@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 21:36 Asia/Bangkok
+Last updated: 2026-07-23 22:10 Asia/Bangkok
 
 ## Snapshot
 
-- Status: Browser Feedback Implementation In Progress
-- Current focus: Apply the 18 reviewed browser comments to the Hero, museum, collection, archive, and footer experiences.
-- Next step: Complete desktop/mobile QA, then publish an updated Vercel phone-test deployment.
+- Status: Browser Feedback Version Deployed
+- Current focus: The 18 reviewed browser comments are implemented, verified, pushed, and live on the stable Vercel phone-test URL.
+- Next step: Collect phone-test feedback; connect an approved Supabase project before enabling real public submissions.
 
 ## Project Goal
 
@@ -119,6 +119,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Revised desktop interaction QA | Passed | Hero, signup warning, museum links/prices/borders, collection portal, three-page wizard, image validation, local card generation, 18-item archive, and footer verified. |
 | 2026-07-23 | Revised mobile interaction QA | Passed | 390 × 844 hero, collection portal, bottom-sheet wizard, and footer verified with 390px document width and no horizontal overflow. |
 | 2026-07-23 | Museum official-site availability | Passed | `cmocity.com/lanna-folklife-museum/` and `fahlannaartmuseum.com/` both returned HTTP 200. |
+| 2026-07-23 | Final Vercel production regression | Passed | Production deployment READY; stable URL returned HTTP 200, Vercel reported no runtime errors, and 390 × 844 QA confirmed the hero, 18-item archive, signup warning, museum details, and patterned collect action without horizontal overflow. |
 
 ## Recent Updates
 
@@ -127,6 +128,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 20:31 Asia/Bangkok: Created the CMI Community GitHub repository, pushed the rollback and implementation branches, and deployed the verified Vercel phone-test version.
 - 2026-07-23 21:36 Asia/Bangkok: Converted 18 annotated browser comments into locked implementation and acceptance decisions.
 - 2026-07-23 21:52 Asia/Bangkok: Completed all 18 revisions and passed desktop/mobile, upload, card-generation, build, worker, and Edge Function checks.
+- 2026-07-23 22:10 Asia/Bangkok: Published the browser-feedback version to the stable Vercel URL and completed final mobile production QA.
 
 ## Handoff Notes
 
