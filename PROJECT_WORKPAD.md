@@ -106,7 +106,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Edge Function syntax parse | Passed | esbuild parsed the Deno TypeScript entrypoint; Deno runtime is not installed locally. |
 | 2026-07-23 | Desktop and mobile interaction QA | Passed | QR, museum choice, form validation, archive filtering/detail, card download, and mobile navigation verified. |
 | 2026-07-23 | Source-to-implementation design QA | Passed | Combined comparison reviewed; no remaining P0/P1/P2 findings. |
-| 2026-07-23 | GitHub organization repository | Passed | Private repository created under CMI Community; `main`, feature, and rollback snapshot branches pushed. |
+| 2026-07-23 | GitHub organization repository | Passed | Public repository created under CMI Community; `main`, feature, and rollback snapshot branches pushed. |
 | 2026-07-23 | Vercel deployment and phone smoke test | Passed | Deployment is READY; stable URL returns 200; 390 × 844 hero and QR modal verified with no console errors. |
 
 ## Recent Updates
