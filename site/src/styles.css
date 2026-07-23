@@ -1667,10 +1667,30 @@ select:focus-visible,
   letter-spacing: 0.08em;
 }
 
-.pattern-card-export__body h3 {
-  margin: 5px 0 7px;
+.pattern-card-export__collector {
+  margin-top: 7px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  color: var(--purple);
+}
+
+.pattern-card-export__collector span {
+  font-size: 7px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+}
+
+.pattern-card-export__collector strong {
   font-family: "Noto Serif SC Variable", serif;
-  font-size: 23px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.pattern-card-export__body h3 {
+  margin: 6px 0 7px;
+  font-family: "Noto Serif SC Variable", serif;
+  font-size: 21px;
   line-height: 1.15;
 }
 
@@ -1725,6 +1745,28 @@ select:focus-visible,
   font-family: "Noto Serif SC Variable", serif;
   font-size: clamp(1.8rem, 3vw, 3rem);
   line-height: 1.25;
+}
+
+.pattern-detail__collector {
+  width: fit-content;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--purple);
+  font-size: 0.82rem;
+}
+
+.pattern-detail__collector span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pattern-detail__collector strong {
+  font-family: "Noto Serif SC Variable", serif;
+  font-size: 1rem;
 }
 
 .pattern-detail__source {

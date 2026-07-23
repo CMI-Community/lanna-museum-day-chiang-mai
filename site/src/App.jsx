@@ -36,6 +36,7 @@ import {
   fetchPublishedPatterns,
   isSupabaseConfigured,
   prepareImageFile,
+  renderPatternCardPng,
   submitPattern,
 } from "./lib/archive";
 
@@ -1143,6 +1144,7 @@ function PatternCard({ pattern, cardRef }) {
     ...(pattern.structure_tags || []),
     ...(pattern.material_tags || []),
   ].slice(0, 5);
+  const collectorName = pattern.collector_name?.trim() || "匿名采集者";
 
   return (
     <article className="pattern-card-export" ref={cardRef}>
@@ -1174,6 +1176,10 @@ function PatternCard({ pattern, cardRef }) {
               ? "FAM Fahlanna Art Museum"
               : "兰纳民俗博物馆")}
         </div>
+        <div className="pattern-card-export__collector">
+          <span>采集者 / COLLECTED BY</span>
+          <strong>{collectorName}</strong>
+        </div>
         <h3>{pattern.source_title}</h3>
         <div className="pattern-card-export__tags">
           {tags.map((tag, index) => (
@@ -1193,9 +1199,11 @@ function PatternCard({ pattern, cardRef }) {
 function PatternDetailDialog({ pattern, onClose }) {
   const cardRef = useRef(null);
   const [downloadStatus, setDownloadStatus] = useState("idle");
+  const [downloadError, setDownloadError] = useState("");
 
   useEffect(() => {
     setDownloadStatus("idle");
+    setDownloadError("");
   }, [pattern?.id]);
 
   if (!pattern) {
@@ -1205,20 +1213,22 @@ function PatternDetailDialog({ pattern, onClose }) {
   const downloadCard = async () => {
     try {
       setDownloadStatus("loading");
-      await document.fonts.ready;
-      const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(cardRef.current, {
-        pixelRatio: 2,
-        cacheBust: true,
-        backgroundColor: "#fbf8f1",
-      });
+      setDownloadError("");
+      const blob = await renderPatternCardPng(pattern);
+      const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       const safeNumber = pattern.archive_number.replace(/[^a-zA-Z0-9-]/g, "-");
       anchor.download = `${safeNumber}-lanna-pattern-card.png`;
-      anchor.href = dataUrl;
+      anchor.href = objectUrl;
+      anchor.style.display = "none";
+      document.body.append(anchor);
       anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1_000);
       setDownloadStatus("success");
-    } catch {
+    } catch (error) {
+      console.error("Pattern card export failed", error);
+      setDownloadError(error.message || "生成失败，请保留此窗口后重试");
       setDownloadStatus("error");
     }
   };
@@ -1251,13 +1261,20 @@ function PatternDetailDialog({ pattern, onClose }) {
                 : "下载纹样卡"}
           </Button>
           {downloadStatus === "error" ? (
-            <p className="download-error">生成失败，请保留此窗口后重试。</p>
+            <p className="download-error">{downloadError}</p>
           ) : null}
         </div>
         <div className="pattern-detail__info">
           <div className="section-kicker">ARCHIVE DETAIL</div>
           <h2>{pattern.archive_number}</h2>
           <h3>{pattern.source_title}</h3>
+          <p className="pattern-detail__collector">
+            <IdentificationCard size={19} />
+            <span>采集者</span>
+            <strong>
+              {pattern.collector_name?.trim() || "匿名采集者"}
+            </strong>
+          </p>
           <p className="pattern-detail__source">
             <MapPin size={17} />
             {pattern.source_location || "来源位置待补充"}

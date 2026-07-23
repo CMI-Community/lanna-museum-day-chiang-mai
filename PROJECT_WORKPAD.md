@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 22:10 Asia/Bangkok
+Last updated: 2026-07-23 22:24 Asia/Bangkok
 
 ## Snapshot
 
-- Status: Browser Feedback Version Deployed
-- Current focus: The 18 reviewed browser comments are implemented, verified, pushed, and live on the stable Vercel phone-test URL.
-- Next step: Collect phone-test feedback; connect an approved Supabase project before enabling real public submissions.
+- Status: Pattern Card Export Fix In Progress
+- Current focus: Make card downloads reliably composite the participant's uploaded images and show collector attribution in both the card and archive detail.
+- Next step: Replace DOM screenshot export with a dedicated Canvas renderer, then verify a downloaded PNG from a real local upload.
 
 ## Project Goal
 
@@ -52,8 +52,9 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 
 ### Now
 
-- [ ] Apply the 18 reviewed browser comments.
-- [ ] Run desktop and phone QA against the updated preview.
+- [ ] Replace the fragile DOM-to-image download with a deterministic Canvas card renderer.
+- [ ] Display “采集者：姓名” on the export card and archive detail.
+- [ ] Verify that a real downloaded PNG includes uploaded detail and context images rather than text-only output.
 
 ### Next
 
@@ -80,6 +81,8 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - [x] Receive the real WeChat registration QR.
 - [x] Create and push `CMI-Community/lanna-museum-day-chiang-mai`.
 - [x] Deploy and verify the Vercel phone-test version.
+- [x] Apply and deploy the first 18 reviewed browser comments.
+- [x] Run desktop and phone QA against the updated preview.
 
 ## Risks And Open Questions
 
@@ -89,6 +92,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | Backend | The only accessible Supabase project is inactive and has a generic name. | Applying schema without confirmation could alter an unrelated project. | Build the integration locally; ask before project mutation. | Open |
 | Access | The event code is known, but no approved Supabase project is connected. | The PRD preview can demonstrate the flow; live enforcement remains unavailable. | Set the server-side Edge Function secret in the approved project before launch. | Open |
 | Release | Vercel was deployed through the authorized file API, not Git import. | New Git pushes will not deploy automatically yet. | Connect the repository in Vercel when continuous deployment is needed. | Open |
+| Export | DOM screenshot libraries can fail on Blob URLs, cross-origin images, fonts, or stylesheet serialization. | A participant may see the card but be unable to download it, or receive an incomplete image. | Render the export from loaded image bitmaps and explicit Canvas drawing; fail before download if the required uploaded image cannot be drawn. | In Progress |
 
 ## Implementation Notes
 
@@ -129,6 +133,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 21:36 Asia/Bangkok: Converted 18 annotated browser comments into locked implementation and acceptance decisions.
 - 2026-07-23 21:52 Asia/Bangkok: Completed all 18 revisions and passed desktop/mobile, upload, card-generation, build, worker, and Edge Function checks.
 - 2026-07-23 22:10 Asia/Bangkok: Published the browser-feedback version to the stable Vercel URL and completed final mobile production QA.
+- 2026-07-23 22:24 Asia/Bangkok: Confirmed collector attribution is absent and the current DOM-to-image export fails on the production preview; locked a Canvas-based image-composition fix.
 
 ## Handoff Notes
 

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pattern card export verification</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #351149;
+        color: #fbf8f1;
+        font-family: sans-serif;
+      }
+
+      #status {
+        margin-bottom: 18px;
+        white-space: pre-wrap;
+      }
+
+      #result {
+        width: min(540px, 100%);
+        height: auto;
+        display: block;
+        background: #fbf8f1;
+      }
+    </style>
+  </head>
+  <body>
+    <pre id="status">RUNNING</pre>
+    <img id="result" alt="导出的纹样卡测试结果" />
+    <script type="module" src="./export-card-test.mjs"></script>
+  </body>
+</html>
