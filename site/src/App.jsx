@@ -311,7 +311,7 @@ function Manifesto() {
     <section id="about" className="manifesto">
       <img
         className="manifesto__ribbon"
-        src="/assets/decor/lanna-history-ribbon.png"
+        src="/assets/decor/lanna-history-ribbon.jpg"
         alt=""
         aria-hidden="true"
       />
