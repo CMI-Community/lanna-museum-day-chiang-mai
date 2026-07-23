@@ -1,11 +1,11 @@
 # Project Workpad
 
-Last updated: 2026-07-24 00:02 Asia/Bangkok
+Last updated: 2026-07-24 00:10 Asia/Bangkok
 
 ## Snapshot
 
 - Status: Shipped
-- Current focus: The production site is connected to Supabase and the 18 reviewed preview records are now published database records attributed to CMI.
+- Current focus: The production Hero now uses a transparent-background WaytoAGI mark and explicitly credits “CMI Community 主办 清迈线下场”.
 - Next step: Let the first participant submission continue at `CMI-LN-0045`; replace the time-limited WeChat QR before it expires.
 
 ## Project Goal
@@ -48,6 +48,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Keep the user-approved replacement event code only in server-side secret configuration and normalize case and surrounding/repeated spaces. | The replacement is distinct from the previously published phrase; the repository must not contain its value. | Approved |
 | 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Superseded |
 | 2026-07-24 | Import the 18 preview records into the production archive with collector name `CMI`, while preserving their preview-source wording. | The user wants the populated experience in production without presenting the sample content as newly verified museum records. | Shipped |
+| 2026-07-24 | Use a transparent WaytoAGI Hero mark with a dark wordmark and credit “CMI Community 主办 清迈线下场”. | The filled badge obscured the intended partner-logo treatment, and the local organizer role needed to be explicit. | Shipped |
 
 ## Task Board
 
@@ -98,6 +99,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - [x] Verify the stable production URL reads the empty public archive and opens the live collection flow without creating test data.
 - [x] Import the 18 reviewed preview records as published production rows attributed to `CMI`.
 - [x] Advance the archive sequence so the next participant submission receives `CMI-LN-0045`.
+- [x] Replace the filled WaytoAGI Hero badge with a transparent-background mark and publish the explicit CMI Community organizer credit.
 
 ## Risks And Open Questions
 
@@ -125,6 +127,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - Local Vercel project linkage is stored in ignored `.vercel/project.json`; production source builds target the verified existing project.
 - Production sample-data migration: `site/supabase/migrations/20260723170006_import_archive_samples.sql`; the upsert is idempotent and preserves the sample provenance text.
 - Current feedback batch: Hero copy/logo/date, signup warning, patterned collect CTA, museum official links/prices/borders, three-step collection wizard, 18 preview records, and footer art repair.
+- WaytoAGI Hero asset: `site/public/assets/brand/waytoagi-logo-transparent.svg`, adapted from the official vector wordmark for transparent use on the warm ivory canvas.
 
 ## Validation Log
 
@@ -162,6 +165,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-24 | Production archive import | Passed | Migration `import_archive_samples` applied successfully; SQL and public REST both returned 18 published rows attributed to `CMI`, and the sequence was synchronized at 44. |
 | 2026-07-24 | Imported archive assets | Passed | All 8 referenced pattern images and both museum context images returned HTTP 200 from the stable production domain. |
 | 2026-07-24 | Post-import Supabase advisors | Passed | Security and performance advisors both returned zero findings. |
+| 2026-07-24 | Transparent Hero partner-credit regression | Passed | Production build, 4/4 Sites worker tests, desktop and 390px visual QA, stable-domain asset loading, exact organizer copy, and horizontal-overflow checks all passed; Vercel deployment `dpl_27oHCahRuticPe3kw95JdqKxR9uq` is `READY`. |
 
 ## Recent Updates
 
@@ -178,6 +182,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 23:35 Asia/Bangkok: Stored the server-only event phrase and production origin in Supabase, verified both rejection and success paths without creating data, and confirmed Vercel still needs Dashboard sign-in before production can be connected.
 - 2026-07-23 23:54 Asia/Bangkok: Connected Production-only Vercel variables, replaced the ineffective prebuilt redeploy with a source build, removed the remaining recent-pattern preview inconsistency, and verified the stable site against the empty live archive without creating test data.
 - 2026-07-24 00:02 Asia/Bangkok: Imported all 18 reviewed preview records into production as published `CMI` records, verified the public API, and advanced the next automatic archive number to 0045.
+- 2026-07-24 00:10 Asia/Bangkok: Replaced the filled WaytoAGI Hero badge with a transparent mark, added the explicit CMI Community organizer credit, and verified the update on the stable Vercel domain at desktop and phone widths.
 
 ## Handoff Notes
 

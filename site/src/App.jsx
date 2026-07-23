@@ -259,10 +259,15 @@ function Hero({ onSignup }) {
 
         <div className="hero__credits">
           <div className="initiator" aria-label="WaytoAGI 发起">
-            <img src="/assets/brand/waytoagi-logo.svg" alt="WaytoAGI" />
+            <img
+              src="/assets/brand/waytoagi-logo-transparent.svg"
+              alt="WaytoAGI"
+            />
             <span>发起</span>
           </div>
-          <div className="hero__venue-credit">清迈线下场</div>
+          <div className="hero__venue-credit">
+            CMI Community 主办 清迈线下场
+          </div>
         </div>
 
         <dl className="hero__facts">

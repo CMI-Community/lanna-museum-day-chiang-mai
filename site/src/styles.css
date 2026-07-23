@@ -442,10 +442,7 @@ select:focus-visible,
   width: 112px;
   height: 36px;
   max-width: none;
-  padding: 3px 8px;
   object-fit: contain;
-  background: var(--purple-deep);
-  border-radius: 3px;
 }
 
 .initiator span,
