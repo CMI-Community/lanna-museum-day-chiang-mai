@@ -488,25 +488,25 @@ select:focus-visible,
 
 .hero__collect-button {
   position: relative;
-  color: #fff;
+  color: var(--purple-dark);
   border-color: var(--purple);
-  background-color: #5b247f;
+  background-color: #fff8ef;
   background-image:
-    linear-gradient(90deg, rgba(55, 14, 83, 0.3), rgba(83, 26, 114, 0.52)),
+    linear-gradient(90deg, rgba(255, 248, 239, 0.92), rgba(255, 248, 239, 0.48) 58%, rgba(255, 248, 239, 0.08)),
     url("/assets/decor/lanna-history-ribbon.jpg");
-  background-size: 100% 100%, 360px auto;
-  background-position: 62% 48%;
-  background-repeat: no-repeat, repeat-x;
+  background-size: 100% 100%, 470px auto;
+  background-position: center, 69% 43%;
+  background-repeat: no-repeat;
   box-shadow: 5px 5px 0 #d9c2e1;
   overflow: hidden;
 }
 
 .hero__collect-button:hover:not(:disabled) {
-  color: #fff;
+  color: var(--purple-dark);
   border-color: var(--purple-dark);
-  background-color: #46165f;
+  background-color: #ffefe2;
   background-image:
-    linear-gradient(90deg, rgba(45, 9, 68, 0.22), rgba(66, 16, 90, 0.4)),
+    linear-gradient(90deg, rgba(255, 239, 226, 0.84), rgba(255, 239, 226, 0.34) 58%, rgba(255, 239, 226, 0.04)),
     url("/assets/decor/lanna-history-ribbon.jpg");
 }
 
