@@ -1,0 +1,4 @@
+project_id = "cmi-lanna-pattern-archive"
+
+[functions.submit-pattern]
+verify_jwt = false

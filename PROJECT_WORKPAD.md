@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 17:20 Asia/Bangkok
+Last updated: 2026-07-23 19:58 Asia/Bangkok
 
 ## Snapshot
 
-- Status: In Progress
-- Current focus: Build the selected responsive single-page experience and prepare the Supabase-backed pattern archive.
-- Next step: Create the Product Design prototype scaffold, place the real brand assets, and implement the activity journey.
+- Status: Ready for Review
+- Current focus: The verified local prototype is complete; the deployable Supabase archive definition is prepared without mutating an unapproved cloud project.
+- Next step: Confirm the intended Supabase project and event collection code before enabling live public submissions.
 
 ## Project Goal
 
@@ -48,25 +48,26 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 
 ### Now
 
-- [ ] Create a local rollback snapshot and dedicated development branch.
-- [ ] Write the implementation-ready product requirements.
-- [ ] Build the responsive single-page prototype from the selected image.
-- [ ] Integrate the real CMI logo, WaytoAGI logo, and WeChat QR.
+- [ ] Connect a user-approved Supabase project.
 
 ### Next
 
-- [ ] Implement museum interaction, upload flow, card export, and archive detail modal.
-- [ ] Add Supabase client integration and deployable database/Edge Function definitions.
-- [ ] Connect a user-approved Supabase project.
-- [ ] Run desktop/mobile interaction and design QA.
+- [ ] Replace the time-limited WeChat QR when the group generates a new code.
+- [ ] Publish to a user-selected hosting target when requested.
 
 ### Later
 
-- [ ] Publish to a user-selected hosting target.
-- [ ] Replace the time-limited WeChat QR when it expires.
+- [ ] Add moderation/admin controls if the archive needs them after the event.
 
 ### Done
 
+- [x] Create a local rollback snapshot and dedicated development branch.
+- [x] Write the implementation-ready product requirements.
+- [x] Build the responsive single-page prototype from the selected image.
+- [x] Integrate the real CMI logo, WaytoAGI logo, and WeChat QR.
+- [x] Implement museum interaction, upload flow, card export, and archive detail modal.
+- [x] Add Supabase client integration and deployable database/Edge Function definitions.
+- [x] Run desktop/mobile interaction and design QA.
 - [x] Research comparable event, museum, collection, and pattern archive experiences.
 - [x] Select and refine the final visual direction.
 - [x] Lock the content hierarchy and event manifesto.
@@ -96,14 +97,18 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Product Design context preflight | Passed | No saved Product Design user context exists; current project references are sufficient. |
 | 2026-07-23 | Supabase project discovery | Needs Review | One inactive generic project found; no mutations performed. |
 | 2026-07-23 | QR asset inspection | Passed | 1080 × 1647 JPEG; group name matches the event; marked valid through 2026-07-30. |
+| 2026-07-23 | Production build and worker tests | Passed | Vite production build completed; 4/4 Sites worker tests passed. |
+| 2026-07-23 | Edge Function syntax parse | Passed | esbuild parsed the Deno TypeScript entrypoint; Deno runtime is not installed locally. |
+| 2026-07-23 | Desktop and mobile interaction QA | Passed | QR, museum choice, form validation, archive filtering/detail, card download, and mobile navigation verified. |
+| 2026-07-23 | Source-to-implementation design QA | Passed | Combined comparison reviewed; no remaining P0/P1/P2 findings. |
 
 ## Recent Updates
 
 - 2026-07-23 17:20 Asia/Bangkok: Locked registration 1B, access 2A, persistence 3A and received the real registration QR.
+- 2026-07-23 19:58 Asia/Bangkok: Completed the responsive prototype, integrated real assets, prepared the Supabase schema/Edge Function, and passed design and interaction QA.
 
 ## Handoff Notes
 
 - Do not reintroduce the removed four-column “现场观察 / 来源信息 / 仍待了解 / 创意表达” section between the hero and fishbone.
 - Keep museum selection before collection instructions and the public archive.
 - Preserve the distinction between observation, verified source information, open questions, and creative reinterpretation inside each pattern record.
-
