@@ -488,26 +488,26 @@ select:focus-visible,
 
 .hero__collect-button {
   position: relative;
-  color: var(--purple-dark);
+  color: #fff;
   border-color: var(--purple);
-  background-color: #fff8ef;
+  background-color: var(--purple);
   background-image:
-    linear-gradient(90deg, rgba(255, 248, 239, 0.92), rgba(255, 248, 239, 0.48) 58%, rgba(255, 248, 239, 0.08)),
-    url("/assets/decor/lanna-history-ribbon.jpg");
-  background-size: 100% 100%, 470px auto;
-  background-position: center, 69% 43%;
+    linear-gradient(90deg, rgba(45, 11, 63, 0.66), rgba(74, 22, 98, 0.3), rgba(45, 11, 63, 0.66)),
+    url("/assets/patterns/purple-mirror.jpg");
+  background-size: 100% 100%, cover;
+  background-position: center, center 54%;
   background-repeat: no-repeat;
   box-shadow: 5px 5px 0 #d9c2e1;
   overflow: hidden;
 }
 
 .hero__collect-button:hover:not(:disabled) {
-  color: var(--purple-dark);
+  color: #fff;
   border-color: var(--purple-dark);
-  background-color: #ffefe2;
+  background-color: var(--purple-dark);
   background-image:
-    linear-gradient(90deg, rgba(255, 239, 226, 0.84), rgba(255, 239, 226, 0.34) 58%, rgba(255, 239, 226, 0.04)),
-    url("/assets/decor/lanna-history-ribbon.jpg");
+    linear-gradient(90deg, rgba(37, 7, 51, 0.56), rgba(65, 16, 85, 0.2), rgba(37, 7, 51, 0.56)),
+    url("/assets/patterns/purple-mirror.jpg");
 }
 
 .scroll-cue {
