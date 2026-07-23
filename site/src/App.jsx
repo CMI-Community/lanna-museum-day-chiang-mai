@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowLeft,
   ArrowDown,
   ArrowRight,
+  Binoculars,
   Buildings,
   CalendarBlank,
   Camera,
@@ -10,17 +12,21 @@ import {
   CheckCircle,
   Clock,
   DownloadSimple,
+  GlobeHemisphereWest,
+  IdentificationCard,
+  ImageSquare,
   Images,
   List,
   MapPin,
+  NotePencil,
   Sparkle,
   SquaresFour,
+  Ticket,
   UploadSimple,
   X,
 } from "@phosphor-icons/react";
 import {
   archiveSamples,
-  collectionSteps,
   filterOptions,
   museums,
   participationSteps,
@@ -189,6 +195,13 @@ function SignupDialog({ open, onClose }) {
         <p>
           入群后获取 CMI Studio 详细位置、博物馆结伴信息、纹样采集口令与活动提醒。
         </p>
+        <div className="signup-dialog__commitment">
+          <CheckCircle size={22} weight="fill" />
+          <div>
+            <strong>加入前，请先确认</strong>
+            <span>请确保自己有兴趣，且有时间来参加该活动。</span>
+          </div>
+        </div>
         <div className="signup-dialog__qr">
           <img
             src="/assets/registration/wechat-group-qr-20260730.jpg"
@@ -233,7 +246,7 @@ function Hero({ onSignup }) {
           <span>博物馆奇妙日 · 清迈场</span>
         </div>
         <h1>
-          <span>探寻兰纳</span>
+          <span>共同探寻兰纳</span>
           <em>Lanna</em>
           <span>纹案的踪迹</span>
         </h1>
@@ -244,12 +257,11 @@ function Hero({ onSignup }) {
         </div>
 
         <div className="hero__credits">
-          <div className="initiator">
+          <div className="initiator" aria-label="WaytoAGI 发起">
             <img src="/assets/brand/waytoagi-logo.svg" alt="WaytoAGI" />
-            <strong>WaytoAGI</strong>
             <span>发起</span>
           </div>
-          <div>清迈场由 CMI Community 组织</div>
+          <div className="hero__venue-credit">清迈线下场</div>
         </div>
 
         <dl className="hero__facts">
@@ -258,7 +270,7 @@ function Hero({ onSignup }) {
               <CalendarBlank size={19} />
               时间
             </dt>
-            <dd>2026.07.26 · 12:30–17:30</dd>
+            <dd>本周日 · 2026.07.26 · 12:30–17:30</dd>
           </div>
           <div>
             <dt>
@@ -285,6 +297,7 @@ function Hero({ onSignup }) {
           </Button>
           <Button
             variant="outline"
+            className="hero__collect-button"
             onClick={scrollToCollect}
             icon={<Camera size={21} />}
           >
@@ -395,9 +408,8 @@ function Journey() {
   );
 }
 
-function MuseumSection({ selectedMuseum, onSelect }) {
+function MuseumSection() {
   const [hoveredMuseum, setHoveredMuseum] = useState(null);
-  const activeMuseum = hoveredMuseum || selectedMuseum;
 
   return (
     <section id="museums" className="museum-section">
@@ -406,26 +418,23 @@ function MuseumSection({ selectedMuseum, onSelect }) {
           CHOOSE / 先选择你的博物馆
         </div>
         <h2>两个入口，两种观察兰纳的方式</h2>
-        <p>滑动、悬停或点击一座馆，先做出你的参观选择。</p>
+        <p>滑动或悬停查看两座馆；出发前可打开官网与地图确认信息。</p>
       </div>
 
       <div
         className={`museum-stage ${
-          activeMuseum ? `museum-stage--${activeMuseum}` : ""
+          hoveredMuseum ? `museum-stage--${hoveredMuseum}` : ""
         }`}
         onMouseLeave={() => setHoveredMuseum(null)}
       >
-        {museums.map((museum) => {
-          const isSelected = selectedMuseum === museum.id;
-          return (
+        {museums.map((museum) => (
             <article
               key={museum.id}
-              className={`museum-card museum-card--${museum.id} ${
-                isSelected ? "is-selected" : ""
-              }`}
+              className={`museum-card museum-card--${museum.id}`}
               tabIndex={0}
               onMouseEnter={() => setHoveredMuseum(museum.id)}
               onFocus={() => setHoveredMuseum(museum.id)}
+              onBlur={() => setHoveredMuseum(null)}
             >
               <img
                 src={museum.image}
@@ -434,12 +443,6 @@ function MuseumSection({ selectedMuseum, onSelect }) {
               />
               <div className="museum-card__wash" />
               <div className="museum-card__index">{museum.index}</div>
-              {isSelected ? (
-                <div className="museum-card__selected">
-                  <CheckCircle size={18} weight="fill" />
-                  已选择
-                </div>
-              ) : null}
               <div className="museum-card__content">
                 <div className="museum-card__title">
                   <span>{museum.name}</span>
@@ -461,13 +464,15 @@ function MuseumSection({ selectedMuseum, onSelect }) {
                   </div>
                 </dl>
                 <div className="museum-card__actions">
-                  <Button
-                    variant={isSelected ? "selected" : "light"}
-                    onClick={() => onSelect(museum.id)}
-                    icon={isSelected ? <Check size={18} /> : null}
+                  <a
+                    className="button button--light"
+                    href={museum.website}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {isSelected ? "已选择此馆" : "选择此馆"}
-                  </Button>
+                    <GlobeHemisphereWest size={18} />
+                    <span>查看官网</span>
+                  </a>
                   <a
                     className="button button--ghost-light"
                     href={museum.map}
@@ -481,24 +486,33 @@ function MuseumSection({ selectedMuseum, onSelect }) {
                 <small>图片来源：{museum.source}</small>
               </div>
             </article>
-          );
-        })}
-        <span className="museum-stage__or">或</span>
+          ))}
       </div>
 
       <div className="museum-mobile-indicator" aria-hidden="true">
-        <span className={selectedMuseum === "lanna_folklife" ? "is-active" : ""}>
-          1
-        </span>
+        <span>1</span>
         <i />
-        <span className={selectedMuseum === "fam" ? "is-active" : ""}>2</span>
+        <span>2</span>
       </div>
     </section>
   );
 }
 
+function FieldLabel({ icon, children, optional = false }) {
+  return (
+    <span className="field-label field-label--icon">
+      <span>
+        {icon}
+        {children}
+      </span>
+      {optional ? <small>可选</small> : null}
+    </span>
+  );
+}
+
 function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }) {
-  const inputRef = useRef(null);
+  const uploadInputRef = useRef(null);
+  const captureInputRef = useRef(null);
   const previews = useMemo(
     () => files.map((file) => ({ file, url: URL.createObjectURL(file) })),
     [files],
@@ -510,48 +524,69 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
   );
 
   const addFiles = (incoming) => {
-    const next = [...files, ...Array.from(incoming)].slice(0, maximum);
+    const next = [...files, ...Array.from(incoming || [])].slice(0, maximum);
     setFiles(next);
   };
 
-  const removeFile = (index) => {
-    setFiles(files.filter((_, fileIndex) => fileIndex !== index));
+  const handleInput = (event) => {
+    addFiles(event.target.files);
+    event.target.value = "";
   };
 
   return (
-    <div className="file-picker">
-      <div className="field-label">
-        <span>{label}</span>
+    <div
+      className="file-picker"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => {
+        event.preventDefault();
+        addFiles(event.dataTransfer.files);
+      }}
+    >
+      <div className="file-picker__heading">
+        <div>
+          <ImageSquare size={20} weight="fill" />
+          <span>{label}</span>
+        </div>
         <small>
           {files.length}/{maximum}
           {minimum ? ` · 至少 ${minimum} 张` : ""}
         </small>
       </div>
-      <button
-        type="button"
-        className="file-dropzone"
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault();
-          addFiles(event.dataTransfer.files);
-        }}
-      >
-        <UploadSimple size={26} />
-        <span>{helper}</span>
-        <small>JPEG、PNG 或 WebP · 自动压缩后单张不超过 1.5MB</small>
-      </button>
+      <p>{helper}</p>
+      <div className="file-picker__actions">
+        <Button
+          variant="outline"
+          onClick={() => uploadInputRef.current?.click()}
+          icon={<UploadSimple size={20} />}
+        >
+          上传图片
+        </Button>
+        <Button
+          variant="soft"
+          onClick={() => captureInputRef.current?.click()}
+          icon={<Camera size={20} />}
+        >
+          拍摄采集
+        </Button>
+      </div>
+      <small className="file-picker__format">
+        JPEG、PNG 或 WebP · 自动压缩后单张不超过 1.5MB
+      </small>
       <input
-        ref={inputRef}
+        ref={uploadInputRef}
         hidden
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        multiple
+        multiple={maximum > 1}
+        onChange={handleInput}
+      />
+      <input
+        ref={captureInputRef}
+        hidden
+        type="file"
+        accept="image/*"
         capture="environment"
-        onChange={(event) => {
-          addFiles(event.target.files);
-          event.target.value = "";
-        }}
+        onChange={handleInput}
       />
       {previews.length ? (
         <div className="file-previews">
@@ -561,7 +596,11 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
               <button
                 type="button"
                 aria-label={`移除 ${preview.file.name}`}
-                onClick={() => removeFile(index)}
+                onClick={() =>
+                  setFiles(
+                    files.filter((_, fileIndex) => fileIndex !== index),
+                  )
+                }
               >
                 <X size={15} weight="bold" />
               </button>
@@ -573,13 +612,41 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
   );
 }
 
-function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
+const normalizeAccessCode = (value) =>
+  value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+
+const wizardPages = [
+  {
+    id: "01",
+    title: "选择来源",
+    description:
+      "先告诉我们这枚纹样来自哪里。即使不知道作品全名，也可以填写“待确认”后继续。",
+    icon: <IdentificationCard size={24} weight="fill" />,
+  },
+  {
+    id: "02+03",
+    title: "采集图像",
+    description:
+      "先拍吸引你的局部，再退后一步保留完整载体。每一类图片都可以从相册上传或直接拍摄。",
+    icon: <Camera size={24} weight="fill" />,
+  },
+  {
+    id: "04",
+    title: "观察与标注",
+    description:
+      "写下你真实看到的、已经确认的，以及仍想追问的。最后用标签帮助大家重新找到它。",
+    icon: <NotePencil size={24} weight="fill" />,
+  },
+];
+
+function CollectionForm({ open, onClose, onPreview, onPublished }) {
+  const [page, setPage] = useState(1);
   const [detailFiles, setDetailFiles] = useState([]);
   const [contextFiles, setContextFiles] = useState([]);
   const [labelFiles, setLabelFiles] = useState([]);
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [values, setValues] = useState({
-    museum: selectedMuseum || "lanna_folklife",
+    museum: "lanna_folklife",
     sourceTitle: "",
     sourceLocation: "",
     observation: "",
@@ -594,14 +661,27 @@ function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
   });
 
   useEffect(() => {
-    if (selectedMuseum) {
-      setValues((current) => ({ ...current, museum: selectedMuseum }));
+    if (open) {
+      setPage(1);
+      setStatus({ type: "idle", message: "" });
     }
-  }, [selectedMuseum]);
+  }, [open]);
 
   const update = (event) => {
     const { name, value } = event.target;
     setValues((current) => ({ ...current, [name]: value }));
+  };
+
+  const goNext = () => {
+    setStatus({ type: "idle", message: "" });
+    if (page === 2 && (!detailFiles.length || !contextFiles.length)) {
+      setStatus({
+        type: "error",
+        message: "请至少添加 1 张纹样局部图和 1 张完整载体图。",
+      });
+      return;
+    }
+    setPage((current) => Math.min(3, current + 1));
   };
 
   const handleSubmit = async (event) => {
@@ -609,33 +689,35 @@ function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
     setStatus({ type: "idle", message: "" });
 
     if (!detailFiles.length || !contextFiles.length) {
+      setPage(2);
       setStatus({
         type: "error",
-        message: "请至少上传 1 张纹样局部图和 1 张完整载体图。",
+        message: "请至少添加 1 张纹样局部图和 1 张完整载体图。",
       });
       return;
     }
-
     if (!values.observation.trim()) {
       setStatus({ type: "error", message: "请写下你为什么注意到这枚纹样。" });
       return;
     }
-
-    if (isSupabaseConfigured && !values.accessCode.trim()) {
+    if (!values.accessCode.trim()) {
       setStatus({ type: "error", message: "请输入活动群中的采集口令。" });
       return;
     }
 
+    const normalizedValues = {
+      ...values,
+      accessCode: normalizeAccessCode(values.accessCode),
+    };
+
     if (!isSupabaseConfigured) {
       const preview = createLocalPreviewPattern(
-        values,
+        normalizedValues,
         detailFiles,
         contextFiles,
+        labelFiles,
       );
-      setStatus({
-        type: "preview",
-        message: "已生成本地预览卡；它不会进入公开档案。",
-      });
+      onClose();
       onPreview(preview);
       return;
     }
@@ -653,18 +735,26 @@ function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
       payload.append(
         "metadata",
         JSON.stringify({
-          museum: values.museum,
-          sourceTitle: values.sourceTitle,
-          sourceLocation: values.sourceLocation,
-          observation: values.observation,
-          verifiedInformation: values.verifiedInformation,
-          openQuestion: values.openQuestion,
-          carrierTags: values.carrier ? [values.carrier] : [],
-          positionTags: values.position ? [values.position] : [],
-          structureTags: values.structure ? [values.structure] : [],
-          materialTags: values.material ? [values.material] : [],
-          collectorName: values.collectorName,
-          accessCode: values.accessCode,
+          museum: normalizedValues.museum,
+          sourceTitle: normalizedValues.sourceTitle,
+          sourceLocation: normalizedValues.sourceLocation,
+          observation: normalizedValues.observation,
+          verifiedInformation: normalizedValues.verifiedInformation,
+          openQuestion: normalizedValues.openQuestion,
+          carrierTags: normalizedValues.carrier
+            ? [normalizedValues.carrier]
+            : [],
+          positionTags: normalizedValues.position
+            ? [normalizedValues.position]
+            : [],
+          structureTags: normalizedValues.structure
+            ? [normalizedValues.structure]
+            : [],
+          materialTags: normalizedValues.material
+            ? [normalizedValues.material]
+            : [],
+          collectorName: normalizedValues.collectorName,
+          accessCode: normalizedValues.accessCode,
         }),
       );
       preparedDetails.forEach((file) => payload.append("detailImages", file));
@@ -672,10 +762,7 @@ function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
       preparedLabels.forEach((file) => payload.append("labelImages", file));
 
       const result = await submitPattern(payload);
-      setStatus({
-        type: "success",
-        message: `${result.archive_number} 已进入公开档案。`,
-      });
+      onClose();
       onPublished(result);
     } catch (error) {
       setStatus({
@@ -685,227 +772,364 @@ function CollectionForm({ selectedMuseum, onPreview, onPublished }) {
     }
   };
 
+  const currentPage = wizardPages[page - 1];
+
   return (
-    <form className="collection-form" onSubmit={handleSubmit}>
-      {!isSupabaseConfigured ? (
-        <div className="service-banner">
-          <Sparkle size={20} weight="fill" />
+    <Dialog
+      open={open}
+      onClose={onClose}
+      label="采集新纹样"
+      size="collector"
+    >
+      <form className="collection-form" onSubmit={handleSubmit}>
+        <header className="collector-wizard__header">
           <div>
-            <strong>当前为本地预览模式</strong>
-            <span>
-              可以完成上传和生成卡片体验，但内容不会公开；连接 Supabase
-              后会自动切换为正式提交。
-            </span>
+            <div className="section-kicker">NEW PATTERN / 采集新纹样</div>
+            <h2>把这次发现，做成一张有来源的纹样卡</h2>
           </div>
-        </div>
-      ) : null}
-
-      <div className="form-grid form-grid--2">
-        <label className="field">
-          <span className="field-label">来源博物馆</span>
-          <div className="select-wrap">
-            <select name="museum" value={values.museum} onChange={update}>
-              <option value="lanna_folklife">兰纳民俗博物馆</option>
-              <option value="fam">FAM Fahlanna Art Museum</option>
-              <option value="other">其他清迈来源</option>
-            </select>
-            <CaretDown size={17} />
-          </div>
-        </label>
-        <label className="field">
-          <span className="field-label">采集者展示名（可选）</span>
-          <input
-            name="collectorName"
-            value={values.collectorName}
-            onChange={update}
-            placeholder="例如：小明 / 匿名"
-          />
-        </label>
-      </div>
-
-      <div className="form-grid form-grid--2">
-        <label className="field">
-          <span className="field-label">作品或展品名称</span>
-          <input
-            name="sourceTitle"
-            value={values.sourceTitle}
-            onChange={update}
-            placeholder="如果不知道，可以写“待确认”"
-          />
-        </label>
-        <label className="field">
-          <span className="field-label">展区或拍摄位置</span>
-          <input
-            name="sourceLocation"
-            value={values.sourceLocation}
-            onChange={update}
-            placeholder="例如：二层织物展区"
-          />
-        </label>
-      </div>
-
-      <div className="form-grid form-grid--2 form-grid--files">
-        <FilePicker
-          label="纹样局部图"
-          helper="上传多个纹样细节"
-          files={detailFiles}
-          setFiles={setDetailFiles}
-          minimum={1}
-          maximum={6}
-        />
-        <FilePicker
-          label="完整载体图"
-          helper="上传完整文物、艺术作品或场景"
-          files={contextFiles}
-          setFiles={setContextFiles}
-          minimum={1}
-          maximum={6}
-        />
-      </div>
-
-      <FilePicker
-        label="展签或来源图（可选）"
-        helper="上传展签、展区名称或其他来源线索"
-        files={labelFiles}
-        setFiles={setLabelFiles}
-        maximum={3}
-      />
-
-      <div className="form-grid form-grid--3">
-        <label className="field">
-          <span className="field-label">现场观察</span>
-          <textarea
-            name="observation"
-            value={values.observation}
-            onChange={update}
-            placeholder="你为什么停下来？它如何重复、延伸或连接？"
-            rows={5}
-            required
-          />
-        </label>
-        <label className="field">
-          <span className="field-label">来源信息</span>
-          <textarea
-            name="verifiedInformation"
-            value={values.verifiedInformation}
-            onChange={update}
-            placeholder="只写展签或可靠资料中已经确认的内容"
-            rows={5}
-          />
-        </label>
-        <label className="field">
-          <span className="field-label">仍待了解</span>
-          <textarea
-            name="openQuestion"
-            value={values.openQuestion}
-            onChange={update}
-            placeholder="你最想继续了解的问题是什么？"
-            rows={5}
-          />
-        </label>
-      </div>
-
-      <div className="form-grid form-grid--4">
-        {[
-          ["carrier", "载体", ["", "织物", "器物", "建筑", "雕塑", "壁画", "编织结构", "装置"]],
-          ["position", "位置", ["", "中心", "边缘", "底部", "表面", "身体", "入口"]],
-          ["structure", "结构", ["", "重复", "对称", "交织", "环绕", "放射", "延伸", "层叠"]],
-          ["material", "材料", ["", "织物", "木", "陶", "漆", "金属", "石材", "竹", "颜料"]],
-        ].map(([name, label, options]) => (
-          <label className="field" key={name}>
-            <span className="field-label">{label}</span>
-            <div className="select-wrap">
-              <select name={name} value={values[name]} onChange={update}>
-                {options.map((option) => (
-                  <option value={option} key={option || "empty"}>
-                    {option || `选择${label}`}
-                  </option>
-                ))}
-              </select>
-              <CaretDown size={17} />
+          {!isSupabaseConfigured ? (
+            <div className="collector-wizard__mode">
+              <Sparkle size={18} weight="fill" />
+              本地预览
             </div>
-          </label>
-        ))}
-      </div>
+          ) : null}
+        </header>
 
-      <div className="form-submit-row">
-        <label className="field access-code-field">
-          <span className="field-label">活动采集口令</span>
-          <input
-            name="accessCode"
-            type="password"
-            value={values.accessCode}
-            onChange={update}
-            placeholder={
-              isSupabaseConfigured ? "从活动群中获取" : "连接正式服务后启用"
-            }
-            disabled={!isSupabaseConfigured}
-          />
-        </label>
-        <Button
-          type="submit"
-          disabled={status.type === "loading"}
-          icon={
-            status.type === "loading" ? (
-              <span className="spinner" />
+        <ol className="collector-wizard__progress">
+          {wizardPages.map((item, index) => (
+            <li
+              key={item.id}
+              className={`${page === index + 1 ? "is-current" : ""} ${
+                page > index + 1 ? "is-complete" : ""
+              }`}
+            >
+              <span>{page > index + 1 ? <Check size={14} /> : item.id}</span>
+              <strong>{item.title}</strong>
+            </li>
+          ))}
+        </ol>
+
+        <section className="wizard-page" aria-live="polite">
+          <div className="wizard-page__intro">
+            <div className="wizard-page__icon">{currentPage.icon}</div>
+            <div>
+              <span>STEP {currentPage.id}</span>
+              <h3>{currentPage.title}</h3>
+              <p>{currentPage.description}</p>
+            </div>
+          </div>
+
+          {page === 1 ? (
+            <div className="wizard-page__content">
+              <div className="form-grid form-grid--2">
+                <label className="field">
+                  <FieldLabel icon={<Buildings size={18} weight="fill" />}>
+                    来源博物馆
+                  </FieldLabel>
+                  <div className="select-wrap">
+                    <select name="museum" value={values.museum} onChange={update}>
+                      <option value="lanna_folklife">兰纳民俗博物馆</option>
+                      <option value="fam">FAM Fahlanna Art Museum</option>
+                      <option value="other">其他清迈来源</option>
+                    </select>
+                    <CaretDown size={17} />
+                  </div>
+                </label>
+                <label className="field">
+                  <FieldLabel
+                    icon={<IdentificationCard size={18} weight="fill" />}
+                    optional
+                  >
+                    采集者展示名
+                  </FieldLabel>
+                  <input
+                    name="collectorName"
+                    value={values.collectorName}
+                    onChange={update}
+                    placeholder="例如：小明 / 匿名"
+                  />
+                </label>
+              </div>
+              <div className="form-grid form-grid--2">
+                <label className="field">
+                  <FieldLabel icon={<ImageSquare size={18} weight="fill" />}>
+                    作品或展品名称
+                  </FieldLabel>
+                  <input
+                    name="sourceTitle"
+                    value={values.sourceTitle}
+                    onChange={update}
+                    placeholder="如果不知道，可以写“待确认”"
+                  />
+                </label>
+                <label className="field">
+                  <FieldLabel icon={<MapPin size={18} weight="fill" />}>
+                    展区或拍摄位置
+                  </FieldLabel>
+                  <input
+                    name="sourceLocation"
+                    value={values.sourceLocation}
+                    onChange={update}
+                    placeholder="例如：二层织物展区"
+                  />
+                </label>
+              </div>
+            </div>
+          ) : null}
+
+          {page === 2 ? (
+            <div className="wizard-page__content">
+              <div className="form-grid form-grid--2 form-grid--files">
+                <FilePicker
+                  label="纹样局部图"
+                  helper="靠近一处真正吸引你的细节，可添加多张。"
+                  files={detailFiles}
+                  setFiles={setDetailFiles}
+                  minimum={1}
+                  maximum={6}
+                />
+                <FilePicker
+                  label="完整载体图"
+                  helper="退后一步，拍下完整文物、艺术作品或场景。"
+                  files={contextFiles}
+                  setFiles={setContextFiles}
+                  minimum={1}
+                  maximum={6}
+                />
+              </div>
+              <FilePicker
+                label="展签或来源图"
+                helper="如果现场有展签、展区名称或其他来源线索，也请留下。"
+                files={labelFiles}
+                setFiles={setLabelFiles}
+                maximum={3}
+              />
+            </div>
+          ) : null}
+
+          {page === 3 ? (
+            <div className="wizard-page__content">
+              <div className="form-grid form-grid--3">
+                <label className="field">
+                  <FieldLabel icon={<Binoculars size={18} weight="fill" />}>
+                    现场观察
+                  </FieldLabel>
+                  <textarea
+                    name="observation"
+                    value={values.observation}
+                    onChange={update}
+                    placeholder="你为什么停下来？它如何重复、延伸或连接？"
+                    rows={5}
+                    required
+                  />
+                </label>
+                <label className="field">
+                  <FieldLabel
+                    icon={<CheckCircle size={18} weight="fill" />}
+                    optional
+                  >
+                    来源信息
+                  </FieldLabel>
+                  <textarea
+                    name="verifiedInformation"
+                    value={values.verifiedInformation}
+                    onChange={update}
+                    placeholder="只写展签或可靠资料中已经确认的内容"
+                    rows={5}
+                  />
+                </label>
+                <label className="field">
+                  <FieldLabel
+                    icon={<NotePencil size={18} weight="fill" />}
+                    optional
+                  >
+                    仍待了解
+                  </FieldLabel>
+                  <textarea
+                    name="openQuestion"
+                    value={values.openQuestion}
+                    onChange={update}
+                    placeholder="你最想继续了解的问题是什么？"
+                    rows={5}
+                  />
+                </label>
+              </div>
+
+              <div className="form-grid form-grid--4">
+                {[
+                  ["carrier", "载体", ["", "织物", "器物", "建筑", "雕塑", "壁画", "编织结构", "装置"]],
+                  ["position", "位置", ["", "中心", "边缘", "底部", "表面", "身体", "入口"]],
+                  ["structure", "结构", ["", "重复", "对称", "交织", "环绕", "放射", "延伸", "层叠"]],
+                  ["material", "材料", ["", "织物", "木", "陶", "漆", "金属", "石材", "竹", "颜料"]],
+                ].map(([name, label, options]) => (
+                  <label className="field" key={name}>
+                    <FieldLabel icon={<Sparkle size={16} weight="fill" />}>
+                      {label}
+                    </FieldLabel>
+                    <div className="select-wrap">
+                      <select name={name} value={values[name]} onChange={update}>
+                        {options.map((option) => (
+                          <option value={option} key={option || "empty"}>
+                            {option || `选择${label}`}
+                          </option>
+                        ))}
+                      </select>
+                      <CaretDown size={17} />
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              <label className="field access-code-field">
+                <FieldLabel icon={<Ticket size={18} weight="fill" />}>
+                  活动采集口令
+                </FieldLabel>
+                <input
+                  name="accessCode"
+                  type="password"
+                  value={values.accessCode}
+                  onChange={update}
+                  placeholder="请输入活动群中的口令"
+                  autoComplete="off"
+                />
+                <small>口令不区分大小写；正式提交由服务端验证。</small>
+              </label>
+            </div>
+          ) : null}
+        </section>
+
+        {status.message ? (
+          <div className={`form-status form-status--${status.type}`} role="status">
+            {status.type === "error" ? (
+              <X size={18} weight="bold" />
             ) : (
-              <SquaresFour size={20} weight="fill" />
-            )
-          }
-        >
-          {status.type === "loading"
-            ? "正在提交"
-            : isSupabaseConfigured
-              ? "提交并生成编号卡"
-              : "生成本地预览卡"}
-        </Button>
-      </div>
+              <CheckCircle size={19} weight="fill" />
+            )}
+            {status.message}
+          </div>
+        ) : null}
 
-      {status.message ? (
-        <div className={`form-status form-status--${status.type}`} role="status">
-          {status.type === "error" ? (
-            <X size={18} weight="bold" />
+        <footer className="collector-wizard__actions">
+          <div>
+            {page > 1 ? (
+              <Button
+                variant="quiet"
+                onClick={() => {
+                  setStatus({ type: "idle", message: "" });
+                  setPage((current) => Math.max(1, current - 1));
+                }}
+                icon={<ArrowLeft size={19} />}
+              >
+                上一步
+              </Button>
+            ) : (
+              <span>共 3 页，已完成 {page - 1} 页</span>
+            )}
+          </div>
+          {page < 3 ? (
+            <Button onClick={goNext} icon={<ArrowRight size={19} />}>
+              下一步
+            </Button>
           ) : (
-            <CheckCircle size={19} weight="fill" />
+            <Button
+              type="submit"
+              disabled={status.type === "loading"}
+              icon={
+                status.type === "loading" ? (
+                  <span className="spinner" />
+                ) : (
+                  <SquaresFour size={20} weight="fill" />
+                )
+              }
+            >
+              {status.type === "loading"
+                ? "正在提交"
+                : isSupabaseConfigured
+                  ? "提交并生成编号卡"
+                  : "生成本地预览卡"}
+            </Button>
           )}
-          {status.message}
-        </div>
-      ) : null}
-    </form>
+        </footer>
+      </form>
+    </Dialog>
   );
 }
 
-function CollectionSection({ selectedMuseum, onPreview, onPublished }) {
+function CollectionSection({ onPreview, onPublished }) {
+  const [collectorOpen, setCollectorOpen] = useState(false);
+  const recentPatterns = archiveSamples.slice(0, 6);
+
   return (
     <section id="collect" className="collection-section section-shell">
       <div className="section-heading section-heading--split">
         <div>
-          <div className="section-kicker">COLLECT / 如何采集一枚纹样</div>
-          <h2>先看完整作品，再靠近一处细节</h2>
+          <div className="section-kicker">COLLECT / 收集兰纳纹样</div>
+          <h2>现在，收集一枚属于你的兰纳纹样</h2>
         </div>
         <p>
-          纹样不是脱离来源的装饰素材。请同时保留局部、完整载体和来源，让之后的
-          AI 创作仍然能回到真实文化语境。
+          看到让你停下来的细节，就把局部、完整作品与来源一起留下。点击入口后，用三步完成采集并生成一张可下载的编号卡。
         </p>
       </div>
 
-      <ol className="collection-steps">
-        {collectionSteps.map((step, index) => (
-          <li key={step.id}>
-            <span>{step.id}</span>
+      <div className="collection-portal">
+        <article className="collection-entry-card">
+          <img
+            className="collection-entry-card__ribbon"
+            src="/assets/decor/lanna-history-ribbon.jpg"
+            alt=""
+            aria-hidden="true"
+          />
+          <div className="collection-entry-card__top">
+            <span>NEW COLLECTION</span>
+            <strong>01 · 02+03 · 04</strong>
+          </div>
+          <div className="collection-entry-card__seal">
+            <Camera size={34} weight="fill" />
+          </div>
+          <div className="collection-entry-card__copy">
+            <p>CMI · LANNA PATTERN ARCHIVE</p>
+            <h3>从一处细节出发，保留它完整的来处。</h3>
+            <span>三步采集 · 自动编号 · 生成下载卡片</span>
+          </div>
+          <Button
+            variant="accent"
+            onClick={() => setCollectorOpen(true)}
+            icon={<Sparkle size={20} weight="fill" />}
+          >
+            采集新纹样
+          </Button>
+        </article>
+
+        <div className="collection-recent">
+          <header>
             <div>
-              <h3>{step.title}</h3>
-              <p>{step.description}</p>
+              <span>RECENTLY COLLECTED</span>
+              <h3>已经收集进来的纹样</h3>
             </div>
-            {index < collectionSteps.length - 1 ? (
-              <ArrowRight size={22} className="collection-steps__arrow" />
-            ) : null}
-          </li>
-        ))}
-      </ol>
+            <a href="#archive">
+              查看全部 {archiveSamples.length} 枚
+              <ArrowDown size={17} />
+            </a>
+          </header>
+          <div className="collection-recent__grid">
+            {recentPatterns.map((pattern) => (
+              <button
+                type="button"
+                key={pattern.id}
+                onClick={() => onPreview(pattern)}
+                aria-label={`查看 ${pattern.archive_number} ${pattern.source_title}`}
+              >
+                <img src={pattern.detail_image_urls[0]} alt="" />
+                <span>{pattern.archive_number}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <CollectionForm
-        selectedMuseum={selectedMuseum}
+        open={collectorOpen}
+        onClose={() => setCollectorOpen(false)}
         onPreview={onPreview}
         onPublished={onPublished}
       />
@@ -1131,7 +1355,7 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
 
         {!isSupabaseConfigured ? (
           <div className="archive-preview-notice">
-            当前展示 8 份体验预览素材；连接 Supabase
+            当前展示 {archiveSamples.length} 份体验预览素材；连接 Supabase
             后，这里会自动切换为参与者的真实公开采集。
           </div>
         ) : null}
@@ -1238,7 +1462,7 @@ function Footer({ onSignup }) {
             JULY 26 · CMI STUDIO
           </div>
           <h2>带一枚让你停下来的纹样，来现场一起做出来。</h2>
-          <p>用 AI 创作，探寻兰纳 Lanna 纹案的踪迹。</p>
+          <p>用 AI 创作，共同探寻兰纳 Lanna 纹案的踪迹。</p>
         </div>
         <Button variant="accent" onClick={onSignup}>
           报名入群
@@ -1258,7 +1482,6 @@ function Footer({ onSignup }) {
 
 export function App() {
   const [signupOpen, setSignupOpen] = useState(false);
-  const [selectedMuseum, setSelectedMuseum] = useState("lanna_folklife");
   const [selectedPattern, setSelectedPattern] = useState(null);
   const [archiveRefreshKey, setArchiveRefreshKey] = useState(0);
 
@@ -1274,12 +1497,8 @@ export function App() {
         <Hero onSignup={() => setSignupOpen(true)} />
         <Manifesto />
         <Journey />
-        <MuseumSection
-          selectedMuseum={selectedMuseum}
-          onSelect={setSelectedMuseum}
-        />
+        <MuseumSection />
         <CollectionSection
-          selectedMuseum={selectedMuseum}
           onPreview={setSelectedPattern}
           onPublished={handlePatternPublished}
         />

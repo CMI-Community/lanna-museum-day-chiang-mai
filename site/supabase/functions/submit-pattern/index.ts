@@ -75,6 +75,10 @@ function text(value: unknown, maximum: number, fallback = "") {
   return value.trim().slice(0, maximum) || fallback;
 }
 
+function normalizeAccessCode(value: unknown) {
+  return text(value, 100).replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+}
+
 function tags(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
@@ -134,7 +138,9 @@ Deno.serve(async (request) => {
     return response(request, { error: "不允许的来源" }, 403);
   }
 
-  const expectedCode = Deno.env.get("PATTERN_SUBMISSION_CODE") ?? "";
+  const expectedCode = normalizeAccessCode(
+    Deno.env.get("PATTERN_SUBMISSION_CODE") ?? "",
+  );
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey =
     Deno.env.get("SUPABASE_SECRET_KEY") ??
@@ -163,7 +169,7 @@ Deno.serve(async (request) => {
     return response(request, { error: "采集信息格式无效" }, 400);
   }
 
-  if (!constantTimeEqual(text(metadata.accessCode, 100), expectedCode)) {
+  if (!constantTimeEqual(normalizeAccessCode(metadata.accessCode), expectedCode)) {
     return response(request, { error: "活动采集口令不正确" }, 401);
   }
 

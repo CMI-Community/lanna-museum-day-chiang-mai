@@ -59,7 +59,12 @@ export async function submitPattern(formData) {
   return payload;
 }
 
-export function createLocalPreviewPattern(values, detailFiles, contextFiles) {
+export function createLocalPreviewPattern(
+  values,
+  detailFiles,
+  contextFiles,
+  labelFiles = [],
+) {
   const now = new Date();
   const localNumber = `PREVIEW-${String(now.getHours()).padStart(2, "0")}${String(
     now.getMinutes(),
@@ -87,7 +92,7 @@ export function createLocalPreviewPattern(values, detailFiles, contextFiles) {
     collector_name: values.collectorName || "匿名采集者",
     detail_image_urls: detailFiles.map((file) => URL.createObjectURL(file)),
     context_image_urls: contextFiles.map((file) => URL.createObjectURL(file)),
-    label_image_urls: [],
+    label_image_urls: labelFiles.map((file) => URL.createObjectURL(file)),
     created_at: now.toISOString(),
     preview: true,
     localPreview: true,

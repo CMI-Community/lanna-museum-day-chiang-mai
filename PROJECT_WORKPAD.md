@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 20:31 Asia/Bangkok
+Last updated: 2026-07-23 21:36 Asia/Bangkok
 
 ## Snapshot
 
-- Status: PRD Preview Deployed
-- Current focus: The responsive prototype is available from the new CMI Community GitHub repository and a verified Vercel deployment.
-- Next step: Test the deployed page on participant phones, then confirm the intended Supabase project and event collection code before enabling live public submissions.
+- Status: Browser Feedback Implementation In Progress
+- Current focus: Apply the 18 reviewed browser comments to the Hero, museum, collection, archive, and footer experiences.
+- Next step: Complete desktop/mobile QA, then publish an updated Vercel phone-test deployment.
 
 ## Project Goal
 
@@ -43,15 +43,21 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Pattern submission requires an event access code. | The user selected option 2A to reduce misuse without adding account friction. | Locked |
 | 2026-07-23 | Persist submissions, images, numbers, and archive data in Supabase. | The user selected option 3A. | Locked |
 | 2026-07-23 | Use 12:30–17:30 Chiang Mai time for the public schedule. | This matches the public recruitment copy and the national Beijing-time schedule. | Locked |
+| 2026-07-23 | Replace the always-expanded collection form with a decorated entry card and a three-page modal wizard: 01 → 02+03 → 04. | A progressive flow lowers the perceived effort and keeps the public page focused on action. | Locked |
+| 2026-07-23 | Museum cards are informational choices with official-site and map links, not persistent selection controls. | The reviewed UI no longer needs “已选择” or “或” states. | Locked |
+| 2026-07-23 | Configure the server-side event code as `cmi studio` and normalize case and surrounding/repeated spaces. | This is the access phrase supplied for the event; the browser must not contain the server secret. | Locked |
+| 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Locked |
 
 ## Task Board
 
 ### Now
 
-- [ ] Connect a user-approved Supabase project.
+- [ ] Apply the 18 reviewed browser comments.
+- [ ] Run desktop and phone QA against the updated preview.
 
 ### Next
 
+- [ ] Connect a user-approved Supabase project and set its server-side `PATTERN_SUBMISSION_CODE`.
 - [ ] Replace the time-limited WeChat QR when the group generates a new code.
 - [ ] Connect the GitHub repository to Vercel Git integration for automatic deployments if desired.
 
@@ -81,7 +87,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | --- | --- | --- | --- | --- |
 | Asset | Current WeChat QR is marked valid through 2026-07-30. | Registration can break after expiry. | Keep it replaceable and show a graceful update state. | Open |
 | Backend | The only accessible Supabase project is inactive and has a generic name. | Applying schema without confirmation could alter an unrelated project. | Build the integration locally; ask before project mutation. | Open |
-| Access | The event submission code has not been provided. | Live uploads cannot be opened safely. | Configure through a server-side Edge Function secret before launch. | Open |
+| Access | The event code is known, but no approved Supabase project is connected. | The PRD preview can demonstrate the flow; live enforcement remains unavailable. | Set the server-side Edge Function secret in the approved project before launch. | Open |
 | Release | Vercel was deployed through the authorized file API, not Git import. | New Git pushes will not deploy automatically yet. | Connect the repository in Vercel when continuous deployment is needed. | Open |
 
 ## Implementation Notes
@@ -94,6 +100,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - Vercel project ID: `prj_v4l33b5C67ChgB2cZ6CD4KHqD75H`.
 - Use the Product Design `prototype` starter inside `site/`; do not initialize a Sites starter.
 - Public submissions are sent to a custom-authenticated Edge Function; the event code and service-role credentials must never be exposed in the browser.
+- Current feedback batch: Hero copy/logo/date, signup warning, patterned collect CTA, museum official links/prices/borders, three-step collection wizard, 18 preview records, and footer art repair.
 
 ## Validation Log
 
@@ -108,12 +115,18 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Source-to-implementation design QA | Passed | Combined comparison reviewed; no remaining P0/P1/P2 findings. |
 | 2026-07-23 | GitHub organization repository | Passed | Public repository created under CMI Community; `main`, feature, and rollback snapshot branches pushed. |
 | 2026-07-23 | Vercel deployment and phone smoke test | Passed | Deployment is READY; stable URL returns 200; 390 × 844 hero and QR modal verified with no console errors. |
+| 2026-07-23 | Browser feedback regression build | Passed | Vite production build, 4/4 Sites worker tests, and Edge Function TypeScript bundle all passed. |
+| 2026-07-23 | Revised desktop interaction QA | Passed | Hero, signup warning, museum links/prices/borders, collection portal, three-page wizard, image validation, local card generation, 18-item archive, and footer verified. |
+| 2026-07-23 | Revised mobile interaction QA | Passed | 390 × 844 hero, collection portal, bottom-sheet wizard, and footer verified with 390px document width and no horizontal overflow. |
+| 2026-07-23 | Museum official-site availability | Passed | `cmocity.com/lanna-folklife-museum/` and `fahlannaartmuseum.com/` both returned HTTP 200. |
 
 ## Recent Updates
 
 - 2026-07-23 17:20 Asia/Bangkok: Locked registration 1B, access 2A, persistence 3A and received the real registration QR.
 - 2026-07-23 19:58 Asia/Bangkok: Completed the responsive prototype, integrated real assets, prepared the Supabase schema/Edge Function, and passed design and interaction QA.
 - 2026-07-23 20:31 Asia/Bangkok: Created the CMI Community GitHub repository, pushed the rollback and implementation branches, and deployed the verified Vercel phone-test version.
+- 2026-07-23 21:36 Asia/Bangkok: Converted 18 annotated browser comments into locked implementation and acceptance decisions.
+- 2026-07-23 21:52 Asia/Bangkok: Completed all 18 revisions and passed desktop/mobile, upload, card-generation, build, worker, and Edge Function checks.
 
 ## Handoff Notes
 

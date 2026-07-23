@@ -13,8 +13,11 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Selected visual target: `/Users/guanchao/.codex/generated_images/019f8e56-7a2f-7b30-a1d7-3c0910524170/call_SmDkZel3AScMyXb3DRTx23Yt.png`.
 - Dominant visual language: lively modular editorial layout, warm ivory canvas, Lanna purple primary color, restrained CMI accent colors, and no gradients.
 - Navigation brand: real CMI Community logo and text. WaytoAGI is credited as initiator in the Hero and activity body.
-- Hero hierarchy: “探寻兰纳 Lanna 纹案的踪迹” is the primary graphic headline; “AI 切磋大会第 26 期” and “博物馆奇妙日·清迈场” share a smaller level.
-- Page order is fixed: Hero → artistic activity manifesto → complete fishbone journey/day schedule → full-screen museum selection → collection instructions/form → newest-first archive grid.
+- Hero hierarchy: “共同探寻兰纳 Lanna 纹案的踪迹” is the primary graphic headline; “AI 切磋大会第 26 期” and “博物馆奇妙日·清迈场” share a smaller level.
+- Page order is fixed: Hero → artistic activity manifesto → complete fishbone journey/day schedule → full-screen museum selection → collection portal/modal wizard → newest-first archive grid.
 - Do not reintroduce the removed four-column explainer between Hero and journey.
 - Registration uses the real replaceable WeChat group QR in `public/assets/registration/`.
-- Pattern submission uses a server-side event access code and Supabase persistence. The client must never contain the real code or service-role credentials.
+- Pattern submission uses a server-side event access code and Supabase persistence. The code is configured as `cmi studio`, with case and whitespace normalization performed in the Edge Function; the client must never contain the real code or service-role credentials.
+- Museum cards use Lanna-pattern borders and link to each museum's official website and map; do not restore selected-state buttons, selected badges, or the central “或” marker.
+- Collection is opened from a decorated card entry and completed in a three-page modal: 01 → 02+03 → 04. Each image picker exposes distinct upload and camera actions.
+- The local archive contains 18 newest-first preview records until the approved Supabase project is connected.
