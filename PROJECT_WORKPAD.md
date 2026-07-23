@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 22:24 Asia/Bangkok
+Last updated: 2026-07-23 22:32 Asia/Bangkok
 
 ## Snapshot
 
-- Status: Pattern Card Export Fix In Progress
-- Current focus: Make card downloads reliably composite the participant's uploaded images and show collector attribution in both the card and archive detail.
-- Next step: Replace DOM screenshot export with a dedicated Canvas renderer, then verify a downloaded PNG from a real local upload.
+- Status: Pattern Card Export Fix Deployed
+- Current focus: Canvas-generated PNG cards now include uploaded detail/context images and collector attribution; the stable Vercel version has passed desktop and phone-width checks.
+- Next step: Continue phone testing; connect an approved Supabase project before enabling real public submissions.
 
 ## Project Goal
 
@@ -52,9 +52,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 
 ### Now
 
-- [ ] Replace the fragile DOM-to-image download with a deterministic Canvas card renderer.
-- [ ] Display “采集者：姓名” on the export card and archive detail.
-- [ ] Verify that a real downloaded PNG includes uploaded detail and context images rather than text-only output.
+- No active implementation item.
 
 ### Next
 
@@ -83,6 +81,9 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - [x] Deploy and verify the Vercel phone-test version.
 - [x] Apply and deploy the first 18 reviewed browser comments.
 - [x] Run desktop and phone QA against the updated preview.
+- [x] Replace the fragile DOM-to-image download with a deterministic Canvas card renderer.
+- [x] Display “采集者：姓名” on the export card and archive detail.
+- [x] Verify that a real downloaded PNG includes uploaded detail and context images rather than text-only output.
 
 ## Risks And Open Questions
 
@@ -92,7 +93,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | Backend | The only accessible Supabase project is inactive and has a generic name. | Applying schema without confirmation could alter an unrelated project. | Build the integration locally; ask before project mutation. | Open |
 | Access | The event code is known, but no approved Supabase project is connected. | The PRD preview can demonstrate the flow; live enforcement remains unavailable. | Set the server-side Edge Function secret in the approved project before launch. | Open |
 | Release | Vercel was deployed through the authorized file API, not Git import. | New Git pushes will not deploy automatically yet. | Connect the repository in Vercel when continuous deployment is needed. | Open |
-| Export | DOM screenshot libraries can fail on Blob URLs, cross-origin images, fonts, or stylesheet serialization. | A participant may see the card but be unable to download it, or receive an incomplete image. | Render the export from loaded image bitmaps and explicit Canvas drawing; fail before download if the required uploaded image cannot be drawn. | In Progress |
+| Export | DOM screenshot libraries can fail on Blob URLs, cross-origin images, fonts, or stylesheet serialization. | A participant may see the card but be unable to download it, or receive an incomplete image. | Replaced with loaded image bitmaps and explicit Canvas drawing; required image failures now stop the download with a specific message. | Resolved |
 
 ## Implementation Notes
 
@@ -124,6 +125,8 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Revised mobile interaction QA | Passed | 390 × 844 hero, collection portal, bottom-sheet wizard, and footer verified with 390px document width and no horizontal overflow. |
 | 2026-07-23 | Museum official-site availability | Passed | `cmocity.com/lanna-folklife-museum/` and `fahlannaartmuseum.com/` both returned HTTP 200. |
 | 2026-07-23 | Final Vercel production regression | Passed | Production deployment READY; stable URL returned HTTP 200, Vercel reported no runtime errors, and 390 × 844 QA confirmed the hero, 18-item archive, signup warning, museum details, and patterned collect action without horizontal overflow. |
+| 2026-07-23 | Uploaded-image PNG composition test | Passed | Two uploaded-file-equivalent Blob URLs produced a 1080 × 1350, 1,727,843-byte PNG; both main/detail and context regions passed pixel-variance checks and the rendered card showed collector “大夏湖”. |
+| 2026-07-23 | Pattern-card production regression | Passed | Stable Vercel detail showed collector attribution in the card and info panel; “下载纹样卡” reached “已下载，再下一张” with no export error, and 390px phone width had no horizontal page overflow. |
 
 ## Recent Updates
 
@@ -134,6 +137,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 21:52 Asia/Bangkok: Completed all 18 revisions and passed desktop/mobile, upload, card-generation, build, worker, and Edge Function checks.
 - 2026-07-23 22:10 Asia/Bangkok: Published the browser-feedback version to the stable Vercel URL and completed final mobile production QA.
 - 2026-07-23 22:24 Asia/Bangkok: Confirmed collector attribution is absent and the current DOM-to-image export fails on the production preview; locked a Canvas-based image-composition fix.
+- 2026-07-23 22:32 Asia/Bangkok: Deployed the Canvas export fix, verified uploaded-image composition and collector attribution, and removed the obsolete `html-to-image` dependency.
 
 ## Handoff Notes
 
