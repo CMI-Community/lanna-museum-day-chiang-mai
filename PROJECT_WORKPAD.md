@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 23:54 Asia/Bangkok
+Last updated: 2026-07-24 00:02 Asia/Bangkok
 
 ## Snapshot
 
 - Status: Shipped
-- Current focus: The production site is connected to the dedicated Singapore Supabase project; real archive reads and the server-authenticated submission path are live.
-- Next step: Let the first participant submission create the first archive record; replace the time-limited WeChat QR before it expires.
+- Current focus: The production site is connected to Supabase and the 18 reviewed preview records are now published database records attributed to CMI.
+- Next step: Let the first participant submission continue at `CMI-LN-0045`; replace the time-limited WeChat QR before it expires.
 
 ## Project Goal
 
@@ -46,7 +46,8 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Replace the always-expanded collection form with a decorated entry card and a three-page modal wizard: 01 → 02+03 → 04. | A progressive flow lowers the perceived effort and keeps the public page focused on action. | Locked |
 | 2026-07-23 | Museum cards are informational choices with official-site and map links, not persistent selection controls. | The reviewed UI no longer needs “已选择” or “或” states. | Locked |
 | 2026-07-23 | Keep the user-approved replacement event code only in server-side secret configuration and normalize case and surrounding/repeated spaces. | The replacement is distinct from the previously published phrase; the repository must not contain its value. | Approved |
-| 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Locked |
+| 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Superseded |
+| 2026-07-24 | Import the 18 preview records into the production archive with collector name `CMI`, while preserving their preview-source wording. | The user wants the populated experience in production without presenting the sample content as newly verified museum records. | Shipped |
 
 ## Task Board
 
@@ -95,6 +96,8 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - [x] Link the local workspace to the verified Vercel project and deploy from source so Vite receives the production variables.
 - [x] Replace the production recent-pattern preview strip with live Supabase results and an honest empty state.
 - [x] Verify the stable production URL reads the empty public archive and opens the live collection flow without creating test data.
+- [x] Import the 18 reviewed preview records as published production rows attributed to `CMI`.
+- [x] Advance the archive sequence so the next participant submission receives `CMI-LN-0045`.
 
 ## Risks And Open Questions
 
@@ -120,6 +123,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - Supabase project: `cmi-lanna-pattern-archive`, ref `osqyplgctlzdlpqmzfud`, Singapore (`ap-southeast-1`), Free plan quote `$0/month`.
 - Local ignored configuration: `site/.env.local`; the same public values are scoped to Production in Vercel.
 - Local Vercel project linkage is stored in ignored `.vercel/project.json`; production source builds target the verified existing project.
+- Production sample-data migration: `site/supabase/migrations/20260723170006_import_archive_samples.sql`; the upsert is idempotent and preserves the sample provenance text.
 - Current feedback batch: Hero copy/logo/date, signup warning, patterned collect CTA, museum official links/prices/borders, three-step collection wizard, 18 preview records, and footer art repair.
 
 ## Validation Log
@@ -154,6 +158,10 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Source-based production deployment | Passed | Deployment `dpl_GrfCfxzkmCXfFKuAaRpB78D6yT3Q` reached `READY` and was aliased to the stable production domain. |
 | 2026-07-23 | Production Supabase read flow | Passed | The stable site removed the preview notice, returned 0 real records from the empty public archive, showed a truthful empty recent state, and opened the live collection wizard without a local-preview badge. |
 | 2026-07-23 | Final connected build and tests | Passed | Vite production build, 4/4 Sites worker tests, `git diff --check`, and the client-bundle server-phrase absence check all passed. |
+| 2026-07-24 | Preview-record migration dry run | Passed | Transactional insert produced 18 rows, 18 `CMI` collectors, and archive range `CMI-LN-0027`–`CMI-LN-0044`; the trial was rolled back before the production migration. |
+| 2026-07-24 | Production archive import | Passed | Migration `import_archive_samples` applied successfully; SQL and public REST both returned 18 published rows attributed to `CMI`, and the sequence was synchronized at 44. |
+| 2026-07-24 | Imported archive assets | Passed | All 8 referenced pattern images and both museum context images returned HTTP 200 from the stable production domain. |
+| 2026-07-24 | Post-import Supabase advisors | Passed | Security and performance advisors both returned zero findings. |
 
 ## Recent Updates
 
@@ -169,10 +177,11 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 23:01 Asia/Bangkok: User approved the replacement server-only event phrase; Supabase Secrets configuration is waiting only for Dashboard sign-in.
 - 2026-07-23 23:35 Asia/Bangkok: Stored the server-only event phrase and production origin in Supabase, verified both rejection and success paths without creating data, and confirmed Vercel still needs Dashboard sign-in before production can be connected.
 - 2026-07-23 23:54 Asia/Bangkok: Connected Production-only Vercel variables, replaced the ineffective prebuilt redeploy with a source build, removed the remaining recent-pattern preview inconsistency, and verified the stable site against the empty live archive without creating test data.
+- 2026-07-24 00:02 Asia/Bangkok: Imported all 18 reviewed preview records into production as published `CMI` records, verified the public API, and advanced the next automatic archive number to 0045.
 
 ## Handoff Notes
 
 - Do not reintroduce the removed four-column “现场观察 / 来源信息 / 仍待了解 / 创意表达” section between the hero and fishbone.
 - Keep museum selection before collection instructions and the public archive.
 - Preserve the distinction between observation, verified source information, open questions, and creative reinterpretation inside each pattern record.
-- Do not restore the previously exposed event phrase. Supabase secrets and production Vercel connectivity are complete; the first real participant submission should create the first archive record.
+- Do not restore the previously exposed event phrase. Supabase secrets and production Vercel connectivity are complete; the next participant submission should create `CMI-LN-0045`.
