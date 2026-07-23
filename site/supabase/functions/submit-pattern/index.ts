@@ -79,6 +79,20 @@ function normalizeAccessCode(value: unknown) {
   return text(value, 100).replace(/\s+/g, " ").toLocaleLowerCase("en-US");
 }
 
+function defaultKeyFromJson(environmentName: string) {
+  const value = Deno.env.get(environmentName);
+  if (!value) {
+    return "";
+  }
+
+  try {
+    const keys = JSON.parse(value);
+    return typeof keys?.default === "string" ? keys.default : "";
+  } catch {
+    return "";
+  }
+}
+
 function tags(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
@@ -143,8 +157,8 @@ Deno.serve(async (request) => {
   );
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey =
-    Deno.env.get("SUPABASE_SECRET_KEY") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+    defaultKeyFromJson("SUPABASE_SECRET_KEYS") ||
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
     "";
 
   if (!expectedCode || !supabaseUrl || !serviceKey) {

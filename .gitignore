@@ -6,3 +6,4 @@ site/dist/
 site/.env
 site/.env.local
 site/.vite/
+.vercel/

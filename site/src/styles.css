@@ -2108,6 +2108,26 @@ select:focus-visible,
   font-size: 0.58rem;
 }
 
+.collection-recent__empty {
+  min-height: 180px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  border: 1px dashed #d6c9d9;
+  background: var(--purple-soft);
+  color: var(--muted);
+  text-align: center;
+}
+
+.collection-recent__empty svg {
+  color: var(--purple);
+}
+
+.collection-recent__empty p {
+  margin: 0;
+}
+
 .dialog--collector {
   width: min(1240px, 100%);
   padding: 0;

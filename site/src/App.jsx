@@ -1056,9 +1056,39 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
   );
 }
 
-function CollectionSection({ onPreview, onPublished }) {
+function CollectionSection({ onPreview, onPublished, refreshKey }) {
   const [collectorOpen, setCollectorOpen] = useState(false);
-  const recentPatterns = archiveSamples.slice(0, 6);
+  const [recentPatterns, setRecentPatterns] = useState(
+    isSupabaseConfigured ? [] : archiveSamples.slice(0, 6),
+  );
+  const [recentCount, setRecentCount] = useState(
+    isSupabaseConfigured ? 0 : archiveSamples.length,
+  );
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setRecentPatterns(archiveSamples.slice(0, 6));
+      setRecentCount(archiveSamples.length);
+      return undefined;
+    }
+
+    let active = true;
+    fetchPublishedPatterns()
+      .then((patterns) => {
+        if (!active) return;
+        setRecentPatterns(patterns.slice(0, 6));
+        setRecentCount(patterns.length);
+      })
+      .catch(() => {
+        if (!active) return;
+        setRecentPatterns([]);
+        setRecentCount(0);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [refreshKey]);
 
   return (
     <section id="collect" className="collection-section section-shell">
@@ -1108,23 +1138,30 @@ function CollectionSection({ onPreview, onPublished }) {
               <h3>已经收集进来的纹样</h3>
             </div>
             <a href="#archive">
-              查看全部 {archiveSamples.length} 枚
+              查看全部 {recentCount} 枚
               <ArrowDown size={17} />
             </a>
           </header>
-          <div className="collection-recent__grid">
-            {recentPatterns.map((pattern) => (
-              <button
-                type="button"
-                key={pattern.id}
-                onClick={() => onPreview(pattern)}
-                aria-label={`查看 ${pattern.archive_number} ${pattern.source_title}`}
-              >
-                <img src={pattern.detail_image_urls[0]} alt="" />
-                <span>{pattern.archive_number}</span>
-              </button>
-            ))}
-          </div>
+          {recentPatterns.length ? (
+            <div className="collection-recent__grid">
+              {recentPatterns.map((pattern) => (
+                <button
+                  type="button"
+                  key={pattern.id}
+                  onClick={() => onPreview(pattern)}
+                  aria-label={`查看 ${pattern.archive_number} ${pattern.source_title}`}
+                >
+                  <img src={pattern.detail_image_urls[0]} alt="" />
+                  <span>{pattern.archive_number}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="collection-recent__empty">
+              <Images size={30} />
+              <p>档案正在等待第一枚真实纹样。</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1518,6 +1555,7 @@ export function App() {
         <CollectionSection
           onPreview={setSelectedPattern}
           onPublished={handlePatternPublished}
+          refreshKey={archiveRefreshKey}
         />
         <ArchiveSection
           refreshKey={archiveRefreshKey}
