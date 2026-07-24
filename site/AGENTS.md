@@ -14,6 +14,7 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Dominant visual language: lively modular editorial layout, warm ivory canvas, Lanna purple primary color, restrained CMI accent colors, and no gradients.
 - Navigation brand: real CMI Community logo and text. WaytoAGI is credited as initiator in the Hero and activity body.
 - Hero partner credit uses the transparent-background WaytoAGI mark with a dark wordmark; do not place it on a filled badge. The adjacent venue credit reads “CMI Community 主办 清迈线下场”.
+- Search and social metadata must foreground “7月26日”, “AI 切磋大会”, and “CMI STUDIO”, and use the dedicated 1200 × 630 branded PNG at `public/assets/social/lanna-museum-day-og.png`.
 - Hero hierarchy: “共同探寻兰纳 Lanna 纹案的踪迹” is the primary graphic headline; “AI 切磋大会第 26 期” and “博物馆奇妙日·清迈场” share a smaller level.
 - Page order is fixed: Hero → artistic activity manifesto → complete fishbone journey/day schedule → full-screen museum selection → collection portal/modal wizard → newest-first archive grid.
 - Do not reintroduce the removed four-column explainer between Hero and journey.

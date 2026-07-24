@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-24 00:10 Asia/Bangkok
+Last updated: 2026-07-24 08:10 Asia/Bangkok
 
 ## Snapshot
 
-- Status: Shipped
-- Current focus: The production Hero now uses a transparent-background WaytoAGI mark and explicitly credits “CMI Community 主办 清迈线下场”.
-- Next step: Let the first participant submission continue at `CMI-LN-0045`; replace the time-limited WeChat QR before it expires.
+- Status: In Progress
+- Current focus: Add complete search/share metadata and a dedicated 1200 × 630 social preview card before publishing the update to the stable domain.
+- Next step: Deploy the validated metadata build, inspect the live HTML/image response, then return the project to Shipped.
 
 ## Project Goal
 
@@ -49,12 +49,13 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Superseded |
 | 2026-07-24 | Import the 18 preview records into the production archive with collector name `CMI`, while preserving their preview-source wording. | The user wants the populated experience in production without presenting the sample content as newly verified museum records. | Shipped |
 | 2026-07-24 | Use a transparent WaytoAGI Hero mark with a dark wordmark and credit “CMI Community 主办 清迈线下场”. | The filled badge obscured the intended partner-logo treatment, and the local organizer role needed to be explicit. | Shipped |
+| 2026-07-24 | Use “7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO” as the share title, paired with a concise participation-focused description and a branded 1200 × 630 PNG card. | Shared links need an immediate date, event, place, image, and clear reason to open the page. | Validated locally |
 
 ## Task Board
 
 ### Now
 
-- No active database implementation item.
+- [ ] Publish and verify the social metadata and sharing-card update on the stable Vercel domain.
 
 ### Next
 
@@ -120,6 +121,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - GitHub repository: `https://github.com/CMI-Community/lanna-museum-day-chiang-mai`.
 - Vercel phone-test URL: `https://lanna-museum-day-chiang-mai.vercel.app/`.
 - Vercel project ID: `prj_v4l33b5C67ChgB2cZ6CD4KHqD75H`.
+- Social preview asset: `site/public/assets/social/lanna-museum-day-og.png` (1200 × 630 PNG); its editable source is the adjacent self-contained SVG.
 - Use the Product Design `prototype` starter inside `site/`; do not initialize a Sites starter.
 - Public submissions are sent to a custom-authenticated Edge Function; the event code and service-role credentials must never be exposed in the browser.
 - Supabase project: `cmi-lanna-pattern-archive`, ref `osqyplgctlzdlpqmzfud`, Singapore (`ap-southeast-1`), Free plan quote `$0/month`.
@@ -166,6 +168,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-24 | Imported archive assets | Passed | All 8 referenced pattern images and both museum context images returned HTTP 200 from the stable production domain. |
 | 2026-07-24 | Post-import Supabase advisors | Passed | Security and performance advisors both returned zero findings. |
 | 2026-07-24 | Transparent Hero partner-credit regression | Passed | Production build, 4/4 Sites worker tests, desktop and 390px visual QA, stable-domain asset loading, exact organizer copy, and horizontal-overflow checks all passed; Vercel deployment `dpl_27oHCahRuticPe3kw95JdqKxR9uq` is `READY`. |
+| 2026-07-24 | Social metadata local validation | Passed | Production build and 4/4 worker tests passed; JSON-LD parsed successfully; required description/Open Graph/Twitter tags are present; the self-contained PNG is 1200 × 630 and 125 KB. |
 
 ## Recent Updates
 
@@ -183,6 +186,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - 2026-07-23 23:54 Asia/Bangkok: Connected Production-only Vercel variables, replaced the ineffective prebuilt redeploy with a source build, removed the remaining recent-pattern preview inconsistency, and verified the stable site against the empty live archive without creating test data.
 - 2026-07-24 00:02 Asia/Bangkok: Imported all 18 reviewed preview records into production as published `CMI` records, verified the public API, and advanced the next automatic archive number to 0045.
 - 2026-07-24 00:10 Asia/Bangkok: Replaced the filled WaytoAGI Hero badge with a transparent mark, added the explicit CMI Community organizer credit, and verified the update on the stable Vercel domain at desktop and phone widths.
+- 2026-07-24 08:10 Asia/Bangkok: Added canonical, description, Open Graph, Twitter Card, Event JSON-LD, favicon, and a self-contained branded 1200 × 630 share image; local build and metadata validation passed, with production deployment pending.
 
 ## Handoff Notes
 
