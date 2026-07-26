@@ -1902,6 +1902,12 @@ function CreationVideo() {
         </div>
         <h2 id="creation-video-title">一条已经发生的可能性</h2>
         <p>从一个文化线索出发，AI 可以帮助我们把想法变成影像。</p>
+        <div className="creation-video__credit">
+          <span>作品署名</span>
+          <p>
+            该作品由 <strong>AIGC 创作者「锐童学」学员</strong>倾力创作。
+          </p>
+        </div>
         <div className="creation-video__labels">
           <span>AI 创作示例</span>
           <span>创意再表达</span>
