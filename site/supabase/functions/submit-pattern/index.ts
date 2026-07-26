@@ -266,7 +266,7 @@ Deno.serve(async (request) => {
         status: "published",
       })
       .select(
-        "id, archive_number, museum, source_title, source_location, observation, verified_information, open_question, carrier_tags, position_tags, structure_tags, material_tags, detail_image_urls, context_image_urls, label_image_urls, collector_name, created_at, published_at",
+        "id, archive_number, museum, source_title, source_location, observation, verified_information, open_question, carrier_tags, position_tags, structure_tags, material_tags, detail_image_urls, context_image_urls, label_image_urls, collector_name, captured_at, created_at, published_at",
       )
       .single();
 

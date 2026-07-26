@@ -11,18 +11,27 @@ import {
   Check,
   CheckCircle,
   Clock,
+  Cube,
   DownloadSimple,
+  GameController,
   GlobeHemisphereWest,
   IdentificationCard,
   ImageSquare,
   Images,
   List,
+  MagicWand,
   MapPin,
   NotePencil,
+  Palette,
+  PenNib,
+  Play,
+  Shuffle,
+  SpeakerHigh,
   Sparkle,
   SquaresFour,
   Ticket,
   UploadSimple,
+  VideoCamera,
   X,
 } from "@phosphor-icons/react";
 import {
@@ -34,11 +43,13 @@ import {
 import {
   createLocalPreviewPattern,
   fetchPublishedPatterns,
+  formatPatternCapturedAt,
   isSupabaseConfigured,
   prepareImageFile,
   renderPatternCardPng,
   submitPattern,
 } from "./lib/archive";
+import { generateIdea, ideaCategories } from "./lib/ideas";
 
 const toneColors = {
   purple: "#5c2683",
@@ -68,7 +79,14 @@ function Button({
   );
 }
 
-function Dialog({ open, onClose, label, children, size = "regular" }) {
+function Dialog({
+  open,
+  onClose,
+  label,
+  children,
+  size = "regular",
+  disableEscape = false,
+}) {
   const closeButtonRef = useRef(null);
 
   useEffect(() => {
@@ -82,7 +100,7 @@ function Dialog({ open, onClose, label, children, size = "regular" }) {
     window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !disableEscape) {
         onClose();
       }
     };
@@ -93,7 +111,7 @@ function Dialog({ open, onClose, label, children, size = "regular" }) {
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus?.();
     };
-  }, [open, onClose]);
+  }, [disableEscape, open, onClose]);
 
   if (!open) {
     return null;
@@ -132,6 +150,7 @@ function Header({ onSignup }) {
     ["博物馆", "museums"],
     ["采集", "collect"],
     ["纹样档案", "archive"],
+    ["灵感", "ideas"],
   ];
 
   const navigate = (id) => {
@@ -1187,6 +1206,11 @@ function PatternCard({ pattern, cardRef }) {
     ...(pattern.material_tags || []),
   ].slice(0, 5);
   const collectorName = pattern.collector_name?.trim() || "匿名采集者";
+  const capturedAt = formatPatternCapturedAt(pattern, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
   return (
     <article className="pattern-card-export" ref={cardRef}>
@@ -1221,6 +1245,11 @@ function PatternCard({ pattern, cardRef }) {
         <div className="pattern-card-export__collector">
           <span>采集者 / COLLECTED BY</span>
           <strong>{collectorName}</strong>
+          {capturedAt ? (
+            <span className="pattern-card-export__captured-at">
+              采集于 {capturedAt}
+            </span>
+          ) : null}
         </div>
         <h3>{pattern.source_title}</h3>
         <div className="pattern-card-export__tags">
@@ -1238,15 +1267,54 @@ function PatternCard({ pattern, cardRef }) {
   );
 }
 
-function PatternDetailDialog({ pattern, onClose }) {
+function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
   const cardRef = useRef(null);
   const [downloadStatus, setDownloadStatus] = useState("idle");
   const [downloadError, setDownloadError] = useState("");
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const allImages = [
+    ...(pattern?.detail_image_urls || []),
+    ...(pattern?.context_image_urls || []),
+    ...(pattern?.label_image_urls || []),
+  ];
 
   useEffect(() => {
     setDownloadStatus("idle");
     setDownloadError("");
+    setLightboxIndex(null);
   }, [pattern?.id]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) {
+      return undefined;
+    }
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setLightboxIndex(null);
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setLightboxIndex((current) =>
+          current === null ? 0 : (current + 1) % allImages.length,
+        );
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setLightboxIndex((current) =>
+          current === null
+            ? 0
+            : (current - 1 + allImages.length) % allImages.length,
+        );
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [allImages.length, lightboxIndex]);
 
   if (!pattern) {
     return null;
@@ -1275,18 +1343,13 @@ function PatternDetailDialog({ pattern, onClose }) {
     }
   };
 
-  const allImages = [
-    ...(pattern.detail_image_urls || []),
-    ...(pattern.context_image_urls || []),
-    ...(pattern.label_image_urls || []),
-  ];
-
   return (
     <Dialog
       open={Boolean(pattern)}
       onClose={onClose}
       label={`${pattern.archive_number} 纹样详情`}
       size="wide"
+      disableEscape={lightboxIndex !== null}
     >
       <div className="pattern-detail">
         <div className="pattern-detail__card-column">
@@ -1321,9 +1384,23 @@ function PatternDetailDialog({ pattern, onClose }) {
             <MapPin size={17} />
             {pattern.source_location || "来源位置待补充"}
           </p>
+          {formatPatternCapturedAt(pattern) ? (
+            <p className="pattern-detail__source">
+              <CalendarBlank size={17} />
+              实际采集时间 {formatPatternCapturedAt(pattern)}
+            </p>
+          ) : null}
           {pattern.preview ? (
             <div className="preview-label">预览样本，不作为历史资料引用</div>
           ) : null}
+          <Button
+            className="pattern-detail__idea-button"
+            variant="outline"
+            icon={<MagicWand size={20} />}
+            onClick={() => onUseForIdea(pattern)}
+          >
+            拿它生成 IDEA
+          </Button>
           <dl className="pattern-detail__notes">
             <div>
               <dt>现场观察</dt>
@@ -1340,15 +1417,91 @@ function PatternDetailDialog({ pattern, onClose }) {
           </dl>
           <div className="pattern-detail__gallery">
             {allImages.map((url, index) => (
-              <img
+              <button
+                type="button"
+                className="pattern-detail__thumb"
                 key={`${url}-${index}`}
-                src={url}
-                alt={`${pattern.archive_number} 采集图片 ${index + 1}`}
-              />
+                aria-label={`放大查看 ${pattern.archive_number} 采集图片 ${index + 1}`}
+                onClick={() => setLightboxIndex(index)}
+              >
+                <img
+                  src={url}
+                  alt={`${pattern.archive_number} 采集图片 ${index + 1}`}
+                />
+                <span>
+                  {String(index + 1).padStart(2, "0")} /{" "}
+                  {String(allImages.length).padStart(2, "0")}
+                </span>
+              </button>
             ))}
           </div>
         </div>
       </div>
+      {lightboxIndex !== null ? (
+        <div
+          className="image-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${pattern.archive_number} 图片预览`}
+          onMouseDown={() => setLightboxIndex(null)}
+        >
+          <button
+            type="button"
+            className="image-lightbox__close"
+            aria-label="关闭图片预览"
+            onClick={() => setLightboxIndex(null)}
+          >
+            <X size={25} weight="bold" />
+          </button>
+          <div
+            className="image-lightbox__stage"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            {allImages.length > 1 ? (
+              <button
+                type="button"
+                className="image-lightbox__nav image-lightbox__nav--previous"
+                aria-label="查看上一张图片"
+                onClick={() =>
+                  setLightboxIndex(
+                    (lightboxIndex - 1 + allImages.length) % allImages.length,
+                  )
+                }
+              >
+                <ArrowLeft size={28} weight="bold" />
+              </button>
+            ) : null}
+            <img
+              src={allImages[lightboxIndex]}
+              alt={`${pattern.archive_number} 放大图片 ${lightboxIndex + 1}`}
+            />
+            {allImages.length > 1 ? (
+              <button
+                type="button"
+                className="image-lightbox__nav image-lightbox__nav--next"
+                aria-label="查看下一张图片"
+                onClick={() =>
+                  setLightboxIndex(
+                    (lightboxIndex + 1) % allImages.length,
+                  )
+                }
+              >
+                <ArrowRight size={28} weight="bold" />
+              </button>
+            ) : null}
+          </div>
+          <div
+            className="image-lightbox__caption"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <span>{pattern.archive_number}</span>
+            <strong>{pattern.source_title}</strong>
+            <em>
+              {lightboxIndex + 1} / {allImages.length}
+            </em>
+          </div>
+        </div>
+      ) : null}
     </Dialog>
   );
 }
@@ -1481,13 +1634,20 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
                 <span className="archive-tile__number">
                   {pattern.archive_number}
                 </span>
+                <span className="archive-tile__collector">
+                  采集者 · {pattern.collector_name?.trim() || "匿名采集者"}
+                </span>
                 <span className="archive-tile__hover">
                   <strong>{pattern.source_title}</strong>
                   <small>
-                    {new Intl.DateTimeFormat("zh-CN", {
-                      month: "2-digit",
-                      day: "2-digit",
-                    }).format(new Date(pattern.created_at))}
+                    {formatPatternCapturedAt(
+                      pattern,
+                      {
+                        month: "2-digit",
+                        day: "2-digit",
+                      },
+                      true,
+                    )}
                   </small>
                 </span>
               </button>
@@ -1504,6 +1664,266 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
             </a>
           </div>
         )}
+      </div>
+    </section>
+  );
+}
+
+const ideaCategoryIcons = {
+  any: Shuffle,
+  writing: PenNib,
+  image: Palette,
+  video: VideoCamera,
+  website: GlobeHemisphereWest,
+  "3d": Cube,
+  game: GameController,
+  audio: SpeakerHigh,
+  assistant: Sparkle,
+  installation: Buildings,
+};
+
+function PossibilityGenerator({ preferredPattern }) {
+  const fallbackPatterns = archiveSamples.slice(0, 18);
+  const [patterns, setPatterns] = useState(fallbackPatterns);
+  const [currentPattern, setCurrentPattern] = useState(
+    preferredPattern || fallbackPatterns[0],
+  );
+  const [category, setCategory] = useState("any");
+  const [idea, setIdea] = useState(() =>
+    generateIdea(preferredPattern || fallbackPatterns[0]),
+  );
+  const [ideaTurn, setIdeaTurn] = useState(0);
+  const generatorRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchPublishedPatterns()
+      .then((publishedPatterns) => {
+        if (cancelled || !publishedPatterns.length) {
+          return;
+        }
+
+        setPatterns(publishedPatterns);
+        setCurrentPattern((existing) => existing || publishedPatterns[0]);
+      })
+      .catch(() => {
+        // The preview archive remains usable when the public archive is offline.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!preferredPattern) {
+      return;
+    }
+
+    setCurrentPattern(preferredPattern);
+    setIdea((current) =>
+      generateIdea(preferredPattern, category, current?.id),
+    );
+    setIdeaTurn((turn) => turn + 1);
+  }, [preferredPattern]);
+
+  const nextIdea = () => {
+    setIdea((current) =>
+      generateIdea(currentPattern, category, current?.id),
+    );
+    setIdeaTurn((turn) => turn + 1);
+  };
+
+  const chooseCategory = (nextCategory) => {
+    setCategory(nextCategory);
+    setIdea((current) =>
+      generateIdea(currentPattern, nextCategory, current?.id),
+    );
+    setIdeaTurn((turn) => turn + 1);
+  };
+
+  const changePattern = () => {
+    if (!patterns.length) {
+      return;
+    }
+
+    const currentIndex = patterns.findIndex(
+      (pattern) => pattern.id === currentPattern?.id,
+    );
+    const nextPattern = patterns[(currentIndex + 1) % patterns.length];
+    setCurrentPattern(nextPattern);
+    setIdea((current) => generateIdea(nextPattern, category, current?.id));
+    setIdeaTurn((turn) => turn + 1);
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (
+        event.code !== "Space" ||
+        event.repeat ||
+        event.target.closest("button, a, input, select, textarea, video")
+      ) {
+        return;
+      }
+
+      const bounds = generatorRef.current?.getBoundingClientRect();
+      if (!bounds || bounds.bottom < 0 || bounds.top > window.innerHeight) {
+        return;
+      }
+
+      event.preventDefault();
+      nextIdea();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [category, currentPattern]);
+
+  const CurrentIcon = ideaCategoryIcons[idea.category] || Sparkle;
+  const collectorName =
+    currentPattern?.collector_name?.trim() || "匿名采集者";
+
+  return (
+    <section
+      id="ideas"
+      className="idea-generator"
+      ref={generatorRef}
+      aria-labelledby="idea-generator-title"
+    >
+      <div className="idea-generator__header section-shell">
+        <div>
+          <div className="section-kicker">IDEA LAB / AI 可能性生成器</div>
+          <h2 id="idea-generator-title">这枚纹样，还能变成什么？</h2>
+        </div>
+        <p>
+          不用先想完整。选一种媒介，或者把选择交给偶然，再生成一个可以开始动手的方向。
+        </p>
+      </div>
+
+      <div className="idea-generator__categories" aria-label="选择 IDEA 类型">
+        <div className="idea-generator__category-track">
+          {ideaCategories.map((item) => {
+            const CategoryIcon = ideaCategoryIcons[item.value] || Sparkle;
+            return (
+              <button
+                type="button"
+                className={category === item.value ? "is-active" : ""}
+                aria-pressed={category === item.value}
+                onClick={() => chooseCategory(item.value)}
+                key={item.value}
+              >
+                <CategoryIcon size={17} weight="bold" />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className={`idea-stage idea-stage--${idea.tone}`}>
+        <div className="idea-stage__number" aria-hidden="true">
+          {String(ideaTurn + 1).padStart(2, "0")}
+        </div>
+        <div className="idea-stage__media">
+          <img
+            src={currentPattern?.detail_image_urls?.[0]}
+            alt=""
+            key={currentPattern?.id}
+          />
+          <div className="idea-stage__medium">
+            <CurrentIcon size={26} weight="fill" />
+            <span>{idea.code}</span>
+            <strong>{idea.categoryLabel}</strong>
+          </div>
+        </div>
+
+        <div
+          className="idea-stage__content"
+          key={`${idea.id}-${ideaTurn}-${currentPattern?.id}`}
+          aria-live="polite"
+        >
+          <div className="idea-line idea-line--look">
+            <span>LOOK / 从这个角度</span>
+            <p>{idea.look}</p>
+          </div>
+          <div className="idea-line idea-line--use">
+            <span>USE / 使用这些素材</span>
+            <p>{idea.use}</p>
+          </div>
+          <div className="idea-line idea-line--make">
+            <span>MAKE / 做一件这样的事</span>
+            <p>{idea.make}</p>
+          </div>
+          <div className="idea-line idea-line--ai">
+            <span>AI CAN HELP / AI 的价值</span>
+            <p>{idea.ai}</p>
+          </div>
+        </div>
+
+        <div className="idea-stage__source">
+          <img src={currentPattern?.detail_image_urls?.[0]} alt="" />
+          <div>
+            <span>CURRENT PATTERN / 当前纹样</span>
+            <strong>
+              {currentPattern?.archive_number} ·{" "}
+              {currentPattern?.source_title || "未命名纹样"}
+            </strong>
+            <small>采集者 · {collectorName}</small>
+          </div>
+          <button type="button" onClick={changePattern}>
+            换一枚纹样
+            <ArrowRight size={16} />
+          </button>
+        </div>
+
+        <div className="idea-stage__action">
+          <button type="button" onClick={nextIdea}>
+            <MagicWand size={23} weight="fill" />
+            <span>再来一个 IDEA</span>
+            <small>SPACE</small>
+          </button>
+          <div>
+            <Sparkle size={16} weight="fill" />
+            REIMAGINED / 创意再表达
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CreationVideo() {
+  return (
+    <section className="creation-video" aria-labelledby="creation-video-title">
+      <div className="creation-video__copy">
+        <div className="section-kicker section-kicker--light">
+          FROM IDEA TO WORK
+        </div>
+        <h2 id="creation-video-title">一条已经发生的可能性</h2>
+        <p>从一个文化线索出发，AI 可以帮助我们把想法变成影像。</p>
+        <div className="creation-video__labels">
+          <span>AI 创作示例</span>
+          <span>创意再表达</span>
+          <span>非历史影像</span>
+        </div>
+      </div>
+      <div className="creation-video__player">
+        <video
+          controls
+          playsInline
+          preload="metadata"
+          poster="/assets/video/lanna-ai-creation-poster.webp"
+        >
+          <source
+            src="/assets/video/lanna-ai-creation.mp4"
+            type="video/mp4"
+          />
+          你的浏览器暂不支持视频播放。
+        </video>
+        <div className="creation-video__playmark" aria-hidden="true">
+          <Play size={26} weight="fill" />
+        </div>
       </div>
     </section>
   );
@@ -1542,11 +1962,22 @@ function Footer({ onSignup }) {
 export function App() {
   const [signupOpen, setSignupOpen] = useState(false);
   const [selectedPattern, setSelectedPattern] = useState(null);
+  const [ideaPattern, setIdeaPattern] = useState(null);
   const [archiveRefreshKey, setArchiveRefreshKey] = useState(0);
 
   const handlePatternPublished = (pattern) => {
     setArchiveRefreshKey((current) => current + 1);
     setSelectedPattern(pattern);
+  };
+
+  const handleUseForIdea = (pattern) => {
+    setIdeaPattern(pattern);
+    setSelectedPattern(null);
+    window.setTimeout(() => {
+      document
+        .getElementById("ideas")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
   };
 
   return (
@@ -1566,12 +1997,15 @@ export function App() {
           refreshKey={archiveRefreshKey}
           onOpenPattern={setSelectedPattern}
         />
+        <PossibilityGenerator preferredPattern={ideaPattern} />
+        <CreationVideo />
       </main>
       <Footer onSignup={() => setSignupOpen(true)} />
       <SignupDialog open={signupOpen} onClose={() => setSignupOpen(false)} />
       <PatternDetailDialog
         pattern={selectedPattern}
         onClose={() => setSelectedPattern(null)}
+        onUseForIdea={handleUseForIdea}
       />
     </>
   );

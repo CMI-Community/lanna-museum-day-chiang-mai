@@ -20,21 +20,19 @@ export async function fetchPublishedPatterns() {
     return [];
   }
 
-  const { data, error } = await supabase
+  const result = await supabase
     .from("pattern_submissions")
-    .select(
-      "id, archive_number, museum, source_title, source_location, observation, verified_information, open_question, carrier_tags, position_tags, structure_tags, material_tags, detail_image_urls, context_image_urls, label_image_urls, collector_name, created_at, published_at",
-    )
+    .select("*")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .order("archive_number", { ascending: false })
     .limit(120);
 
-  if (error) {
-    throw error;
+  if (result.error) {
+    throw result.error;
   }
 
-  return data ?? [];
+  return result.data ?? [];
 }
 
 export async function submitPattern(formData) {
@@ -93,10 +91,39 @@ export function createLocalPreviewPattern(
     detail_image_urls: detailFiles.map((file) => URL.createObjectURL(file)),
     context_image_urls: contextFiles.map((file) => URL.createObjectURL(file)),
     label_image_urls: labelFiles.map((file) => URL.createObjectURL(file)),
+    captured_at: now.toISOString(),
     created_at: now.toISOString(),
     preview: true,
     localPreview: true,
   };
+}
+
+export function formatPatternCapturedAt(
+  pattern,
+  options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  },
+  fallbackToCreated = false,
+) {
+  const value =
+    pattern?.captured_at || (fallbackToCreated ? pattern?.created_at : "");
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Bangkok",
+    ...options,
+  }).format(date);
 }
 
 export async function prepareImageFile(file) {
@@ -312,6 +339,11 @@ export async function renderPatternCardPng(pattern) {
     const muted = "#6c6070";
     const orange = "#ec7623";
     const collectorName = pattern.collector_name?.trim() || "匿名采集者";
+    const capturedAt = formatPatternCapturedAt(pattern, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
     const museumLabel =
       pattern.museumLabel ||
       (pattern.museum === "fam"
@@ -367,6 +399,12 @@ export async function renderPatternCardPng(pattern) {
     context.fillStyle = purple;
     context.font = '700 20px "Noto Sans SC", sans-serif';
     context.fillText(`采集者 / COLLECTED BY · ${collectorName}`, 70, 910);
+    if (capturedAt) {
+      context.textAlign = "right";
+      context.font = '600 17px "Noto Sans SC", sans-serif';
+      context.fillText(`采集于 · ${capturedAt}`, 1010, 910);
+      context.textAlign = "left";
+    }
 
     context.fillStyle = purpleDeep;
     context.font = '700 42px "Noto Serif SC", serif';
