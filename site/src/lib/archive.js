@@ -108,6 +108,7 @@ export function formatPatternCapturedAt(
     minute: "2-digit",
   },
   fallbackToCreated = false,
+  locale = "zh-CN",
 ) {
   const value =
     pattern?.captured_at || (fallbackToCreated ? pattern?.created_at : "");
@@ -120,7 +121,7 @@ export function formatPatternCapturedAt(
     return "";
   }
 
-  return new Intl.DateTimeFormat("zh-CN", {
+  return new Intl.DateTimeFormat(locale, {
     timeZone: "Asia/Bangkok",
     ...options,
   }).format(date);
@@ -314,12 +315,62 @@ function canvasToPngBlob(canvas) {
   });
 }
 
-export async function renderPatternCardPng(pattern) {
+const exportCopy = {
+  zh: {
+    detailImage: "纹样局部图片",
+    contextImage: "完整文物或作品图片",
+    unsupported: "当前浏览器无法生成纹样卡",
+    anonymous: "匿名采集者",
+    lannaMuseum: "兰纳民俗博物馆",
+    otherSource: "其他来源",
+    collector: "采集者 / COLLECTED BY",
+    capturedAt: "采集于",
+    untitled: "未命名纹样采集",
+    noObservation: "尚未填写现场观察",
+    footer1: "现场观察 · 来源信息 · 仍待了解 · 创意再表达",
+    footer2: "WaytoAGI 发起 · CMI Community 清迈场",
+    locale: "zh-CN",
+  },
+  th: {
+    detailImage: "ภาพลวดลายระยะใกล้",
+    contextImage: "ภาพวัตถุหรือผลงานทั้งหมด",
+    unsupported: "เบราว์เซอร์นี้ไม่สามารถสร้างการ์ดลวดลายได้",
+    anonymous: "ผู้เก็บไม่ระบุชื่อ",
+    lannaMuseum: "พิพิธภัณฑ์พื้นถิ่นล้านนา",
+    otherSource: "แหล่งอื่น",
+    collector: "ผู้เก็บ / COLLECTED BY",
+    capturedAt: "เก็บเมื่อ",
+    untitled: "การเก็บลวดลายไม่มีชื่อ",
+    noObservation: "ยังไม่ได้บันทึกสิ่งที่สังเกต ณ สถานที่จริง",
+    footer1:
+      "สิ่งที่สังเกต · ข้อมูลที่มา · สิ่งที่ยังต้องค้นคว้า · การตีความใหม่",
+    footer2: "WaytoAGI ริเริ่ม · CMI Community เชียงใหม่",
+    locale: "th-TH-u-ca-gregory",
+  },
+  en: {
+    detailImage: "pattern close-up",
+    contextImage: "complete object or work image",
+    unsupported: "This browser cannot generate a pattern card",
+    anonymous: "Anonymous collector",
+    lannaMuseum: "Lanna Folklife Centre",
+    otherSource: "Other source",
+    collector: "COLLECTED BY",
+    capturedAt: "Collected on",
+    untitled: "Untitled pattern collection",
+    noObservation: "No on-site observation provided",
+    footer1: "OBSERVATION · SOURCE · STILL TO LEARN · REIMAGINED",
+    footer2: "Initiated by WaytoAGI · CMI Community Chiang Mai",
+    locale: "en-GB",
+  },
+};
+
+export async function renderPatternCardPng(pattern, language = "zh") {
+  const copy = exportCopy[language] || exportCopy.zh;
   const detailUrl = pattern.detail_image_urls?.[0];
   const contextUrl = pattern.context_image_urls?.[0];
   const [detailImage, contextImage] = await Promise.all([
-    loadCanvasImage(detailUrl, "纹样局部图片"),
-    loadCanvasImage(contextUrl, "完整文物或作品图片"),
+    loadCanvasImage(detailUrl, copy.detailImage),
+    loadCanvasImage(contextUrl, copy.contextImage),
   ]);
 
   try {
@@ -330,7 +381,7 @@ export async function renderPatternCardPng(pattern) {
     canvas.height = 1350;
     const context = canvas.getContext("2d", { alpha: false });
     if (!context) {
-      throw new Error("当前浏览器无法生成纹样卡");
+      throw new Error(copy.unsupported);
     }
 
     const purple = "#5c2683";
@@ -338,19 +389,19 @@ export async function renderPatternCardPng(pattern) {
     const paper = "#fbf8f1";
     const muted = "#6c6070";
     const orange = "#ec7623";
-    const collectorName = pattern.collector_name?.trim() || "匿名采集者";
+    const collectorName = pattern.collector_name?.trim() || copy.anonymous;
     const capturedAt = formatPatternCapturedAt(pattern, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-    });
+    }, false, copy.locale);
     const museumLabel =
       pattern.museumLabel ||
       (pattern.museum === "fam"
         ? "FAM Fahlanna Art Museum"
         : pattern.museum === "lanna_folklife"
-          ? "兰纳民俗博物馆"
-          : "其他来源");
+          ? copy.lannaMuseum
+          : copy.otherSource);
     const tags = [
       ...(pattern.carrier_tags || []),
       ...(pattern.structure_tags || []),
@@ -398,18 +449,18 @@ export async function renderPatternCardPng(pattern) {
 
     context.fillStyle = purple;
     context.font = '700 20px "Noto Sans SC", sans-serif';
-    context.fillText(`采集者 / COLLECTED BY · ${collectorName}`, 70, 910);
+    context.fillText(`${copy.collector} · ${collectorName}`, 70, 910);
     if (capturedAt) {
       context.textAlign = "right";
       context.font = '600 17px "Noto Sans SC", sans-serif';
-      context.fillText(`采集于 · ${capturedAt}`, 1010, 910);
+      context.fillText(`${copy.capturedAt} · ${capturedAt}`, 1010, 910);
       context.textAlign = "left";
     }
 
     context.fillStyle = purpleDeep;
     context.font = '700 42px "Noto Serif SC", serif';
     context.fillText(
-      fitText(context, pattern.source_title || "未命名纹样采集", 940),
+      fitText(context, pattern.source_title || copy.untitled, 940),
       70,
       967,
     );
@@ -434,7 +485,7 @@ export async function renderPatternCardPng(pattern) {
     context.font = '400 21px "Noto Sans SC", sans-serif';
     wrapText(
       context,
-      pattern.observation || "尚未填写现场观察",
+      pattern.observation || copy.noObservation,
       70,
       1080,
       940,
@@ -451,9 +502,9 @@ export async function renderPatternCardPng(pattern) {
 
     context.fillStyle = muted;
     context.font = '500 14px "Noto Sans SC", sans-serif';
-    context.fillText("现场观察 · 来源信息 · 仍待了解 · 创意再表达", 70, 1292);
+    context.fillText(copy.footer1, 70, 1292);
     context.textAlign = "right";
-    context.fillText("WaytoAGI 发起 · CMI Community 清迈场", 1010, 1292);
+    context.fillText(copy.footer2, 1010, 1292);
     context.textAlign = "left";
 
     return canvasToPngBlob(canvas);

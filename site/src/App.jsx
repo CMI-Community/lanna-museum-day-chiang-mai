@@ -34,12 +34,14 @@ import {
   VideoCamera,
   X,
 } from "@phosphor-icons/react";
+import { archiveSamples } from "./content";
 import {
-  archiveSamples,
-  filterOptions,
-  museums,
-  participationSteps,
-} from "./content";
+  getFilterOptions,
+  getMuseums,
+  getParticipationSteps,
+  localizePattern,
+} from "./content-i18n";
+import { languageOptions, useI18n } from "./i18n";
 import {
   createLocalPreviewPattern,
   fetchPublishedPatterns,
@@ -49,7 +51,7 @@ import {
   renderPatternCardPng,
   submitPattern,
 } from "./lib/archive";
-import { generateIdea, ideaCategories } from "./lib/ideas";
+import { generateIdea, getIdeaCategories } from "./lib/ideas";
 
 const toneColors = {
   purple: "#5c2683",
@@ -58,6 +60,81 @@ const toneColors = {
   cyan: "#1e9fbd",
   pink: "#e34f7d",
 };
+
+const getFeaturedWorks = (t) => [
+  {
+    id: "pattern-garden",
+    number: "01",
+    type: "website",
+    medium: t("works.interactiveWebsite"),
+    title: t("works.gardenTitle"),
+    description: t("works.gardenDescription"),
+    creator: t("works.gardenCreator"),
+    cover: "/assets/works/pattern-garden-cover.png",
+    coverPosition: "50% 36%",
+    href: "https://lanna-pattern-garden.vercel.app/",
+  },
+  {
+    id: "video-work-01",
+    number: "02",
+    type: "video",
+    medium: t("works.videoWork"),
+    title: t("works.microTitle1"),
+    description: (
+      <>
+        {t("works.microDescription1")}{" "}
+        <strong className="work-description__emphasis">
+          {t("works.microEmphasis")}
+        </strong>
+        {t("works.microDescription2")}
+        <br />
+        <br />
+        {" "}
+        {t("works.microDescription3")}
+      </>
+    ),
+    creator: "Shindo Teenager Group",
+    cover: "/assets/works/lanna-video-work-01-cover.jpg",
+    coverPosition: "50% 18%",
+    videoSrc: "/assets/works/lanna-video-work-01.mp4",
+  },
+  {
+    id: "video-work-02",
+    number: "03",
+    type: "video",
+    medium: t("works.videoWork"),
+    title: t("works.microTitle2"),
+    description: (
+      <>
+        {t("works.microDescription1")}{" "}
+        <strong className="work-description__emphasis">
+          {t("works.microEmphasis")}
+        </strong>
+        {t("works.microDescription2")}
+        <br />
+        <br />
+        {" "}
+        {t("works.microDescription3")}
+      </>
+    ),
+    creator: "Shindo Teenager Group",
+    cover: "/assets/works/lanna-video-work-02-cover.jpg",
+    coverPosition: "50% 45%",
+    videoSrc: "/assets/works/lanna-video-work-02.mp4",
+  },
+  {
+    id: "event-recap",
+    number: "04",
+    type: "video",
+    medium: t("works.eventRecap"),
+    title: t("works.recapTitle"),
+    description: t("works.recapDescription"),
+    creator: t("works.creatorPending"),
+    cover: "/assets/works/lanna-event-recap-cover-v2.jpg",
+    coverPosition: "50% 38%",
+    videoSrc: "/assets/works/lanna-event-recap.mp4",
+  },
+];
 
 function Button({
   children,
@@ -87,6 +164,7 @@ function Dialog({
   size = "regular",
   disableEscape = false,
 }) {
+  const { t } = useI18n();
   const closeButtonRef = useRef(null);
 
   useEffect(() => {
@@ -130,7 +208,7 @@ function Dialog({
           ref={closeButtonRef}
           className="icon-button dialog__close"
           type="button"
-          aria-label="关闭"
+          aria-label={t("close")}
           onClick={onClose}
         >
           <X size={22} weight="bold" />
@@ -141,16 +219,97 @@ function Dialog({
   );
 }
 
+function LanguageSwitcher() {
+  const { language, setLanguage, t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const switcherRef = useRef(null);
+  const currentLanguage =
+    languageOptions.find(({ code }) => code === language) || languageOptions[0];
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      if (!switcherRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  return (
+    <div className="language-switcher" ref={switcherRef}>
+      <button
+        className="language-switcher__trigger"
+        type="button"
+        aria-label={`${t("language")}: ${currentLanguage.label}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <GlobeHemisphereWest size={19} weight="bold" />
+        <span>{currentLanguage.short}</span>
+        <CaretDown size={14} weight="bold" />
+      </button>
+      {open ? (
+        <div
+          className="language-switcher__menu"
+          role="listbox"
+          aria-label={t("languageMenu")}
+        >
+          <span className="language-switcher__eyebrow">{t("language")}</span>
+          {languageOptions.map((option) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={language === option.code}
+              className={language === option.code ? "is-active" : ""}
+              key={option.code}
+              onClick={() => {
+                setLanguage(option.code);
+                setOpen(false);
+              }}
+            >
+              <span>{option.nativeLabel}</span>
+              <small>
+                {option.code === "zh"
+                  ? "Chinese"
+                  : option.code === "th"
+                    ? "Thai"
+                    : "English"}
+              </small>
+              {language === option.code ? (
+                <Check size={16} weight="bold" />
+              ) : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function Header({ onSignup }) {
+  const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    ["活动", "about"],
-    ["日程", "journey"],
-    ["博物馆", "museums"],
-    ["采集", "collect"],
-    ["纹样档案", "archive"],
-    ["灵感", "ideas"],
+    [t("nav.works"), "works"],
+    [t("nav.about"), "about"],
+    [t("nav.journey"), "journey"],
+    [t("nav.museums"), "museums"],
+    [t("nav.collect"), "collect"],
+    [t("nav.archive"), "archive"],
+    [t("nav.ideas"), "ideas"],
   ];
 
   const navigate = (id) => {
@@ -160,7 +319,7 @@ function Header({ onSignup }) {
 
   return (
     <header className="site-header">
-      <a className="brand-lockup" href="#top" aria-label="CMI Community 首页">
+      <a className="brand-lockup" href="#top" aria-label="CMI Community">
         <img
           src="/assets/brand/cmi-community.svg"
           alt=""
@@ -169,7 +328,7 @@ function Header({ onSignup }) {
         <span>CMI Community</span>
       </a>
 
-      <nav className="desktop-nav" aria-label="主要导航">
+      <nav className="desktop-nav" aria-label={t("navLabel")}>
         {links.map(([label, id]) => (
           <button key={id} type="button" onClick={() => navigate(id)}>
             {label}
@@ -177,14 +336,17 @@ function Header({ onSignup }) {
         ))}
       </nav>
 
-      <Button className="desktop-signup" onClick={onSignup}>
-        报名入群
-      </Button>
+      <div className="header-actions">
+        <LanguageSwitcher />
+        <Button className="desktop-signup" onClick={onSignup}>
+          {t("signup.action")}
+        </Button>
+      </div>
 
       <button
         type="button"
         className="icon-button mobile-menu-button"
-        aria-label={menuOpen ? "关闭导航" : "打开导航"}
+        aria-label={menuOpen ? t("closeNav") : t("openNav")}
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen((current) => !current)}
       >
@@ -199,7 +361,7 @@ function Header({ onSignup }) {
               <ArrowRight size={18} />
             </button>
           ))}
-          <Button onClick={onSignup}>报名入群</Button>
+          <Button onClick={onSignup}>{t("signup.action")}</Button>
         </div>
       ) : null}
     </header>
@@ -207,25 +369,24 @@ function Header({ onSignup }) {
 }
 
 function SignupDialog({ open, onClose }) {
+  const { t } = useI18n();
   return (
-    <Dialog open={open} onClose={onClose} label="报名加入活动群">
+    <Dialog open={open} onClose={onClose} label={t("signup.dialogLabel")}>
       <div className="signup-dialog">
-        <div className="section-kicker">REGISTER / 报名入群</div>
-        <h2>扫码加入清迈场活动群</h2>
-        <p>
-          入群后获取 CMI Studio 详细位置、博物馆结伴信息、纹样采集口令与活动提醒。
-        </p>
+        <div className="section-kicker">{t("signup.kicker")}</div>
+        <h2>{t("signup.title")}</h2>
+        <p>{t("signup.description")}</p>
         <div className="signup-dialog__commitment">
           <CheckCircle size={22} weight="fill" />
           <div>
-            <strong>加入前，请先确认</strong>
-            <span>请确保自己有兴趣，且有时间来参加该活动。</span>
+            <strong>{t("signup.confirmTitle")}</strong>
+            <span>{t("signup.confirmText")}</span>
           </div>
         </div>
         <div className="signup-dialog__qr">
           <img
             src="/assets/registration/wechat-group-qr-20260730.jpg"
-            alt="博物馆奇妙日·清迈 CMI·兰纳纹样微信群二维码，有效至 7 月 30 日"
+            alt={t("signup.qrAlt")}
             onError={(event) => {
               event.currentTarget.hidden = true;
               event.currentTarget
@@ -234,13 +395,13 @@ function SignupDialog({ open, onClose }) {
             }}
           />
           <div className="qr-fallback">
-            <strong>群二维码更新中</strong>
-            <span>请稍后刷新，或联系 CMI Community 获取最新二维码。</span>
+            <strong>{t("signup.qrUnavailable")}</strong>
+            <span>{t("signup.qrUnavailableHelp")}</span>
           </div>
         </div>
         <div className="signup-dialog__notice">
           <Clock size={18} />
-          当前二维码图片标注 7 月 30 日前有效；过期后将在此处直接更新。
+          {t("signup.qrNotice")}
         </div>
       </div>
     </Dialog>
@@ -248,6 +409,7 @@ function SignupDialog({ open, onClose }) {
 }
 
 function Hero({ onSignup }) {
+  const { t } = useI18n();
   const scrollToCollect = () => {
     document.getElementById("collect")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -262,30 +424,30 @@ function Hero({ onSignup }) {
       />
       <div className="hero__content">
         <div className="hero__series">
-          <span>AI 切磋大会 第 26 期</span>
-          <span>博物馆奇妙日 · 清迈场</span>
+          <span>{t("hero.series")}</span>
+          <span>{t("hero.event")}</span>
         </div>
         <h1>
-          <span>共同探寻兰纳</span>
+          <span>{t("hero.headlineBefore")}</span>
           <em>Lanna</em>
-          <span>纹案的踪迹</span>
+          <span>{t("hero.headlineAfter")}</span>
         </h1>
         <div className="hero__subtitle">
           <Sparkle size={23} weight="fill" />
-          用 AI 创作
+          {t("hero.subtitle")}
           <Sparkle size={17} weight="fill" />
         </div>
 
         <div className="hero__credits">
-          <div className="initiator" aria-label="WaytoAGI 发起">
+          <div className="initiator" aria-label={`WaytoAGI ${t("hero.initiator")}`}>
             <img
               src="/assets/brand/waytoagi-logo-transparent.svg"
               alt="WaytoAGI"
             />
-            <span>发起</span>
+            <span>{t("hero.initiator")}</span>
           </div>
           <div className="hero__venue-credit">
-            CMI Community 主办 清迈线下场
+            {t("hero.venue")}
           </div>
         </div>
 
@@ -293,23 +455,23 @@ function Hero({ onSignup }) {
           <div>
             <dt>
               <CalendarBlank size={19} />
-              时间
+              {t("hero.timeLabel")}
             </dt>
-            <dd>本周日 · 2026.07.26 · 12:30–17:30</dd>
+            <dd>{t("hero.time")}</dd>
           </div>
           <div>
             <dt>
               <MapPin size={19} />
-              地点
+              {t("hero.placeLabel")}
             </dt>
             <dd>CMI Studio</dd>
           </div>
           <div>
             <dt>
               <Buildings size={19} />
-              位置
+              {t("hero.locationLabel")}
             </dt>
-            <dd>报名入群后获取详细信息</dd>
+            <dd>{t("hero.location")}</dd>
           </div>
         </dl>
 
@@ -318,7 +480,7 @@ function Hero({ onSignup }) {
             onClick={onSignup}
             icon={<Sparkle size={21} weight="fill" />}
           >
-            报名入群
+            {t("signup.action")}
           </Button>
           <Button
             variant="outline"
@@ -326,7 +488,7 @@ function Hero({ onSignup }) {
             onClick={scrollToCollect}
             icon={<Camera size={21} />}
           >
-            开始采集纹样
+            {t("hero.collect")}
           </Button>
         </div>
       </div>
@@ -334,17 +496,230 @@ function Hero({ onSignup }) {
         className="scroll-cue"
         type="button"
         onClick={() =>
-          document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })
+          document.getElementById("works")?.scrollIntoView({ behavior: "smooth" })
         }
       >
-        了解这场活动
+        {t("hero.worksCue")}
         <ArrowDown size={18} />
       </button>
     </section>
   );
 }
 
+function WorkCard({ work, onOpenVideo }) {
+  const { t } = useI18n();
+  const isWebsite = work.type === "website";
+  const isVideo = Boolean(work.videoSrc);
+  const CardTag = work.href ? "a" : "article";
+  const cardProps = work.href
+    ? {
+        href: work.href,
+        target: "_blank",
+        rel: "noreferrer",
+        "aria-label": t("works.open", { title: work.title }),
+      }
+    : isVideo
+      ? {
+          role: "button",
+          tabIndex: 0,
+          "aria-label": t("works.play", { title: work.title }),
+          onClick: () => onOpenVideo(work),
+          onKeyDown: (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onOpenVideo(work);
+            }
+          },
+        }
+      : {};
+
+  return (
+    <CardTag
+      className={`work-card ${work.href || isVideo ? "is-interactive" : ""}`}
+      {...cardProps}
+    >
+      <div className={`work-card__cover ${work.cover ? "has-cover" : "is-pending"}`}>
+        {work.cover ? (
+          <img
+            src={work.cover}
+            alt={t("works.coverAlt", { title: work.title })}
+            style={
+              work.coverPosition
+                ? { objectPosition: work.coverPosition }
+                : undefined
+            }
+          />
+        ) : (
+          <div className="work-card__cover-placeholder">
+            <span>VIDEO COVER</span>
+            <strong>{work.number}</strong>
+          </div>
+        )}
+        <div className="work-card__media">
+          {isWebsite ? (
+            <GlobeHemisphereWest size={17} weight="bold" />
+          ) : (
+            <VideoCamera size={17} weight="bold" />
+          )}
+          {work.medium}
+        </div>
+        <span className="work-card__number">/ {work.number}</span>
+      </div>
+
+      <div className="work-card__body">
+        <div className="work-card__title-row">
+          <h3>{work.title}</h3>
+          {work.href ? (
+            <span className="work-card__open" aria-hidden="true">
+              <ArrowRight size={21} weight="bold" />
+            </span>
+          ) : isVideo ? (
+            <span className="work-card__play" aria-hidden="true">
+              <Play size={17} weight="fill" />
+            </span>
+          ) : null}
+        </div>
+        <p>{work.description}</p>
+        <div className="work-card__creator">
+          <span>{t("works.creator")}</span>
+          <strong>{work.creator}</strong>
+        </div>
+      </div>
+    </CardTag>
+  );
+}
+
+function WorkVideoDialog({ work, onClose }) {
+  const { t } = useI18n();
+  if (!work) {
+    return null;
+  }
+
+  return (
+    <Dialog
+      open
+      onClose={onClose}
+      label={t("works.play", { title: work.title })}
+      size="wide"
+    >
+      <div className="work-video-dialog">
+        <div className="work-video-dialog__copy">
+          <div className="section-kicker section-kicker--light">
+            VIDEO / {work.medium}
+          </div>
+          <h2>{work.title}</h2>
+          <p>{work.description}</p>
+          <div className="work-video-dialog__creator">
+            <span>{t("works.creator")}</span>
+            <strong>{work.creator}</strong>
+          </div>
+        </div>
+        <div className="work-video-dialog__player">
+          <video
+            key={work.videoSrc}
+            controls
+            playsInline
+            preload="metadata"
+            poster={work.cover}
+          >
+            <source src={work.videoSrc} type="video/mp4" />
+            {t("works.videoUnsupported")}
+          </video>
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
+function WorksShowcase() {
+  const { t } = useI18n();
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const worksRailRef = useRef(null);
+  const featuredWorks = useMemo(() => getFeaturedWorks(t), [t]);
+
+  const scrollWorks = (direction) => {
+    const rail = worksRailRef.current;
+    const firstCard = rail?.querySelector(".work-card");
+
+    if (!rail || !firstCard) {
+      return;
+    }
+
+    const gap = Number.parseFloat(window.getComputedStyle(rail).columnGap) || 18;
+    rail.scrollBy({
+      left: direction * (firstCard.getBoundingClientRect().width + gap),
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <>
+      <section id="works" className="works-showcase" aria-labelledby="works-title">
+        <div className="works-showcase__header">
+          <div>
+            <div className="section-kicker">{t("works.kicker")}</div>
+            <h2 id="works-title">
+              {t("works.titleLine1")}
+              <br />
+              {t("works.titleLine2")}
+            </h2>
+          </div>
+          <div className="works-showcase__intro">
+            <span>JUL 26 · CMI STUDIO</span>
+            <p>{t("works.intro")}</p>
+          </div>
+        </div>
+
+        <div className="works-showcase__rail-shell">
+          <div className="works-showcase__rail-toolbar">
+            <span>04 WORKS · HORIZONTAL VIEW</span>
+            <div className="works-showcase__rail-actions">
+              <button
+                type="button"
+                aria-label={t("works.previous")}
+                onClick={() => scrollWorks(-1)}
+              >
+                <ArrowLeft size={20} weight="bold" />
+              </button>
+              <button
+                type="button"
+                aria-label={t("works.next")}
+                onClick={() => scrollWorks(1)}
+              >
+                <ArrowRight size={20} weight="bold" />
+              </button>
+            </div>
+          </div>
+          <div
+            ref={worksRailRef}
+            className="works-showcase__rail"
+            aria-label={t("works.railLabel")}
+          >
+          {featuredWorks.map((work) => (
+            <WorkCard
+              key={work.id}
+              work={work}
+              onOpenVideo={setSelectedVideo}
+            />
+          ))}
+          </div>
+        </div>
+
+        <div className="works-showcase__footer">
+          <span>01—04 / FIRST DROP</span>
+          <p>{t("works.footer")}</p>
+        </div>
+      </section>
+      <WorkVideoDialog
+        work={selectedVideo}
+        onClose={() => setSelectedVideo(null)}
+      />
+    </>
+  );
+}
+
 function Manifesto() {
+  const { t } = useI18n();
   return (
     <section id="about" className="manifesto">
       <img
@@ -354,34 +729,25 @@ function Manifesto() {
         aria-hidden="true"
       />
       <div className="manifesto__content">
-        <div className="section-kicker">ABOUT / 这是一场什么活动</div>
+        <div className="section-kicker">{t("manifesto.kicker")}</div>
         <h2>
-          这不是一场坐着听完的讲座。
+          {t("manifesto.title1")}
           <br />
-          它从一枚让你停下来的
-          <strong>兰纳纹样</strong>开始。
+          {t("manifesto.title2")}{" "}
+          <strong>{t("manifesto.pattern")}</strong>
+          {t("manifesto.title3")}
         </h2>
-        <p className="manifesto__intro">
-          AI 切磋大会由 WaytoAGI 发起，清迈场由 CMI Community
-          组织。活动前，你会走进两座博物馆中的一座，记录纹样的局部、完整文物与来源；7
-          月 26 日，再把它带回 CMI Studio，与伙伴一起用 AI 创作。
-        </p>
+        <p className="manifesto__intro">{t("manifesto.intro")}</p>
         <p className="manifesto__creative">
           <Sparkle size={24} weight="fill" />
-          从观察出发，把真实的文化细节做成
-          <span>网页、影像、智能体、游戏、3D 或亲子作品。</span>
+          {t("manifesto.creative1")}
+          <span>{t("manifesto.creative2")}</span>
         </p>
-        <h3>最后留下的，不只是一个好看的图案。</h3>
-        <p className="manifesto__outcome">
-          你会带走一张有编号、有来源、可下载的纹样卡；完成一件可以展示、分享并继续完善的
-          AI
-          作品；也让这次发现进入一座持续生长的清迈兰纳纹样档案。
-        </p>
-        <div className="manifesto__credits">
-          WaytoAGI 发起 · CMI Community 组织清迈场 · 现场 CMI Studio
-        </div>
+        <h3>{t("manifesto.outcomeTitle")}</h3>
+        <p className="manifesto__outcome">{t("manifesto.outcome")}</p>
+        <div className="manifesto__credits">{t("manifesto.credits")}</div>
         <a className="manifesto__next" href="#journey">
-          接下来，看看这条参与路径如何展开
+          {t("manifesto.next")}
           <ArrowDown size={18} />
         </a>
       </div>
@@ -390,21 +756,23 @@ function Manifesto() {
 }
 
 function Journey() {
+  const { language, t } = useI18n();
+  const localizedSteps = useMemo(
+    () => getParticipationSteps(language),
+    [language],
+  );
   return (
     <section id="journey" className="journey section-shell">
       <div className="section-heading section-heading--split">
         <div>
-          <div className="section-kicker">JOURNEY / 一次完整的参与路径</div>
-          <h2>从报名，到作品上墙</h2>
+          <div className="section-kicker">{t("journey.kicker")}</div>
+          <h2>{t("journey.title")}</h2>
         </div>
-        <p>
-          活动前先去看、去拍、去问；活动当天再把真实观察变成一件 AI
-          作品。所有时间均为清迈时间 GMT+7。
-        </p>
+        <p>{t("journey.intro")}</p>
       </div>
 
       <ol className="fishbone">
-        {participationSteps.map((step, index) => (
+        {localizedSteps.map((step, index) => (
           <li
             key={step.id}
             className={index % 2 === 0 ? "fishbone__item is-top" : "fishbone__item is-bottom"}
@@ -425,7 +793,7 @@ function Journey() {
 
       <div className="journey__cta">
         <a className="button button--primary" href="#museums">
-          <span>先选择你的博物馆</span>
+          <span>{t("journey.choose")}</span>
           <ArrowDown size={19} />
         </a>
       </div>
@@ -434,16 +802,18 @@ function Journey() {
 }
 
 function MuseumSection() {
+  const { language, t } = useI18n();
   const [hoveredMuseum, setHoveredMuseum] = useState(null);
+  const localizedMuseums = useMemo(() => getMuseums(language), [language]);
 
   return (
     <section id="museums" className="museum-section">
       <div className="museum-section__heading">
         <div className="section-kicker section-kicker--light">
-          CHOOSE / 先选择你的博物馆
+          {t("museums.kicker")}
         </div>
-        <h2>两个入口，两种观察兰纳的方式</h2>
-        <p>滑动或悬停查看两座馆；出发前可打开官网与地图确认信息。</p>
+        <h2>{t("museums.title")}</h2>
+        <p>{t("museums.intro")}</p>
       </div>
 
       <div
@@ -452,7 +822,7 @@ function MuseumSection() {
         }`}
         onMouseLeave={() => setHoveredMuseum(null)}
       >
-        {museums.map((museum) => (
+        {localizedMuseums.map((museum) => (
             <article
               key={museum.id}
               className={`museum-card museum-card--${museum.id}`}
@@ -463,7 +833,7 @@ function MuseumSection() {
             >
               <img
                 src={museum.image}
-                alt={`${museum.chineseName}馆内场景`}
+                alt={t("museums.sceneAlt", { name: museum.chineseName })}
                 className="museum-card__image"
               />
               <div className="museum-card__wash" />
@@ -496,7 +866,7 @@ function MuseumSection() {
                     rel="noreferrer"
                   >
                     <GlobeHemisphereWest size={18} />
-                    <span>查看官网</span>
+                    <span>{t("museums.website")}</span>
                   </a>
                   <a
                     className="button button--ghost-light"
@@ -505,10 +875,10 @@ function MuseumSection() {
                     rel="noreferrer"
                   >
                     <MapPin size={18} />
-                    <span>打开地图</span>
+                    <span>{t("museums.map")}</span>
                   </a>
                 </div>
-                <small>图片来源：{museum.source}</small>
+                <small>{t("museums.source", { source: museum.source })}</small>
               </div>
             </article>
           ))}
@@ -524,18 +894,20 @@ function MuseumSection() {
 }
 
 function FieldLabel({ icon, children, optional = false }) {
+  const { t } = useI18n();
   return (
     <span className="field-label field-label--icon">
       <span>
         {icon}
         {children}
       </span>
-      {optional ? <small>可选</small> : null}
+      {optional ? <small>{t("optional")}</small> : null}
     </span>
   );
 }
 
 function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }) {
+  const { t } = useI18n();
   const uploadInputRef = useRef(null);
   const captureInputRef = useRef(null);
   const previews = useMemo(
@@ -574,7 +946,7 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
         </div>
         <small>
           {files.length}/{maximum}
-          {minimum ? ` · 至少 ${minimum} 张` : ""}
+          {minimum ? ` · ${t("collect.minimum", { count: minimum })}` : ""}
         </small>
       </div>
       <p>{helper}</p>
@@ -584,18 +956,18 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
           onClick={() => uploadInputRef.current?.click()}
           icon={<UploadSimple size={20} />}
         >
-          上传图片
+          {t("collect.upload")}
         </Button>
         <Button
           variant="soft"
           onClick={() => captureInputRef.current?.click()}
           icon={<Camera size={20} />}
         >
-          拍摄采集
+          {t("collect.capture")}
         </Button>
       </div>
       <small className="file-picker__format">
-        JPEG、PNG 或 WebP · 自动压缩后单张不超过 1.5MB
+        {t("collect.format")}
       </small>
       <input
         ref={uploadInputRef}
@@ -620,7 +992,7 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
               <img src={preview.url} alt="" />
               <button
                 type="button"
-                aria-label={`移除 ${preview.file.name}`}
+                aria-label={t("collect.remove", { name: preview.file.name })}
                 onClick={() =>
                   setFiles(
                     files.filter((_, fileIndex) => fileIndex !== index),
@@ -640,31 +1012,50 @@ function FilePicker({ label, helper, files, setFiles, minimum = 0, maximum = 6 }
 const normalizeAccessCode = (value) =>
   value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
 
-const wizardPages = [
-  {
-    id: "01",
-    title: "选择来源",
-    description:
-      "先告诉我们这枚纹样来自哪里。即使不知道作品全名，也可以填写“待确认”后继续。",
-    icon: <IdentificationCard size={24} weight="fill" />,
-  },
-  {
-    id: "02+03",
-    title: "采集图像",
-    description:
-      "先拍吸引你的局部，再退后一步保留完整载体。每一类图片都可以从相册上传或直接拍摄。",
-    icon: <Camera size={24} weight="fill" />,
-  },
-  {
-    id: "04",
-    title: "观察与标注",
-    description:
-      "写下你真实看到的、已经确认的，以及仍想追问的。最后用标签帮助大家重新找到它。",
-    icon: <NotePencil size={24} weight="fill" />,
-  },
-];
+function localizeRuntimeError(message, language, fallback) {
+  if (language === "zh" || !message) {
+    return message || fallback;
+  }
+
+  if (/1\.5MB/.test(message)) {
+    return language === "th"
+      ? "ภาพยังมีขนาดเกิน 1.5MB หลังประมวลผล โปรดเลือกภาพที่เล็กกว่า"
+      : "The image is still larger than 1.5MB after processing. Choose a smaller image.";
+  }
+  if (/图片|图像|image/i.test(message)) {
+    return language === "th"
+      ? "ไม่สามารถอ่านหรือประมวลผลภาพได้ โปรดอัปโหลดใหม่แล้วลองอีกครั้ง"
+      : "The image could not be read or processed. Upload it again and retry.";
+  }
+
+  return fallback;
+}
 
 function CollectionForm({ open, onClose, onPreview, onPublished }) {
+  const { language, t } = useI18n();
+  const wizardPages = useMemo(
+    () => [
+      {
+        id: "01",
+        title: t("collect.step1Title"),
+        description: t("collect.step1Description"),
+        icon: <IdentificationCard size={24} weight="fill" />,
+      },
+      {
+        id: "02+03",
+        title: t("collect.step2Title"),
+        description: t("collect.step2Description"),
+        icon: <Camera size={24} weight="fill" />,
+      },
+      {
+        id: "04",
+        title: t("collect.step3Title"),
+        description: t("collect.step3Description"),
+        icon: <NotePencil size={24} weight="fill" />,
+      },
+    ],
+    [t],
+  );
   const [page, setPage] = useState(1);
   const [detailFiles, setDetailFiles] = useState([]);
   const [contextFiles, setContextFiles] = useState([]);
@@ -702,7 +1093,7 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
     if (page === 2 && (!detailFiles.length || !contextFiles.length)) {
       setStatus({
         type: "error",
-        message: "请至少添加 1 张纹样局部图和 1 张完整载体图。",
+        message: t("collect.imageRequired"),
       });
       return;
     }
@@ -717,16 +1108,16 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
       setPage(2);
       setStatus({
         type: "error",
-        message: "请至少添加 1 张纹样局部图和 1 张完整载体图。",
+        message: t("collect.imageRequired"),
       });
       return;
     }
     if (!values.observation.trim()) {
-      setStatus({ type: "error", message: "请写下你为什么注意到这枚纹样。" });
+      setStatus({ type: "error", message: t("collect.observationRequired") });
       return;
     }
     if (!values.accessCode.trim()) {
-      setStatus({ type: "error", message: "请输入活动群中的采集口令。" });
+      setStatus({ type: "error", message: t("collect.codeRequired") });
       return;
     }
 
@@ -748,7 +1139,7 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
     }
 
     try {
-      setStatus({ type: "loading", message: "正在压缩图片并安全上传…" });
+      setStatus({ type: "loading", message: t("collect.uploading") });
       const [preparedDetails, preparedContexts, preparedLabels] =
         await Promise.all([
           Promise.all(detailFiles.map(prepareImageFile)),
@@ -792,7 +1183,11 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
     } catch (error) {
       setStatus({
         type: "error",
-        message: error.message || "提交失败，请保留页面并重试。",
+        message: localizeRuntimeError(
+          error.message,
+          language,
+          t("collect.submitFailed"),
+        ),
       });
     }
   };
@@ -803,19 +1198,19 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
     <Dialog
       open={open}
       onClose={onClose}
-      label="采集新纹样"
+      label={t("collect.wizardLabel")}
       size="collector"
     >
       <form className="collection-form" onSubmit={handleSubmit}>
         <header className="collector-wizard__header">
           <div>
-            <div className="section-kicker">NEW PATTERN / 采集新纹样</div>
-            <h2>把这次发现，做成一张有来源的纹样卡</h2>
+            <div className="section-kicker">{t("collect.kicker")}</div>
+            <h2>{t("collect.title")}</h2>
           </div>
           {!isSupabaseConfigured ? (
             <div className="collector-wizard__mode">
               <Sparkle size={18} weight="fill" />
-              本地预览
+              {t("collect.localPreview")}
             </div>
           ) : null}
         </header>
@@ -849,13 +1244,13 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
               <div className="form-grid form-grid--2">
                 <label className="field">
                   <FieldLabel icon={<Buildings size={18} weight="fill" />}>
-                    来源博物馆
+                    {t("collect.museum")}
                   </FieldLabel>
                   <div className="select-wrap">
                     <select name="museum" value={values.museum} onChange={update}>
-                      <option value="lanna_folklife">兰纳民俗博物馆</option>
-                      <option value="fam">FAM Fahlanna Art Museum</option>
-                      <option value="other">其他清迈来源</option>
+                      <option value="lanna_folklife">{t("taxonomy.lannaMuseum")}</option>
+                      <option value="fam">{t("taxonomy.famMuseum")}</option>
+                      <option value="other">{t("taxonomy.otherSource")}</option>
                     </select>
                     <CaretDown size={17} />
                   </div>
@@ -865,37 +1260,37 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
                     icon={<IdentificationCard size={18} weight="fill" />}
                     optional
                   >
-                    采集者展示名
+                    {t("collect.collectorName")}
                   </FieldLabel>
                   <input
                     name="collectorName"
                     value={values.collectorName}
                     onChange={update}
-                    placeholder="例如：小明 / 匿名"
+                    placeholder={t("collect.collectorPlaceholder")}
                   />
                 </label>
               </div>
               <div className="form-grid form-grid--2">
                 <label className="field">
                   <FieldLabel icon={<ImageSquare size={18} weight="fill" />}>
-                    作品或展品名称
+                    {t("collect.sourceTitle")}
                   </FieldLabel>
                   <input
                     name="sourceTitle"
                     value={values.sourceTitle}
                     onChange={update}
-                    placeholder="如果不知道，可以写“待确认”"
+                    placeholder={t("collect.sourceTitlePlaceholder")}
                   />
                 </label>
                 <label className="field">
                   <FieldLabel icon={<MapPin size={18} weight="fill" />}>
-                    展区或拍摄位置
+                    {t("collect.location")}
                   </FieldLabel>
                   <input
                     name="sourceLocation"
                     value={values.sourceLocation}
                     onChange={update}
-                    placeholder="例如：二层织物展区"
+                    placeholder={t("collect.locationPlaceholder")}
                   />
                 </label>
               </div>
@@ -906,16 +1301,16 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
             <div className="wizard-page__content">
               <div className="form-grid form-grid--2 form-grid--files">
                 <FilePicker
-                  label="纹样局部图"
-                  helper="靠近一处真正吸引你的细节，可添加多张。"
+                  label={t("collect.detailImage")}
+                  helper={t("collect.detailHelp")}
                   files={detailFiles}
                   setFiles={setDetailFiles}
                   minimum={1}
                   maximum={6}
                 />
                 <FilePicker
-                  label="完整载体图"
-                  helper="退后一步，拍下完整文物、艺术作品或场景。"
+                  label={t("collect.contextImage")}
+                  helper={t("collect.contextHelp")}
                   files={contextFiles}
                   setFiles={setContextFiles}
                   minimum={1}
@@ -923,8 +1318,8 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
                 />
               </div>
               <FilePicker
-                label="展签或来源图"
-                helper="如果现场有展签、展区名称或其他来源线索，也请留下。"
+                label={t("collect.labelImage")}
+                helper={t("collect.labelHelp")}
                 files={labelFiles}
                 setFiles={setLabelFiles}
                 maximum={3}
@@ -937,13 +1332,13 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
               <div className="form-grid form-grid--3">
                 <label className="field">
                   <FieldLabel icon={<Binoculars size={18} weight="fill" />}>
-                    现场观察
+                    {t("collect.observation")}
                   </FieldLabel>
                   <textarea
                     name="observation"
                     value={values.observation}
                     onChange={update}
-                    placeholder="你为什么停下来？它如何重复、延伸或连接？"
+                    placeholder={t("collect.observationPlaceholder")}
                     rows={5}
                     required
                   />
@@ -953,13 +1348,13 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
                     icon={<CheckCircle size={18} weight="fill" />}
                     optional
                   >
-                    来源信息
+                    {t("collect.verified")}
                   </FieldLabel>
                   <textarea
                     name="verifiedInformation"
                     value={values.verifiedInformation}
                     onChange={update}
-                    placeholder="只写展签或可靠资料中已经确认的内容"
+                    placeholder={t("collect.verifiedPlaceholder")}
                     rows={5}
                   />
                 </label>
@@ -968,13 +1363,13 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
                     icon={<NotePencil size={18} weight="fill" />}
                     optional
                   >
-                    仍待了解
+                    {t("collect.unknown")}
                   </FieldLabel>
                   <textarea
                     name="openQuestion"
                     value={values.openQuestion}
                     onChange={update}
-                    placeholder="你最想继续了解的问题是什么？"
+                    placeholder={t("collect.unknownPlaceholder")}
                     rows={5}
                   />
                 </label>
@@ -982,42 +1377,47 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
 
               <div className="form-grid form-grid--4">
                 {[
-                  ["carrier", "载体", ["", "织物", "器物", "建筑", "雕塑", "壁画", "编织结构", "装置"]],
-                  ["position", "位置", ["", "中心", "边缘", "底部", "表面", "身体", "入口"]],
-                  ["structure", "结构", ["", "重复", "对称", "交织", "环绕", "放射", "延伸", "层叠"]],
-                  ["material", "材料", ["", "织物", "木", "陶", "漆", "金属", "石材", "竹", "颜料"]],
-                ].map(([name, label, options]) => (
+                  ["carrier", "taxonomy.carrier", [["", ""], ["织物", "taxonomy.textile"], ["器物", "taxonomy.object"], ["建筑", "taxonomy.architecture"], ["雕塑", "taxonomy.sculpture"], ["壁画", "taxonomy.mural"], ["编织结构", "taxonomy.weave"], ["装置", "taxonomy.installation"]]],
+                  ["position", "taxonomy.position", [["", ""], ["中心", "taxonomy.center"], ["边缘", "taxonomy.edge"], ["底部", "taxonomy.bottom"], ["表面", "taxonomy.surface"], ["身体", "taxonomy.body"], ["入口", "taxonomy.entrance"]]],
+                  ["structure", "taxonomy.structure", [["", ""], ["重复", "taxonomy.repeat"], ["对称", "taxonomy.symmetry"], ["交织", "taxonomy.interlace"], ["环绕", "taxonomy.surround"], ["放射", "taxonomy.radiate"], ["延伸", "taxonomy.extend"], ["层叠", "taxonomy.layer"]]],
+                  ["material", "taxonomy.material", [["", ""], ["织物", "taxonomy.textile"], ["木", "taxonomy.wood"], ["陶", "taxonomy.ceramic"], ["漆", "taxonomy.lacquer"], ["金属", "taxonomy.metal"], ["石材", "taxonomy.stone"], ["竹", "taxonomy.bamboo"], ["颜料", "taxonomy.pigment"]]],
+                ].map(([name, labelKey, options]) => {
+                  const label = t(labelKey);
+                  return (
                   <label className="field" key={name}>
                     <FieldLabel icon={<Sparkle size={16} weight="fill" />}>
                       {label}
                     </FieldLabel>
                     <div className="select-wrap">
                       <select name={name} value={values[name]} onChange={update}>
-                        {options.map((option) => (
-                          <option value={option} key={option || "empty"}>
-                            {option || `选择${label}`}
+                        {options.map(([value, optionKey]) => (
+                          <option value={value} key={value || "empty"}>
+                            {value
+                              ? t(optionKey)
+                              : t("taxonomy.choose", { label })}
                           </option>
                         ))}
                       </select>
                       <CaretDown size={17} />
                     </div>
                   </label>
-                ))}
+                  );
+                })}
               </div>
 
               <label className="field access-code-field">
                 <FieldLabel icon={<Ticket size={18} weight="fill" />}>
-                  活动采集口令
+                  {t("collect.accessCode")}
                 </FieldLabel>
                 <input
                   name="accessCode"
                   type="password"
                   value={values.accessCode}
                   onChange={update}
-                  placeholder="请输入活动群中的口令"
+                  placeholder={t("collect.accessCodePlaceholder")}
                   autoComplete="off"
                 />
-                <small>口令不区分大小写；正式提交由服务端验证。</small>
+                <small>{t("collect.accessCodeHelp")}</small>
               </label>
             </div>
           ) : null}
@@ -1045,15 +1445,15 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
                 }}
                 icon={<ArrowLeft size={19} />}
               >
-                上一步
+                {t("collect.previous")}
               </Button>
             ) : (
-              <span>共 3 页，已完成 {page - 1} 页</span>
+              <span>{t("collect.progress", { count: page - 1 })}</span>
             )}
           </div>
           {page < 3 ? (
             <Button onClick={goNext} icon={<ArrowRight size={19} />}>
-              下一步
+              {t("collect.next")}
             </Button>
           ) : (
             <Button
@@ -1068,10 +1468,10 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
               }
             >
               {status.type === "loading"
-                ? "正在提交"
+                ? t("collect.submitting")
                 : isSupabaseConfigured
-                  ? "提交并生成编号卡"
-                  : "生成本地预览卡"}
+                  ? t("collect.submit")
+                  : t("collect.preview")}
             </Button>
           )}
         </footer>
@@ -1081,12 +1481,17 @@ function CollectionForm({ open, onClose, onPreview, onPublished }) {
 }
 
 function CollectionSection({ onPreview, onPublished, refreshKey }) {
+  const { language, t } = useI18n();
   const [collectorOpen, setCollectorOpen] = useState(false);
   const [recentPatterns, setRecentPatterns] = useState(
     isSupabaseConfigured ? [] : archiveSamples.slice(0, 6),
   );
   const [recentCount, setRecentCount] = useState(
     isSupabaseConfigured ? 0 : archiveSamples.length,
+  );
+  const localizedRecentPatterns = useMemo(
+    () => recentPatterns.map((pattern) => localizePattern(pattern, language)),
+    [language, recentPatterns],
   );
 
   useEffect(() => {
@@ -1118,12 +1523,10 @@ function CollectionSection({ onPreview, onPublished, refreshKey }) {
     <section id="collect" className="collection-section section-shell">
       <div className="section-heading section-heading--split">
         <div>
-          <div className="section-kicker">COLLECT / 收集兰纳纹样</div>
-          <h2>现在，收集一枚属于你的兰纳纹样</h2>
+          <div className="section-kicker">{t("collect.sectionKicker")}</div>
+          <h2>{t("collect.sectionTitle")}</h2>
         </div>
-        <p>
-          看到让你停下来的细节，就把局部、完整作品与来源一起留下。点击入口后，用三步完成采集并生成一张可下载的编号卡。
-        </p>
+        <p>{t("collect.sectionIntro")}</p>
       </div>
 
       <div className="collection-portal">
@@ -1143,15 +1546,15 @@ function CollectionSection({ onPreview, onPublished, refreshKey }) {
           </div>
           <div className="collection-entry-card__copy">
             <p>CMI · LANNA PATTERN ARCHIVE</p>
-            <h3>从一处细节出发，保留它完整的来处。</h3>
-            <span>三步采集 · 自动编号 · 生成下载卡片</span>
+            <h3>{t("collect.cardTitle")}</h3>
+            <span>{t("collect.cardMeta")}</span>
           </div>
           <Button
             variant="accent"
             onClick={() => setCollectorOpen(true)}
             icon={<Sparkle size={20} weight="fill" />}
           >
-            采集新纹样
+            {t("collect.newPattern")}
           </Button>
         </article>
 
@@ -1159,21 +1562,24 @@ function CollectionSection({ onPreview, onPublished, refreshKey }) {
           <header>
             <div>
               <span>RECENTLY COLLECTED</span>
-              <h3>已经收集进来的纹样</h3>
+              <h3>{t("collect.recentTitle")}</h3>
             </div>
             <a href="#archive">
-              查看全部 {recentCount} 枚
+              {t("collect.viewAll", { count: recentCount })}
               <ArrowDown size={17} />
             </a>
           </header>
           {recentPatterns.length ? (
             <div className="collection-recent__grid">
-              {recentPatterns.map((pattern) => (
+              {localizedRecentPatterns.map((pattern) => (
                 <button
                   type="button"
                   key={pattern.id}
                   onClick={() => onPreview(pattern)}
-                  aria-label={`查看 ${pattern.archive_number} ${pattern.source_title}`}
+                  aria-label={t("collect.viewPattern", {
+                    number: pattern.archive_number,
+                    title: pattern.source_title,
+                  })}
                 >
                   <img src={pattern.detail_image_urls[0]} alt="" />
                   <span>{pattern.archive_number}</span>
@@ -1183,7 +1589,7 @@ function CollectionSection({ onPreview, onPublished, refreshKey }) {
           ) : (
             <div className="collection-recent__empty">
               <Images size={30} />
-              <p>档案正在等待第一枚真实纹样。</p>
+              <p>{t("collect.empty")}</p>
             </div>
           )}
         </div>
@@ -1200,17 +1606,18 @@ function CollectionSection({ onPreview, onPublished, refreshKey }) {
 }
 
 function PatternCard({ pattern, cardRef }) {
+  const { language, t } = useI18n();
   const tags = [
     ...(pattern.carrier_tags || []),
     ...(pattern.structure_tags || []),
     ...(pattern.material_tags || []),
   ].slice(0, 5);
-  const collectorName = pattern.collector_name?.trim() || "匿名采集者";
+  const collectorName = pattern.collector_name?.trim() || t("archive.anonymous");
   const capturedAt = formatPatternCapturedAt(pattern, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
+  }, false, language === "th" ? "th-TH-u-ca-gregory" : language === "en" ? "en-GB" : "zh-CN");
 
   return (
     <article className="pattern-card-export" ref={cardRef}>
@@ -1240,14 +1647,14 @@ function PatternCard({ pattern, cardRef }) {
           {pattern.museumLabel ||
             (pattern.museum === "fam"
               ? "FAM Fahlanna Art Museum"
-              : "兰纳民俗博物馆")}
+              : t("taxonomy.lannaMuseum"))}
         </div>
         <div className="pattern-card-export__collector">
-          <span>采集者 / COLLECTED BY</span>
+          <span>{t("archive.collectedBy")}</span>
           <strong>{collectorName}</strong>
           {capturedAt ? (
             <span className="pattern-card-export__captured-at">
-              采集于 {capturedAt}
+              {t("archive.capturedAt", { date: capturedAt })}
             </span>
           ) : null}
         </div>
@@ -1260,14 +1667,15 @@ function PatternCard({ pattern, cardRef }) {
         <p>{pattern.observation}</p>
       </div>
       <footer>
-        <span>现场观察 · 来源信息 · 仍待了解 · 创意再表达</span>
-        <span>WaytoAGI 发起 · CMI Community 清迈场</span>
+        <span>{t("archive.footer1")}</span>
+        <span>{t("archive.footer2")}</span>
       </footer>
     </article>
   );
 }
 
 function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
+  const { language, t } = useI18n();
   const cardRef = useRef(null);
   const [downloadStatus, setDownloadStatus] = useState("idle");
   const [downloadError, setDownloadError] = useState("");
@@ -1324,7 +1732,7 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
     try {
       setDownloadStatus("loading");
       setDownloadError("");
-      const blob = await renderPatternCardPng(pattern);
+      const blob = await renderPatternCardPng(pattern, language);
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       const safeNumber = pattern.archive_number.replace(/[^a-zA-Z0-9-]/g, "-");
@@ -1338,7 +1746,13 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
       setDownloadStatus("success");
     } catch (error) {
       console.error("Pattern card export failed", error);
-      setDownloadError(error.message || "生成失败，请保留此窗口后重试");
+      setDownloadError(
+        localizeRuntimeError(
+          error.message,
+          language,
+          t("archive.exportFailed"),
+        ),
+      );
       setDownloadStatus("error");
     }
   };
@@ -1347,7 +1761,7 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
     <Dialog
       open={Boolean(pattern)}
       onClose={onClose}
-      label={`${pattern.archive_number} 纹样详情`}
+      label={t("archive.details", { number: pattern.archive_number })}
       size="wide"
       disableEscape={lightboxIndex !== null}
     >
@@ -1360,10 +1774,10 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
             icon={<DownloadSimple size={20} />}
           >
             {downloadStatus === "loading"
-              ? "正在生成"
+              ? t("archive.generating")
               : downloadStatus === "success"
-                ? "已下载，再下一张"
-                : "下载纹样卡"}
+                ? t("archive.downloaded")
+                : t("archive.download")}
           </Button>
           {downloadStatus === "error" ? (
             <p className="download-error">{downloadError}</p>
@@ -1375,23 +1789,43 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
           <h3>{pattern.source_title}</h3>
           <p className="pattern-detail__collector">
             <IdentificationCard size={19} />
-            <span>采集者</span>
+            <span>{t("archive.collector")}</span>
             <strong>
-              {pattern.collector_name?.trim() || "匿名采集者"}
+              {pattern.collector_name?.trim() || t("archive.anonymous")}
             </strong>
           </p>
           <p className="pattern-detail__source">
             <MapPin size={17} />
-            {pattern.source_location || "来源位置待补充"}
+            {pattern.source_location || t("archive.sourceMissing")}
           </p>
-          {formatPatternCapturedAt(pattern) ? (
+          {formatPatternCapturedAt(
+            pattern,
+            undefined,
+            false,
+            language === "th"
+              ? "th-TH-u-ca-gregory"
+              : language === "en"
+                ? "en-GB"
+                : "zh-CN",
+          ) ? (
             <p className="pattern-detail__source">
               <CalendarBlank size={17} />
-              实际采集时间 {formatPatternCapturedAt(pattern)}
+              {t("archive.actualTime", {
+                date: formatPatternCapturedAt(
+                  pattern,
+                  undefined,
+                  false,
+                  language === "th"
+                    ? "th-TH-u-ca-gregory"
+                    : language === "en"
+                      ? "en-GB"
+                      : "zh-CN",
+                ),
+              })}
             </p>
           ) : null}
           {pattern.preview ? (
-            <div className="preview-label">预览样本，不作为历史资料引用</div>
+            <div className="preview-label">{t("archive.previewLabel")}</div>
           ) : null}
           <Button
             className="pattern-detail__idea-button"
@@ -1399,20 +1833,20 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
             icon={<MagicWand size={20} />}
             onClick={() => onUseForIdea(pattern)}
           >
-            拿它生成 IDEA
+            {t("archive.idea")}
           </Button>
           <dl className="pattern-detail__notes">
             <div>
-              <dt>现场观察</dt>
-              <dd>{pattern.observation || "未填写"}</dd>
+              <dt>{t("archive.observation")}</dt>
+              <dd>{pattern.observation || t("archive.emptyObservation")}</dd>
             </div>
             <div>
-              <dt>来源信息</dt>
-              <dd>{pattern.verified_information || "待补充"}</dd>
+              <dt>{t("archive.verified")}</dt>
+              <dd>{pattern.verified_information || t("archive.emptyVerified")}</dd>
             </div>
             <div>
-              <dt>仍待了解</dt>
-              <dd>{pattern.open_question || "暂未填写"}</dd>
+              <dt>{t("archive.unknown")}</dt>
+              <dd>{pattern.open_question || t("archive.emptyUnknown")}</dd>
             </div>
           </dl>
           <div className="pattern-detail__gallery">
@@ -1421,12 +1855,18 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
                 type="button"
                 className="pattern-detail__thumb"
                 key={`${url}-${index}`}
-                aria-label={`放大查看 ${pattern.archive_number} 采集图片 ${index + 1}`}
+                aria-label={t("archive.enlarge", {
+                  number: pattern.archive_number,
+                  index: index + 1,
+                })}
                 onClick={() => setLightboxIndex(index)}
               >
                 <img
                   src={url}
-                  alt={`${pattern.archive_number} 采集图片 ${index + 1}`}
+                  alt={t("archive.imageAlt", {
+                    number: pattern.archive_number,
+                    index: index + 1,
+                  })}
                 />
                 <span>
                   {String(index + 1).padStart(2, "0")} /{" "}
@@ -1442,13 +1882,15 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
           className="image-lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label={`${pattern.archive_number} 图片预览`}
+          aria-label={t("archive.imagePreview", {
+            number: pattern.archive_number,
+          })}
           onMouseDown={() => setLightboxIndex(null)}
         >
           <button
             type="button"
             className="image-lightbox__close"
-            aria-label="关闭图片预览"
+            aria-label={t("archive.closePreview")}
             onClick={() => setLightboxIndex(null)}
           >
             <X size={25} weight="bold" />
@@ -1461,7 +1903,7 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
               <button
                 type="button"
                 className="image-lightbox__nav image-lightbox__nav--previous"
-                aria-label="查看上一张图片"
+                aria-label={t("archive.previousImage")}
                 onClick={() =>
                   setLightboxIndex(
                     (lightboxIndex - 1 + allImages.length) % allImages.length,
@@ -1473,13 +1915,16 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
             ) : null}
             <img
               src={allImages[lightboxIndex]}
-              alt={`${pattern.archive_number} 放大图片 ${lightboxIndex + 1}`}
+              alt={t("archive.enlargedAlt", {
+                number: pattern.archive_number,
+                index: lightboxIndex + 1,
+              })}
             />
             {allImages.length > 1 ? (
               <button
                 type="button"
                 className="image-lightbox__nav image-lightbox__nav--next"
-                aria-label="查看下一张图片"
+                aria-label={t("archive.nextImage")}
                 onClick={() =>
                   setLightboxIndex(
                     (lightboxIndex + 1) % allImages.length,
@@ -1507,6 +1952,7 @@ function PatternDetailDialog({ pattern, onClose, onUseForIdea }) {
 }
 
 function ArchiveSection({ refreshKey, onOpenPattern }) {
+  const { language, t } = useI18n();
   const [patterns, setPatterns] = useState(
     isSupabaseConfigured ? [] : archiveSamples,
   );
@@ -1517,6 +1963,10 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
     carrier: "all",
     structure: "all",
   });
+  const localizedFilterOptions = useMemo(
+    () => getFilterOptions(language),
+    [language],
+  );
 
   const loadPatterns = async () => {
     if (!isSupabaseConfigured) {
@@ -1530,7 +1980,7 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
       const data = await fetchPublishedPatterns();
       setPatterns(data);
     } catch {
-      setError("档案暂时没有加载出来，请重试。");
+      setError(t("archive.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -1551,37 +2001,39 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
       pattern.structure_tags?.includes(filters.structure);
     return museumMatch && carrierMatch && structureMatch;
   });
+  const localizedPatterns = useMemo(
+    () =>
+      filteredPatterns.map((pattern) => localizePattern(pattern, language)),
+    [filteredPatterns, language],
+  );
 
   return (
     <section id="archive" className="archive-section">
       <div className="section-shell">
         <div className="section-heading section-heading--split">
           <div>
-            <div className="section-kicker">ARCHIVE / 大家的纹样</div>
-            <h2>一座持续生长的兰纳纹样档案</h2>
+            <div className="section-kicker">{t("archive.kicker")}</div>
+            <h2>{t("archive.title")}</h2>
           </div>
-          <p>
-            从最新发现开始浏览。点击任何方格，打开它与完整文物、来源和采集问题之间的关系。
-          </p>
+          <p>{t("archive.intro")}</p>
         </div>
 
         {!isSupabaseConfigured ? (
           <div className="archive-preview-notice">
-            当前展示 {archiveSamples.length} 份体验预览素材；连接 Supabase
-            后，这里会自动切换为参与者的真实公开采集。
+            {t("archive.previewNotice", { count: archiveSamples.length })}
           </div>
         ) : null}
 
         <div className="archive-toolbar">
           <div className="archive-toolbar__filters">
-            {Object.entries(filterOptions).map(([name, options]) => (
+            {Object.entries(localizedFilterOptions).map(([name, options]) => (
               <label key={name}>
                 <span className="sr-only">
                   {name === "museum"
-                    ? "博物馆"
+                    ? t("archive.museumFilter")
                     : name === "carrier"
-                      ? "载体"
-                      : "结构"}
+                      ? t("archive.carrierFilter")
+                      : t("archive.structureFilter")}
                 </span>
                 <select
                   value={filters[name]}
@@ -1602,24 +2054,24 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
               </label>
             ))}
           </div>
-          <span>{filteredPatterns.length} 枚纹样</span>
+          <span>{t("archive.count", { count: localizedPatterns.length })}</span>
         </div>
 
         {loading ? (
           <div className="archive-state">
             <span className="spinner spinner--purple" />
-            正在整理档案…
+            {t("archive.loading")}
           </div>
         ) : error ? (
           <div className="archive-state">
             <p>{error}</p>
             <Button variant="outline" onClick={loadPatterns}>
-              重新加载
+              {t("archive.reload")}
             </Button>
           </div>
-        ) : filteredPatterns.length ? (
+        ) : localizedPatterns.length ? (
           <div className="archive-grid">
-            {filteredPatterns.map((pattern) => (
+            {localizedPatterns.map((pattern) => (
               <button
                 type="button"
                 className="archive-tile"
@@ -1635,7 +2087,10 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
                   {pattern.archive_number}
                 </span>
                 <span className="archive-tile__collector">
-                  采集者 · {pattern.collector_name?.trim() || "匿名采集者"}
+                  {t("archive.tileCollector", {
+                    name:
+                      pattern.collector_name?.trim() || t("archive.anonymous"),
+                  })}
                 </span>
                 <span className="archive-tile__hover">
                   <strong>{pattern.source_title}</strong>
@@ -1647,6 +2102,11 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
                         day: "2-digit",
                       },
                       true,
+                      language === "th"
+                        ? "th-TH-u-ca-gregory"
+                        : language === "en"
+                          ? "en-GB"
+                          : "zh-CN",
                     )}
                   </small>
                 </span>
@@ -1656,10 +2116,10 @@ function ArchiveSection({ refreshKey, onOpenPattern }) {
         ) : (
           <div className="archive-state archive-state--empty">
             <Images size={34} />
-            <h3>还没有符合条件的纹样</h3>
-            <p>换一个筛选条件，或者成为第一个提交的人。</p>
+            <h3>{t("archive.noMatches")}</h3>
+            <p>{t("archive.noMatchesHelp")}</p>
             <a className="button button--primary" href="#collect">
-              <span>开始采集</span>
+              <span>{t("archive.start")}</span>
               <ArrowRight size={18} />
             </a>
           </div>
@@ -1683,6 +2143,7 @@ const ideaCategoryIcons = {
 };
 
 function PossibilityGenerator({ preferredPattern }) {
+  const { language, t } = useI18n();
   const fallbackPatterns = archiveSamples.slice(0, 18);
   const [patterns, setPatterns] = useState(fallbackPatterns);
   const [currentPattern, setCurrentPattern] = useState(
@@ -1690,10 +2151,23 @@ function PossibilityGenerator({ preferredPattern }) {
   );
   const [category, setCategory] = useState("any");
   const [idea, setIdea] = useState(() =>
-    generateIdea(preferredPattern || fallbackPatterns[0]),
+    generateIdea(
+      localizePattern(preferredPattern || fallbackPatterns[0], language),
+      "any",
+      "",
+      language,
+    ),
   );
   const [ideaTurn, setIdeaTurn] = useState(0);
   const generatorRef = useRef(null);
+  const localizedCategories = useMemo(
+    () => getIdeaCategories(language),
+    [language],
+  );
+  const localizedCurrentPattern = useMemo(
+    () => localizePattern(currentPattern, language),
+    [currentPattern, language],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -1723,14 +2197,36 @@ function PossibilityGenerator({ preferredPattern }) {
 
     setCurrentPattern(preferredPattern);
     setIdea((current) =>
-      generateIdea(preferredPattern, category, current?.id),
+      generateIdea(
+        localizePattern(preferredPattern, language),
+        category,
+        current?.id,
+        language,
+      ),
     );
     setIdeaTurn((turn) => turn + 1);
-  }, [preferredPattern]);
+  }, [preferredPattern, language]);
+
+  useEffect(() => {
+    setIdea((current) =>
+      generateIdea(
+        localizedCurrentPattern,
+        category,
+        current?.id,
+        language,
+      ),
+    );
+    setIdeaTurn((turn) => turn + 1);
+  }, [language]);
 
   const nextIdea = () => {
     setIdea((current) =>
-      generateIdea(currentPattern, category, current?.id),
+      generateIdea(
+        localizedCurrentPattern,
+        category,
+        current?.id,
+        language,
+      ),
     );
     setIdeaTurn((turn) => turn + 1);
   };
@@ -1738,7 +2234,12 @@ function PossibilityGenerator({ preferredPattern }) {
   const chooseCategory = (nextCategory) => {
     setCategory(nextCategory);
     setIdea((current) =>
-      generateIdea(currentPattern, nextCategory, current?.id),
+      generateIdea(
+        localizedCurrentPattern,
+        nextCategory,
+        current?.id,
+        language,
+      ),
     );
     setIdeaTurn((turn) => turn + 1);
   };
@@ -1753,7 +2254,14 @@ function PossibilityGenerator({ preferredPattern }) {
     );
     const nextPattern = patterns[(currentIndex + 1) % patterns.length];
     setCurrentPattern(nextPattern);
-    setIdea((current) => generateIdea(nextPattern, category, current?.id));
+    setIdea((current) =>
+      generateIdea(
+        localizePattern(nextPattern, language),
+        category,
+        current?.id,
+        language,
+      ),
+    );
     setIdeaTurn((turn) => turn + 1);
   };
 
@@ -1782,7 +2290,7 @@ function PossibilityGenerator({ preferredPattern }) {
 
   const CurrentIcon = ideaCategoryIcons[idea.category] || Sparkle;
   const collectorName =
-    currentPattern?.collector_name?.trim() || "匿名采集者";
+    localizedCurrentPattern?.collector_name?.trim() || t("archive.anonymous");
 
   return (
     <section
@@ -1793,17 +2301,18 @@ function PossibilityGenerator({ preferredPattern }) {
     >
       <div className="idea-generator__header section-shell">
         <div>
-          <div className="section-kicker">IDEA LAB / AI 可能性生成器</div>
-          <h2 id="idea-generator-title">这枚纹样，还能变成什么？</h2>
+          <div className="section-kicker">{t("ideas.kicker")}</div>
+          <h2 id="idea-generator-title">{t("ideas.title")}</h2>
         </div>
-        <p>
-          不用先想完整。选一种媒介，或者把选择交给偶然，再生成一个可以开始动手的方向。
-        </p>
+        <p>{t("ideas.intro")}</p>
       </div>
 
-      <div className="idea-generator__categories" aria-label="选择 IDEA 类型">
+      <div
+        className="idea-generator__categories"
+        aria-label={t("ideas.categoriesLabel")}
+      >
         <div className="idea-generator__category-track">
-          {ideaCategories.map((item) => {
+          {localizedCategories.map((item) => {
             const CategoryIcon = ideaCategoryIcons[item.value] || Sparkle;
             return (
               <button
@@ -1827,9 +2336,9 @@ function PossibilityGenerator({ preferredPattern }) {
         </div>
         <div className="idea-stage__media">
           <img
-            src={currentPattern?.detail_image_urls?.[0]}
+            src={localizedCurrentPattern?.detail_image_urls?.[0]}
             alt=""
-            key={currentPattern?.id}
+            key={localizedCurrentPattern?.id}
           />
           <div className="idea-stage__medium">
             <CurrentIcon size={26} weight="fill" />
@@ -1840,39 +2349,39 @@ function PossibilityGenerator({ preferredPattern }) {
 
         <div
           className="idea-stage__content"
-          key={`${idea.id}-${ideaTurn}-${currentPattern?.id}`}
+          key={`${idea.id}-${ideaTurn}-${localizedCurrentPattern?.id}`}
           aria-live="polite"
         >
           <div className="idea-line idea-line--look">
-            <span>LOOK / 从这个角度</span>
+            <span>{t("ideas.look")}</span>
             <p>{idea.look}</p>
           </div>
           <div className="idea-line idea-line--use">
-            <span>USE / 使用这些素材</span>
+            <span>{t("ideas.use")}</span>
             <p>{idea.use}</p>
           </div>
           <div className="idea-line idea-line--make">
-            <span>MAKE / 做一件这样的事</span>
+            <span>{t("ideas.make")}</span>
             <p>{idea.make}</p>
           </div>
           <div className="idea-line idea-line--ai">
-            <span>AI CAN HELP / AI 的价值</span>
+            <span>{t("ideas.ai")}</span>
             <p>{idea.ai}</p>
           </div>
         </div>
 
         <div className="idea-stage__source">
-          <img src={currentPattern?.detail_image_urls?.[0]} alt="" />
+          <img src={localizedCurrentPattern?.detail_image_urls?.[0]} alt="" />
           <div>
-            <span>CURRENT PATTERN / 当前纹样</span>
+            <span>{t("ideas.current")}</span>
             <strong>
-              {currentPattern?.archive_number} ·{" "}
-              {currentPattern?.source_title || "未命名纹样"}
+              {localizedCurrentPattern?.archive_number} ·{" "}
+              {localizedCurrentPattern?.source_title || t("ideas.unnamed")}
             </strong>
-            <small>采集者 · {collectorName}</small>
+            <small>{t("ideas.collector", { name: collectorName })}</small>
           </div>
           <button type="button" onClick={changePattern}>
-            换一枚纹样
+            {t("ideas.change")}
             <ArrowRight size={16} />
           </button>
         </div>
@@ -1880,12 +2389,12 @@ function PossibilityGenerator({ preferredPattern }) {
         <div className="idea-stage__action">
           <button type="button" onClick={nextIdea}>
             <MagicWand size={23} weight="fill" />
-            <span>再来一个 IDEA</span>
+            <span>{t("ideas.again")}</span>
             <small>SPACE</small>
           </button>
           <div>
             <Sparkle size={16} weight="fill" />
-            REIMAGINED / 创意再表达
+            {t("ideas.reimagined")}
           </div>
         </div>
       </div>
@@ -1894,24 +2403,27 @@ function PossibilityGenerator({ preferredPattern }) {
 }
 
 function CreationVideo() {
+  const { t } = useI18n();
   return (
     <section className="creation-video" aria-labelledby="creation-video-title">
       <div className="creation-video__copy">
         <div className="section-kicker section-kicker--light">
           FROM IDEA TO WORK
         </div>
-        <h2 id="creation-video-title">一条已经发生的可能性</h2>
-        <p>从一个文化线索出发，AI 可以帮助我们把想法变成影像。</p>
+        <h2 id="creation-video-title">{t("video.title")}</h2>
+        <p>{t("video.intro")}</p>
         <div className="creation-video__credit">
-          <span>作品署名</span>
+          <span>{t("video.creditLabel")}</span>
           <p>
-            该作品由 <strong>AIGC 创作者「锐童学」学员</strong>倾力创作。
+            {t("video.creditBefore")}{" "}
+            <strong>{t("video.creditName")}</strong>
+            {t("video.creditAfter")}
           </p>
         </div>
         <div className="creation-video__labels">
-          <span>AI 创作示例</span>
-          <span>创意再表达</span>
-          <span>非历史影像</span>
+          <span>{t("video.example")}</span>
+          <span>{t("video.reimagined")}</span>
+          <span>{t("video.nonHistorical")}</span>
         </div>
       </div>
       <div className="creation-video__player">
@@ -1925,7 +2437,7 @@ function CreationVideo() {
             src="/assets/video/lanna-ai-creation.mp4"
             type="video/mp4"
           />
-          你的浏览器暂不支持视频播放。
+          {t("video.unsupported")}
         </video>
         <div className="creation-video__playmark" aria-hidden="true">
           <Play size={26} weight="fill" />
@@ -1936,6 +2448,7 @@ function CreationVideo() {
 }
 
 function Footer({ onSignup }) {
+  const { t } = useI18n();
   return (
     <footer className="site-footer">
       <div className="site-footer__art" aria-hidden="true">
@@ -1946,11 +2459,11 @@ function Footer({ onSignup }) {
           <div className="section-kicker section-kicker--light">
             JULY 26 · CMI STUDIO
           </div>
-          <h2>带一枚让你停下来的纹样，来现场一起做出来。</h2>
-          <p>用 AI 创作，共同探寻兰纳 Lanna 纹案的踪迹。</p>
+          <h2>{t("footer.title")}</h2>
+          <p>{t("footer.intro")}</p>
         </div>
         <Button variant="accent" onClick={onSignup}>
-          报名入群
+          {t("signup.action")}
         </Button>
       </div>
       <div className="site-footer__bottom">
@@ -1958,8 +2471,8 @@ function Footer({ onSignup }) {
           <img src="/assets/brand/cmi-community.svg" alt="" />
           <span>CMI Community</span>
         </a>
-        <span>WaytoAGI 发起 · CMI Community 组织清迈场</span>
-        <span>活动地点：CMI Studio · 详细位置入群获取</span>
+        <span>{t("footer.credits")}</span>
+        <span>{t("footer.location")}</span>
       </div>
     </footer>
   );
@@ -1991,6 +2504,7 @@ export function App() {
       <Header onSignup={() => setSignupOpen(true)} />
       <main>
         <Hero onSignup={() => setSignupOpen(true)} />
+        <WorksShowcase />
         <Manifesto />
         <Journey />
         <MuseumSection />

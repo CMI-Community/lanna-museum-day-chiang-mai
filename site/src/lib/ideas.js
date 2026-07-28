@@ -11,6 +11,41 @@ export const ideaCategories = [
   { value: "installation", label: "实体装置" },
 ];
 
+const localizedCategoryLabels = {
+  en: {
+    any: "Surprise me",
+    writing: "Writing",
+    image: "Image",
+    video: "Video",
+    website: "Website",
+    "3d": "3D",
+    game: "Game",
+    audio: "Sound",
+    assistant: "AI assistant",
+    installation: "Physical installation",
+  },
+  th: {
+    any: "สุ่มให้ฉัน",
+    writing: "งานเขียน",
+    image: "ภาพ",
+    video: "วิดีโอ",
+    website: "เว็บไซต์",
+    "3d": "3D",
+    game: "เกม",
+    audio: "เสียง",
+    assistant: "ผู้ช่วย AI",
+    installation: "ศิลปะจัดวาง",
+  },
+};
+
+export function getIdeaCategories(language = "zh") {
+  if (language === "zh") return ideaCategories;
+  return ideaCategories.map((item) => ({
+    ...item,
+    label: localizedCategoryLabels[language][item.value],
+  }));
+}
+
 const categoryMeta = {
   writing: { label: "写内容", code: "WORDS", tone: "orange" },
   image: { label: "作图", code: "IMAGE", tone: "pink" },
@@ -46,6 +81,190 @@ function describe(pattern) {
     material: first(pattern?.material_tags, "原有材料"),
   };
 }
+
+function describeLocalized(pattern, language) {
+  const fallback =
+    language === "th"
+      ? {
+          title: "ลวดลายนี้",
+          location: "ตำแหน่งจัดแสดงเดิม",
+          observation: "สิ่งที่ผู้เก็บสังเกต ณ สถานที่จริง",
+          question: "เหตุใดลวดลายนี้จึงปรากฏอยู่ตรงนี้",
+          carrier: "วัตถุหรือบริบททั้งหมด",
+          structure: "โครงสร้างการจัดวาง",
+          material: "วัสดุเดิม",
+        }
+      : {
+          title: "this pattern",
+          location: "its original display location",
+          observation: "the collector’s on-site observation",
+          question: "Why does it appear here?",
+          carrier: "the complete carrier",
+          structure: "its organizing structure",
+          material: "the original material",
+        };
+
+  return {
+    title: clip(pattern?.source_title, fallback.title, 80),
+    location: clip(pattern?.source_location, fallback.location, 80),
+    observation: clip(pattern?.observation, fallback.observation, 120),
+    question: clip(pattern?.open_question, fallback.question, 120),
+    carrier: first(pattern?.carrier_tags, fallback.carrier),
+    structure: first(pattern?.structure_tags, fallback.structure),
+    material: first(pattern?.material_tags, fallback.material),
+  };
+}
+
+const localizedBuilders = {
+  en: {
+    writing: (p) => ({
+      look: `Begin with the still-unanswered question: “${p.question}”`,
+      use: `Work with the label, close-up and complete images of ${p.title}, and the observation “${p.observation}”`,
+      make:
+        "Write a visual pattern story that leads readers from one detail back to the complete work and its source",
+      ai:
+        "Use AI to organize clues, propose interview questions, structure the story, and draft multiple language versions; keep every factual claim tied to a recorded source",
+    }),
+    image: (p) => ({
+      look: `Explore how ${p.structure} can move, repeat, or pause across an image`,
+      use: `Use the pattern close-up, the complete ${p.carrier}, the texture of ${p.material}, and the archive number`,
+      make:
+        "Create a “pattern migration” poster in which the motif travels from its original carrier into a present-day setting",
+      ai:
+        "Use AI to extract color and rhythm and test several compositions; always retain the original image and source information",
+    }),
+    video: (p) => ({
+      look: `Start from the direction and viewing rhythm created by ${p.structure}`,
+      use: `Use the close-up, complete ${p.carrier}, ambient sound, and source text`,
+      make:
+        "Create a 15-second loop in which the pattern emerges from the original object, moves, and returns to its source",
+      ai:
+        "Use AI for storyboards, in-between frames, motion tests, and a voiceover draft; label the result as a creative reinterpretation",
+    }),
+    website: (p) => ({
+      look: `Begin with what visitors still do not understand: “${p.question}”`,
+      use: `Use the label, close-up and complete images, the observation “${p.observation},” and the source location`,
+      make:
+        "Build an exploratory one-page story where each interaction reveals one new piece of evidence or one new question",
+      ai:
+        "Use AI to plan the information hierarchy, draft interaction copy, and prototype the frontend; verify facts and viewing order yourself",
+    }),
+    "3d": (p) => ({
+      look: `Study the thickness, relief, and ${p.structure} of ${p.material}`,
+      use: `Use multiple viewing angles, scale observations, the complete ${p.carrier}, and the pattern’s position`,
+      make:
+        "Create a hand-held educational 3D concept model and display it beside photographs of the original object",
+      ai:
+        "Use AI to extract outlines, generate a base mesh, and test fabrication; state clearly that this is neither a restoration nor an official replica",
+    }),
+    game: (p) => ({
+      look: `Turn the open question “${p.question}” into an investigation rather than a guessed cultural answer`,
+      use: `Use a map of ${p.location}, pattern photos, verified clues, and questions still awaiting confirmation`,
+      make:
+        "Design a ten-minute pattern detective game where observation—not guessing—unlocks each clue",
+      ai:
+        "Use AI to sequence missions, create character prompts, scoring, and a playable prototype; every answer must return to a real source",
+    }),
+    audio: (p) => ({
+      look: `Begin with the rhythm, texture, and spatial associations of ${p.material}`,
+      use: `Use ambient sound, material taps or friction, the collector’s voice, and source information for ${p.title}`,
+      make:
+        "Produce a 30-second “sound portrait of an object” that lets listeners sense the pattern’s rhythm with their eyes closed",
+      ai:
+        "Use AI to clean recordings, plan sound layers, test music, and prepare accessible multilingual narration",
+    }),
+    assistant: (p) => ({
+      look: `Ask what a visitor is most likely to wonder after seeing ${p.title}`,
+      use: `Use label text, verified references, on-site observations, open questions, and complete images`,
+      make:
+        "Build a pattern inquiry assistant that can say “I don’t know” and clearly separates facts, observations, and imagination",
+      ai:
+        "Use AI to retrieve and organize permitted sources, turning low-evidence answers into concrete next research steps",
+    }),
+    installation: (p) => ({
+      look: `Explore how movement through space can reveal ${p.structure} in a new way`,
+      use: `Use the pattern outline, the texture of ${p.material}, projection, and simple camera or distance input`,
+      make:
+        "Create a responsive pattern-and-shadow wall: approach to see the detail, step back to see the complete carrier",
+      ai:
+        "Use AI to generate real-time visual behaviors and interaction code while keeping source information and a REIMAGINED label visible",
+    }),
+  },
+  th: {
+    writing: (p) => ({
+      look: `เริ่มจากคำถามที่ยังไม่มีคำตอบว่า “${p.question}”`,
+      use: `ใช้ป้าย ภาพระยะใกล้และภาพรวมของ ${p.title} พร้อมสิ่งที่สังเกตว่า “${p.observation}”`,
+      make:
+        "เขียนเรื่องเล่าลวดลายที่อ่านควบคู่กับภาพ พาผู้อ่านจากรายละเอียดกลับไปสู่วัตถุทั้งหมดและที่มา",
+      ai:
+        "ให้ AI ช่วยจัดเบาะแส ตั้งคำถามสัมภาษณ์ วางโครงเรื่อง และร่างหลายภาษา แต่ข้อมูลข้อเท็จจริงต้องอ้างกลับไปยังแหล่งที่มาที่บันทึกไว้",
+    }),
+    image: (p) => ({
+      look: `สำรวจว่า ${p.structure} เคลื่อนที่ ซ้ำ หรือหยุดพักในภาพได้อย่างไร`,
+      use: `ใช้ภาพลวดลายระยะใกล้ ภาพรวมของ ${p.carrier} พื้นผิวแบบ ${p.material} และหมายเลขคลัง`,
+      make:
+        "สร้างโปสเตอร์ “การเดินทางของลวดลาย” ให้ลายออกจากวัตถุดั้งเดิมแล้วค่อย ๆ เข้าสู่ชีวิตปัจจุบัน",
+      ai:
+        "ให้ AI ช่วยสกัดสีและจังหวะ ทดลองหลายองค์ประกอบ โดยเก็บภาพต้นฉบับและข้อมูลที่มาไว้เสมอ",
+    }),
+    video: (p) => ({
+      look: `เริ่มจากทิศทางการเคลื่อนไหวและจังหวะการมองที่เกิดจาก ${p.structure}`,
+      use: `ใช้ภาพระยะใกล้ ภาพรวมของ ${p.carrier} เสียงแวดล้อม และข้อความที่มา`,
+      make:
+        "สร้างวิดีโอวนซ้ำ 15 วินาที ให้ลวดลายปรากฏจากวัตถุ เคลื่อนไหว แล้วกลับไปยังที่มา",
+      ai:
+        "ให้ AI ช่วยทำสตอรีบอร์ด ภาพเชื่อม การทดสอบการเคลื่อนไหว และร่างเสียงบรรยาย พร้อมกำกับว่าเป็นการตีความสร้างสรรค์ใหม่",
+    }),
+    website: (p) => ({
+      look: `เริ่มจากสิ่งที่ผู้ชมยังไม่เข้าใจว่า “${p.question}”`,
+      use: `ใช้ป้าย ภาพระยะใกล้และภาพรวม สิ่งที่สังเกตว่า “${p.observation}” และตำแหน่งที่มา`,
+      make:
+        "สร้างเรื่องเล่าหน้าเดียวแบบกดสำรวจ ทุกการโต้ตอบเผยหลักฐานหรือคำถามใหม่ทีละข้อ",
+      ai:
+        "ให้ AI ช่วยวางลำดับข้อมูล ร่างข้อความโต้ตอบ และสร้างต้นแบบหน้าเว็บ ส่วนคุณตรวจสอบข้อเท็จจริงและลำดับการรับชม",
+    }),
+    "3d": (p) => ({
+      look: `ศึกษาความหนา ผิวสูงต่ำ และ ${p.structure} ของวัสดุ ${p.material}`,
+      use: `ใช้ภาพหลายมุม การสังเกตขนาด ภาพรวมของ ${p.carrier} และตำแหน่งลวดลาย`,
+      make:
+        "สร้างแบบจำลองแนวคิด 3D เพื่อการเรียนรู้ที่หยิบถือได้ แล้วจัดแสดงคู่กับภาพวัตถุต้นฉบับ",
+      ai:
+        "ให้ AI ช่วยสกัดเส้นรอบรูป สร้างโมเดลพื้นฐาน และทดสอบการผลิต พร้อมระบุชัดว่าไม่ใช่การบูรณะหรือสำเนาทางการ",
+    }),
+    game: (p) => ({
+      look: `เปลี่ยนคำถาม “${p.question}” ให้เป็นภารกิจสืบค้น แทนการเดาความหมายทางวัฒนธรรม`,
+      use: `ใช้แผนที่ ${p.location} ภาพลวดลาย เบาะแสที่ยืนยันแล้ว และคำถามที่ยังรอตรวจสอบ`,
+      make:
+        "ออกแบบเกมนักสืบลวดลาย 10 นาที ให้ผู้เล่นปลดล็อกเบาะแสด้วยการสังเกต ไม่ใช่การคาดเดา",
+      ai:
+        "ให้ AI ช่วยเรียงภารกิจ สร้างคำใบ้ ตัวละคร ระบบคะแนน และต้นแบบที่เล่นได้ แต่ทุกคำตอบต้องกลับไปยังแหล่งจริง",
+    }),
+    audio: (p) => ({
+      look: `เริ่มจากจังหวะ สัมผัส และความรู้สึกเชิงพื้นที่ของวัสดุ ${p.material}`,
+      use: `ใช้เสียงแวดล้อม เสียงเคาะหรือเสียดสีวัสดุ เสียงอ่านของผู้เก็บ และข้อมูลที่มาของ ${p.title}`,
+      make:
+        "ผลิต “ภาพเหมือนเสียงของวัตถุ” 30 วินาที ให้ผู้ฟังหลับตาแล้วยังสัมผัสจังหวะของลวดลายได้",
+      ai:
+        "ให้ AI ช่วยทำความสะอาดเสียง วางชั้นเสียง ทดลองดนตรี และจัดทำคำบรรยายหลายภาษาที่เข้าถึงได้",
+    }),
+    assistant: (p) => ({
+      look: `ถามว่าผู้ชมอยากรู้อะไรมากที่สุดหลังเห็น ${p.title}`,
+      use: "ใช้ข้อความป้าย เอกสารที่ยืนยันแล้ว สิ่งที่สังเกต คำถามเปิด และภาพรวมทั้งหมด",
+      make:
+        "สร้างผู้ช่วยถามตอบเรื่องลวดลายที่ยอมรับว่า “ยังไม่ทราบ” และแยกข้อเท็จจริง การสังเกต และจินตนาการอย่างชัดเจน",
+      ai:
+        "ให้ AI ค้นและจัดระเบียบแหล่งข้อมูลที่ได้รับอนุญาต และเปลี่ยนคำตอบที่หลักฐานไม่พอให้เป็นขั้นตอนค้นคว้าต่อ",
+    }),
+    installation: (p) => ({
+      look: `สำรวจว่าการเคลื่อนที่ของผู้ชมทำให้มองเห็น ${p.structure} ในแบบใหม่ได้อย่างไร`,
+      use: `ใช้เส้นรอบรูปลวดลาย พื้นผิวแบบ ${p.material} การฉายภาพ และกล้องหรือเซนเซอร์ระยะอย่างง่าย`,
+      make:
+        "สร้างผนังแสงเงาลวดลายที่ตอบสนองต่อร่างกาย เดินเข้าใกล้เพื่อเห็นรายละเอียด ถอยออกเพื่อเห็นวัตถุทั้งหมด",
+      ai:
+        "ให้ AI สร้างภาพแบบเรียลไทม์และโค้ดโต้ตอบ พร้อมแสดงข้อมูลที่มาและป้าย REIMAGINED ตลอดเวลา",
+    }),
+  },
+};
 
 const templates = [
   {
@@ -230,7 +449,12 @@ const templates = [
   },
 ];
 
-export function generateIdea(pattern, category = "any", previousIdeaId = "") {
+export function generateIdea(
+  pattern,
+  category = "any",
+  previousIdeaId = "",
+  language = "zh",
+) {
   let candidates = templates.filter(
     (template) => category === "any" || template.category === category,
   );
@@ -245,13 +469,22 @@ export function generateIdea(pattern, category = "any", previousIdeaId = "") {
   const template =
     candidates[Math.floor(Math.random() * candidates.length)] || templates[0];
   const meta = categoryMeta[template.category];
+  const localizedBuild =
+    language === "zh"
+      ? template.build(describe(pattern))
+      : localizedBuilders[language][template.category](
+          describeLocalized(pattern, language),
+        );
 
   return {
     id: template.id,
     category: template.category,
-    categoryLabel: meta.label,
+    categoryLabel:
+      language === "zh"
+        ? meta.label
+        : localizedCategoryLabels[language][template.category],
     code: meta.code,
     tone: meta.tone,
-    ...template.build(describe(pattern)),
+    ...localizedBuild,
   };
 }
