@@ -1,11 +1,15 @@
-import {
-  activityWebsite,
-  articleMeta,
-  museums,
-  sections,
-  websiteRoles,
-} from "./recap-content";
+import * as recapZh from "./recap-content";
+import * as recapEn from "./recap-content.en";
+import * as recapTh from "./recap-content.th";
+import { useI18n } from "./i18n";
+import { recapUi } from "./recap-ui";
 import "./recap.css";
+
+const recapContent = {
+  zh: recapZh,
+  th: recapTh,
+  en: recapEn,
+};
 
 function SectionHeading({ kicker, title }) {
   return (
@@ -27,14 +31,25 @@ function Paragraphs({ items }) {
 }
 
 export function RecapPage() {
+  const { language } = useI18n();
+  const {
+    articleMeta,
+    museums,
+    sections,
+    websiteRoles,
+  } = recapContent[language] ?? recapZh;
+  const ui = recapUi[language] ?? recapUi.zh;
+  const activityWebsite = language === "zh" ? "/" : `/?lang=${language}`;
+  const activitySection = (id) => `${activityWebsite}#${id}`;
+
   return (
     <article className="recap-page">
       <section className="hero" id="recap-top">
         <div className="hero-copy">
           <p className="hero-eyebrow">{articleMeta.eyebrow}</p>
           <h1>
-            带着一枚纹样
-            <span>重新认识我们生活的清迈</span>
+            {articleMeta.titleLines[0]}
+            <span>{articleMeta.titleLines[1]}</span>
           </h1>
           <p className="hero-subtitle">{articleMeta.subtitle}</p>
           <div className="hero-meta">
@@ -45,38 +60,28 @@ export function RecapPage() {
         <figure className="hero-image">
           <img
             src="/assets/recap/article/textile-pillars.jpg"
-            alt="FAM Fahlanna Art Museum 展厅中的兰纳织物立柱"
+            alt={ui.hero.imageAlt}
           />
           <figcaption>
-            FAM · KINGDOM OF TEXTILES
-            <span>由 HEIC 原片转换并整理</span>
+            {ui.hero.imageCaption}
+            <span>{ui.hero.sourceNote}</span>
           </figcaption>
         </figure>
         <div className="hero-seal" aria-hidden="true">
-          <span>兰纳</span>
-          <small>LANNA</small>
+          <span>{ui.hero.seal}</span>
+          <small>{ui.hero.sealLatin}</small>
         </div>
       </section>
 
       <section className="standfirst shell">
         <p>{articleMeta.standfirst}</p>
-        <div className="fact-strip" aria-label="活动数据">
-          <div>
-            <strong>10+</strong>
-            <span>位参与者</span>
-          </div>
-          <div>
-            <strong>400+</strong>
-            <span>张采集照片</span>
-          </div>
-          <div>
-            <strong>90</strong>
-            <span>分钟现场共创</span>
-          </div>
-          <div>
-            <strong>06</strong>
-            <span>个作品原型</span>
-          </div>
+        <div className="fact-strip" aria-label={ui.facts.aria}>
+          {ui.facts.items.map(([value, label]) => (
+            <div key={label}>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -90,11 +95,9 @@ export function RecapPage() {
           <figure className="editorial-figure landscape">
             <img
               src="/assets/recap/article/event-cover.jpg"
-              alt="CMI Studio 半开放空间内，参与者围坐进行 AI 共创"
+              alt={ui.opening.imageAlt}
             />
-            <figcaption>
-              新接通的网络、搬来的旧家具，以及第一次被共同使用的新空间。
-            </figcaption>
+            <figcaption>{ui.opening.caption}</figcaption>
           </figure>
         </div>
       </section>
@@ -109,9 +112,9 @@ export function RecapPage() {
             <figure className="tall-image">
               <img
                 src="/assets/recap/article/team-making.jpg"
-                alt="年轻参与者围着电脑和手绘草图共同创作"
+                alt={ui.shindo.imageAlt}
               />
-              <figcaption>从细节出发，想法在讨论中慢慢显形。</figcaption>
+              <figcaption>{ui.shindo.caption}</figcaption>
             </figure>
             <div>
               <Paragraphs items={sections.shindo.paragraphs} />
@@ -131,8 +134,8 @@ export function RecapPage() {
         />
         <div className="pattern-layout">
           <Paragraphs items={sections.whyPattern.paragraphs} />
-          <ol className="method-line" aria-label="纹样观察方法">
-            {["看见", "记录", "核验", "提问", "再创作"].map((item, index) => (
+          <ol className="method-line" aria-label={ui.pattern.aria}>
+            {ui.pattern.steps.map((item, index) => (
               <li key={item}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 {item}
@@ -143,11 +146,9 @@ export function RecapPage() {
         <figure className="pattern-banner">
           <img
             src="/assets/recap/article/procession-pattern.jpg"
-            alt="FAM 展出的佛教礼敬行列图案 Mud Mee 织物"
+            alt={ui.pattern.imageAlt}
           />
-          <figcaption>
-            纹样不是可以随意抽离的装饰。材料、工艺、用途与信仰，共同决定它如何出现。
-          </figcaption>
+          <figcaption>{ui.pattern.caption}</figcaption>
         </figure>
       </section>
 
@@ -161,27 +162,27 @@ export function RecapPage() {
             <Paragraphs items={sections.museums.paragraphs} />
             <aside className="side-note">
               <span>FIELD NOTE</span>
-              两座博物馆是本次活动的推荐参观地点，并非活动联合主办方。
+              {ui.museumStory.note}
             </aside>
           </div>
           <div className="museum-mosaic">
             <figure className="mosaic-main">
               <img
                 src="/assets/recap/article/wooden-loom.jpg"
-                alt="FAM 展厅中的传统木织机和正在织造的条纹织物"
+                alt={ui.museumStory.loomAlt}
               />
-              <figcaption>工艺不是纹样背后的注脚，它就是纹样如何发生。</figcaption>
+              <figcaption>{ui.museumStory.loomCaption}</figcaption>
             </figure>
             <figure>
               <img
                 src="/assets/recap/article/lanna-roof-pattern.jpg"
-                alt="FAM 展厅中的兰纳红金建筑纹饰"
+                alt={ui.museumStory.roofAlt}
               />
             </figure>
             <figure className="mosaic-wide">
               <img
                 src="/assets/recap/article/fam-red-gold-panorama.jpg"
-                alt="FAM 博物馆内红金祭坛主题展陈空间"
+                alt={ui.museumStory.panoramaAlt}
               />
             </figure>
           </div>
@@ -196,27 +197,17 @@ export function RecapPage() {
         <div className="capture-grid">
           <Paragraphs items={sections.capture.paragraphs} />
           <div className="capture-card">
-            <p className="capture-card-title">一套更轻的采集顺序</p>
+            <p className="capture-card-title">{ui.capture.title}</p>
             <ol>
-              <li>
-                <span>01</span>
-                <strong>DETAIL</strong>
-                先拍多个纹样细节
-              </li>
-              <li>
-                <span>02</span>
-                <strong>OBJECT</strong>
-                再拍完整载体
-              </li>
-              <li>
-                <span>03</span>
-                <strong>LABEL</strong>
-                最后拍展签与来源
-              </li>
+              {ui.capture.steps.map(([label, text], index) => (
+                <li key={label}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{label}</strong>
+                  {text}
+                </li>
+              ))}
             </ol>
-            <p className="capture-card-foot">
-              先让眼睛自由地看，理解与建档可以在离开展厅之后慢慢完成。
-            </p>
+            <p className="capture-card-foot">{ui.capture.foot}</p>
           </div>
         </div>
       </section>
@@ -243,7 +234,7 @@ export function RecapPage() {
           <a
             className="browser-frame"
             href={activityWebsite}
-            aria-label="打开清迈兰纳纹样活动网站"
+            aria-label={ui.website.aria}
           >
             <div className="browser-bar">
               <span />
@@ -253,28 +244,28 @@ export function RecapPage() {
             </div>
             <img
               src="/assets/recap/article/activity-site.jpg"
-              alt="清迈兰纳纹样活动网站首页"
+              alt={ui.website.imageAlt}
             />
             <div className="browser-cta">
-              <span>进入清迈兰纳纹样档案</span>
-              <strong>OPEN THE WEBSITE ↗</strong>
+              <span>{ui.website.enter}</span>
+              <strong>{ui.website.cta}</strong>
             </div>
           </a>
           <div className="website-links">
             <a
-              href={`${activityWebsite}#works`}
+              href={activitySection("works")}
             >
-              查看现场作品 <span>↗</span>
+              {ui.website.works} <span>↗</span>
             </a>
             <a
-              href={`${activityWebsite}#archive`}
+              href={activitySection("archive")}
             >
-              浏览纹样档案 <span>↗</span>
+              {ui.website.archive} <span>↗</span>
             </a>
             <a
-              href={`${activityWebsite}#museums`}
+              href={activitySection("museums")}
             >
-              选择参观路线 <span>↗</span>
+              {ui.website.museums} <span>↗</span>
             </a>
           </div>
         </div>
@@ -291,15 +282,15 @@ export function RecapPage() {
             <figure>
               <img
                 src="/assets/recap/article/participants.jpg"
-                alt="参与者在玻璃窗前围桌交流"
+                alt={ui.making.participantsAlt}
               />
             </figure>
             <figure>
               <img
                 src="/assets/recap/article/ai-making.jpg"
-                alt="电脑中的 AI 创作界面与桌面手绘草图同框"
+                alt={ui.making.aiAlt}
               />
-              <figcaption>AI 生成界面、手绘草图与现场讨论同时发生。</figcaption>
+              <figcaption>{ui.making.caption}</figcaption>
             </figure>
           </div>
         </div>
@@ -317,11 +308,9 @@ export function RecapPage() {
           <figure>
             <img
               src="/assets/recap/article/remote-opening.jpg"
-              alt="CMI Studio 的大屏幕上显示全国线上连线参与者"
+              alt={ui.organization.imageAlt}
             />
-            <figcaption>
-              线下的小桌子和远程的大屏幕，共同组成这次活动的现场。
-            </figcaption>
+            <figcaption>{ui.organization.caption}</figcaption>
           </figure>
         </div>
       </section>
@@ -337,20 +326,18 @@ export function RecapPage() {
         <figure>
           <img
             src="/assets/recap/article/milan-cat.jpg"
-            alt="白色小猫米兰坐在 CMI Studio 的绿植旁"
+            alt={ui.studio.imageAlt}
           />
-          <figcaption>米兰在绿植旁边看着新空间慢慢被使用。</figcaption>
+          <figcaption>{ui.studio.caption}</figcaption>
         </figure>
       </section>
 
       <section className="guide-section" id="museum-guide">
         <div className="shell">
           <header className="guide-heading">
-            <p className="kicker">VISIT / MUSEUM ROUTES</p>
-            <h2>如果你也想沿着这次活动的路线逛博物馆</h2>
-            <p>
-              两个入口，两种接近兰纳的方式。不要试图一次记住所有知识，先为自己选择一个观察问题。
-            </p>
+            <p className="kicker">{ui.guide.kicker}</p>
+            <h2>{ui.guide.title}</h2>
+            <p>{ui.guide.intro}</p>
           </header>
           <div className="route-grid">
             {museums.map((museum) => (
@@ -369,15 +356,15 @@ export function RecapPage() {
                   </div>
                   <dl>
                     <div>
-                      <dt>适合你，如果</dt>
+                      <dt>{ui.guide.suitable}</dt>
                       <dd>{museum.suitable}</dd>
                     </div>
                     <div>
-                      <dt>重点看</dt>
+                      <dt>{ui.guide.focus}</dt>
                       <dd>{museum.focus}</dd>
                     </div>
                     <div>
-                      <dt>推荐逛法</dt>
+                      <dt>{ui.guide.method}</dt>
                       <dd>{museum.method}</dd>
                     </div>
                   </dl>
@@ -387,19 +374,17 @@ export function RecapPage() {
                   </div>
                   <div className="route-links">
                     <a href={museum.website} target="_blank" rel="noreferrer">
-                      官网 ↗
+                      {ui.guide.website}
                     </a>
                     <a href={museum.map} target="_blank" rel="noreferrer">
-                      地图 ↗
+                      {ui.guide.map}
                     </a>
                   </div>
                 </div>
               </article>
             ))}
           </div>
-          <p className="guide-note">
-            以上信息核验于 2026 年 7 月 29 日。开放时间、票价和临时展览可能调整，出发前请以馆方最新公告为准。两座博物馆是本次活动的推荐参观地点，并非活动联合主办方。
-          </p>
+          <p className="guide-note">{ui.guide.note}</p>
         </div>
       </section>
 
@@ -412,7 +397,7 @@ export function RecapPage() {
           />
           <Paragraphs items={sections.closing.paragraphs} />
           <a href={activityWebsite}>
-            继续浏览兰纳纹样档案 <span>↗</span>
+            {ui.closing.cta} <span>↗</span>
           </a>
         </div>
       </section>

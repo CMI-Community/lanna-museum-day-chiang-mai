@@ -3,6 +3,7 @@ export const activityWebsite = "/";
 export const articleMeta = {
   eyebrow: "MUSEUM DAY · CHIANG MAI / FIELD NOTES 2026",
   title: "带着一枚纹样，重新认识我们生活的清迈",
+  titleLines: ["带着一枚纹样", "重新认识我们生活的清迈"],
   subtitle: "从博物馆采集、AI 共创，到一座持续生长的线上纹样档案",
   standfirst:
     "十多个人、四百多张博物馆照片、六个现场原型。这个下午真正留下来的，不只是作品，而是一种重新观看博物馆、理解地方文化，也重新组织一场活动的方法。",

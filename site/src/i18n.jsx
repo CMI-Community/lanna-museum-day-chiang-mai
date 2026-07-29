@@ -374,7 +374,7 @@ const messages = {
       worksCue: "ชมผลงานที่เกิดขึ้นในวันนั้น",
       recapKicker: "FIELD NOTES / บันทึกกิจกรรม",
       recapTitle:
-        "พกลวดลายหนึ่งชิ้น แล้วทำความรู้จักเชียงใหม่ที่เราอาศัยอยู่อีกครั้ง",
+        "พกลวดลายหนึ่งชิ้น แล้วมองเชียงใหม่ด้วยสายตาใหม่",
       recapEdition: "เชียงใหม่ · 2026.07",
       recapChapter: "จากการมองเห็น สู่การร่วมสร้าง",
       recapPageTitle: "ลวดลายหนึ่งชิ้น เติบโตเป็นพิพิธภัณฑ์ร่วมกันได้อย่างไร",
@@ -698,7 +698,7 @@ const messages = {
       collect: "Start collecting",
       worksCue: "See the works created that day",
       recapKicker: "FIELD NOTES / EVENT RECAP",
-      recapTitle: "Carry one pattern, and meet the Chiang Mai we live in again",
+      recapTitle: "Carrying a Pattern, Seeing Our Chiang Mai Anew",
       recapEdition: "Chiang Mai · 2026.07",
       recapChapter: "From noticing to making together",
       recapPageTitle: "How can one pattern grow into a shared museum?",
@@ -1041,8 +1041,8 @@ export function I18nProvider({ children }) {
     const titles = isRecapPage
       ? {
           zh: "带着一枚纹样，重新认识我们生活的清迈｜活动回顾",
-          th: "บันทึกกิจกรรมลวดลายล้านนาและเชียงใหม่｜CMI FIELD NOTES",
-          en: "Carry one pattern, and meet Chiang Mai again | CMI Field Notes",
+          th: "พกลวดลายหนึ่งชิ้น แล้วมองเชียงใหม่ด้วยสายตาใหม่｜บันทึกกิจกรรม CMI",
+          en: "Carrying a Pattern, Seeing Our Chiang Mai Anew | CMI Field Notes",
         }
       : {
           zh: "7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO",

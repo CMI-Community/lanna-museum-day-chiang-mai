@@ -62,8 +62,6 @@ const toneColors = {
   pink: "#e34f7d",
 };
 
-const eventRecapUrl = "/recap";
-
 const getFeaturedWorks = (t) => [
   {
     id: "pattern-garden",
@@ -399,12 +397,13 @@ function Header() {
 }
 
 function RecapBook() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
+  const recapHref = language === "zh" ? "/recap" : `/recap?lang=${language}`;
 
   return (
     <a
       className="hero-recap-book"
-      href={eventRecapUrl}
+      href={recapHref}
       aria-label={t("hero.recapAria")}
     >
       <span className="hero-recap-book__page-edges" aria-hidden="true" />
@@ -2496,9 +2495,12 @@ function CreationVideo() {
 }
 
 function Footer() {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
+  const localizedHome = language === "zh" ? "/" : `/?lang=${language}`;
   const homeHref =
-    window.location.pathname.replace(/\/+$/, "") === "/recap" ? "/" : "#top";
+    window.location.pathname.replace(/\/+$/, "") === "/recap"
+      ? localizedHome
+      : "#top";
   return (
     <footer className="site-footer">
       <div className="site-footer__art" aria-hidden="true">
