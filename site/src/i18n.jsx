@@ -57,6 +57,16 @@ const messages = {
       location: "报名入群后获取详细信息",
       collect: "开始采集纹样",
       worksCue: "看看现场留下的作品",
+      recapKicker: "FIELD NOTES / 活动回顾",
+      recapTitle: "带着一枚纹样，重新认识我们生活的清迈",
+      recapEdition: "清迈 · 2026.07",
+      recapChapter: "从看见，到共同创造",
+      recapPageTitle: "一枚纹样，如何长成一座共同的博物馆？",
+      recapSummary:
+        "从博物馆采集、现场围坐共创，到一座持续生长的线上兰纳纹样档案。这是这次活动留下的完整故事。",
+      recapTopics: "博物馆采集 · AI 共创 · 纹样档案",
+      recapCta: "翻开完整回顾",
+      recapAria: "打开《带着一枚纹样，重新认识我们生活的清迈》完整活动回顾",
     },
     works: {
       kicker: "AFTER / 作品上墙",
@@ -360,6 +370,18 @@ const messages = {
       location: "รับรายละเอียดหลังเข้ากลุ่ม",
       collect: "เริ่มเก็บลวดลาย",
       worksCue: "ชมผลงานที่เกิดขึ้นในวันนั้น",
+      recapKicker: "FIELD NOTES / บันทึกกิจกรรม",
+      recapTitle:
+        "พกลวดลายหนึ่งชิ้น แล้วทำความรู้จักเชียงใหม่ที่เราอาศัยอยู่อีกครั้ง",
+      recapEdition: "เชียงใหม่ · 2026.07",
+      recapChapter: "จากการมองเห็น สู่การร่วมสร้าง",
+      recapPageTitle: "ลวดลายหนึ่งชิ้น เติบโตเป็นพิพิธภัณฑ์ร่วมกันได้อย่างไร",
+      recapSummary:
+        "จากการเก็บลวดลายในพิพิธภัณฑ์ การร่วมสร้างรอบโต๊ะ ไปจนถึงคลังลวดลายล้านนาออนไลน์ที่ยังเติบโตต่อไป นี่คือเรื่องราวฉบับเต็มของกิจกรรมครั้งนี้",
+      recapTopics: "สำรวจพิพิธภัณฑ์ · ร่วมสร้างกับ AI · คลังลวดลาย",
+      recapCta: "เปิดอ่านบันทึกฉบับเต็ม",
+      recapAria:
+        "เปิดอ่านบันทึกกิจกรรมฉบับเต็มเกี่ยวกับลวดลายล้านนาและเชียงใหม่",
     },
     works: {
       kicker: "AFTER / จัดแสดงผลงาน",
@@ -672,6 +694,17 @@ const messages = {
       location: "Details available after joining the group",
       collect: "Start collecting",
       worksCue: "See the works created that day",
+      recapKicker: "FIELD NOTES / EVENT RECAP",
+      recapTitle: "Carry one pattern, and meet the Chiang Mai we live in again",
+      recapEdition: "Chiang Mai · 2026.07",
+      recapChapter: "From noticing to making together",
+      recapPageTitle: "How can one pattern grow into a shared museum?",
+      recapSummary:
+        "From museum fieldwork and making together around a table to a growing online archive of Lanna patterns—this is the full story of the gathering.",
+      recapTopics: "Museum fieldwork · AI co-creation · Pattern archive",
+      recapCta: "Open the full story",
+      recapAria:
+        "Open the full event recap, Carry one pattern and meet Chiang Mai again",
     },
     works: {
       kicker: "AFTER / Works on view",

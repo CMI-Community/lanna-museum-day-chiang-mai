@@ -61,6 +61,9 @@ const toneColors = {
   pink: "#e34f7d",
 };
 
+const eventRecapUrl =
+  "https://lanna-field-notes-chiang-mai.vercel.app/";
+
 const getFeaturedWorks = (t) => [
   {
     id: "pattern-garden",
@@ -408,6 +411,65 @@ function SignupDialog({ open, onClose }) {
   );
 }
 
+function RecapBook() {
+  const { t } = useI18n();
+
+  return (
+    <a
+      className="hero-recap-book"
+      href={eventRecapUrl}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={t("hero.recapAria")}
+    >
+      <span className="hero-recap-book__page-edges" aria-hidden="true" />
+      <span className="hero-recap-book__cover">
+        <img
+          src="/assets/recap/lanna-field-notes-cover.jpg"
+          alt=""
+          aria-hidden="true"
+        />
+        <span className="hero-recap-book__cover-shade" aria-hidden="true" />
+        <span className="hero-recap-book__cover-frame" aria-hidden="true" />
+        <span className="hero-recap-book__cover-copy">
+          <span className="hero-recap-book__kicker">
+            {t("hero.recapKicker")}
+          </span>
+          <strong>{t("hero.recapTitle")}</strong>
+          <span className="hero-recap-book__edition">
+            {t("hero.recapEdition")}
+          </span>
+          <span className="hero-recap-book__mobile-cta">
+            {t("hero.recapCta")}
+            <ArrowRight size={18} weight="bold" />
+          </span>
+        </span>
+      </span>
+
+      <span className="hero-recap-book__spine" aria-hidden="true" />
+
+      <span className="hero-recap-book__page">
+        <span className="hero-recap-book__folio">CMI / FIELD NOTES / 01</span>
+        <span className="hero-recap-book__chapter">
+          {t("hero.recapChapter")}
+        </span>
+        <strong>{t("hero.recapPageTitle")}</strong>
+        <span className="hero-recap-book__summary">
+          {t("hero.recapSummary")}
+        </span>
+        <span className="hero-recap-book__topics">
+          {t("hero.recapTopics")}
+        </span>
+        <span className="hero-recap-book__cta">
+          {t("hero.recapCta")}
+          <ArrowRight size={19} weight="bold" />
+        </span>
+        <span className="hero-recap-book__page-number">01</span>
+      </span>
+    </a>
+  );
+}
+
 function Hero({ onSignup }) {
   const { t } = useI18n();
   const scrollToCollect = () => {
@@ -422,74 +484,81 @@ function Hero({ onSignup }) {
         alt=""
         aria-hidden="true"
       />
-      <div className="hero__content">
-        <div className="hero__series">
-          <span>{t("hero.series")}</span>
-          <span>{t("hero.event")}</span>
-        </div>
-        <h1>
-          <span>{t("hero.headlineBefore")}</span>
-          <em>Lanna</em>
-          <span>{t("hero.headlineAfter")}</span>
-        </h1>
-        <div className="hero__subtitle">
-          <Sparkle size={23} weight="fill" />
-          {t("hero.subtitle")}
-          <Sparkle size={17} weight="fill" />
+      <div className="hero__layout">
+        <div className="hero__content hero__content--intro">
+          <div className="hero__series">
+            <span>{t("hero.series")}</span>
+            <span>{t("hero.event")}</span>
+          </div>
+          <h1>
+            <span>{t("hero.headlineBefore")}</span>
+            <em>Lanna</em>
+            <span>{t("hero.headlineAfter")}</span>
+          </h1>
+          <div className="hero__subtitle">
+            <Sparkle size={23} weight="fill" />
+            {t("hero.subtitle")}
+            <Sparkle size={17} weight="fill" />
+          </div>
+
+          <div className="hero__credits">
+            <div
+              className="initiator"
+              aria-label={`WaytoAGI ${t("hero.initiator")}`}
+            >
+              <img
+                src="/assets/brand/waytoagi-logo-transparent.svg"
+                alt="WaytoAGI"
+              />
+              <span>{t("hero.initiator")}</span>
+            </div>
+            <div className="hero__venue-credit">{t("hero.venue")}</div>
+          </div>
         </div>
 
-        <div className="hero__credits">
-          <div className="initiator" aria-label={`WaytoAGI ${t("hero.initiator")}`}>
-            <img
-              src="/assets/brand/waytoagi-logo-transparent.svg"
-              alt="WaytoAGI"
-            />
-            <span>{t("hero.initiator")}</span>
-          </div>
-          <div className="hero__venue-credit">
-            {t("hero.venue")}
-          </div>
-        </div>
+        <RecapBook />
 
-        <dl className="hero__facts">
-          <div>
-            <dt>
-              <CalendarBlank size={19} />
-              {t("hero.timeLabel")}
-            </dt>
-            <dd>{t("hero.time")}</dd>
-          </div>
-          <div>
-            <dt>
-              <MapPin size={19} />
-              {t("hero.placeLabel")}
-            </dt>
-            <dd>CMI Studio</dd>
-          </div>
-          <div>
-            <dt>
-              <Buildings size={19} />
-              {t("hero.locationLabel")}
-            </dt>
-            <dd>{t("hero.location")}</dd>
-          </div>
-        </dl>
+        <div className="hero__content hero__content--details">
+          <dl className="hero__facts">
+            <div>
+              <dt>
+                <CalendarBlank size={19} />
+                {t("hero.timeLabel")}
+              </dt>
+              <dd>{t("hero.time")}</dd>
+            </div>
+            <div>
+              <dt>
+                <MapPin size={19} />
+                {t("hero.placeLabel")}
+              </dt>
+              <dd>CMI Studio</dd>
+            </div>
+            <div>
+              <dt>
+                <Buildings size={19} />
+                {t("hero.locationLabel")}
+              </dt>
+              <dd>{t("hero.location")}</dd>
+            </div>
+          </dl>
 
-        <div className="hero__actions">
-          <Button
-            onClick={onSignup}
-            icon={<Sparkle size={21} weight="fill" />}
-          >
-            {t("signup.action")}
-          </Button>
-          <Button
-            variant="outline"
-            className="hero__collect-button"
-            onClick={scrollToCollect}
-            icon={<Camera size={21} />}
-          >
-            {t("hero.collect")}
-          </Button>
+          <div className="hero__actions">
+            <Button
+              onClick={onSignup}
+              icon={<Sparkle size={21} weight="fill" />}
+            >
+              {t("signup.action")}
+            </Button>
+            <Button
+              variant="outline"
+              className="hero__collect-button"
+              onClick={scrollToCollect}
+              icon={<Camera size={21} />}
+            >
+              {t("hero.collect")}
+            </Button>
+          </div>
         </div>
       </div>
       <button
