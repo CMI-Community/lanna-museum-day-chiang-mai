@@ -167,7 +167,15 @@ select:focus-visible,
 
 .button:disabled {
   opacity: 0.55;
-  cursor: wait;
+  cursor: not-allowed;
+}
+
+.ended-button:disabled {
+  opacity: 1;
+  color: #fff;
+  border-color: #76667d;
+  background: #76667d;
+  box-shadow: none;
 }
 
 .button--primary {
@@ -633,10 +641,18 @@ html[data-language="th"] .hero h1 span:last-child {
   gap: 14px;
 }
 
-.hero-recap-book {
+.hero-recap-entry {
   grid-area: book;
-  position: relative;
   width: min(100%, 760px);
+  justify-self: end;
+  display: grid;
+  gap: 18px;
+  justify-items: end;
+}
+
+.hero-recap-book {
+  position: relative;
+  width: 100%;
   aspect-ratio: 1.43;
   justify-self: end;
   display: grid;
@@ -649,6 +665,94 @@ html[data-language="th"] .hero h1 span:last-child {
     transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
     filter 320ms ease;
   isolation: isolate;
+}
+
+.hero-recap-entry__hint {
+  width: fit-content;
+  max-width: min(100%, 520px);
+  margin: 0 12px 0 0;
+  padding: 11px 15px;
+  border: 1px solid rgba(92, 38, 131, 0.22);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--purple-dark);
+  background: rgba(255, 250, 238, 0.9);
+  box-shadow: 4px 4px 0 rgba(92, 38, 131, 0.1);
+  font-size: 0.86rem;
+  font-weight: 760;
+}
+
+.hero-recap-entry__hint svg {
+  flex: 0 0 auto;
+}
+
+.hero-followup {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid rgba(92, 38, 131, 0.22);
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 15px;
+  align-items: start;
+  background: rgba(255, 250, 238, 0.9);
+  box-shadow: 6px 6px 0 rgba(92, 38, 131, 0.09);
+}
+
+.hero-followup__qr {
+  padding: 5px;
+  border: 1px solid rgba(92, 38, 131, 0.18);
+  background: #fff;
+}
+
+.hero-followup__qr img {
+  width: 100%;
+  aspect-ratio: 1;
+  display: block;
+  object-fit: contain;
+}
+
+.hero-followup__copy {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.hero-followup__kicker {
+  color: var(--orange-dark);
+  font-size: 0.64rem;
+  font-weight: 840;
+  letter-spacing: 0.09em;
+}
+
+.hero-followup__copy > strong {
+  color: var(--purple-dark);
+  font-size: 0.94rem;
+  line-height: 1.35;
+}
+
+.hero-followup__copy p,
+.hero-followup__copy small {
+  margin: 0;
+  color: #645968;
+  font-size: 0.73rem;
+  line-height: 1.55;
+}
+
+.hero-followup__contact {
+  margin-top: 3px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(92, 38, 131, 0.14);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  color: var(--purple-dark);
+  font-size: 0.74rem;
+}
+
+.hero-followup__contact strong {
+  overflow-wrap: anywhere;
 }
 
 .hero-recap-book:hover,
@@ -4346,6 +4450,15 @@ html[data-language="en"] .hero-recap-book__page > strong {
     justify-self: center;
   }
 
+  .hero-recap-entry {
+    justify-self: center;
+    justify-items: center;
+  }
+
+  .hero-recap-entry__hint {
+    margin-right: 0;
+  }
+
   .hero h1 {
     font-size: clamp(4.4rem, 10.5vw, 6.8rem);
   }
@@ -4584,6 +4697,23 @@ html[data-language="en"] .hero-recap-book__page > strong {
     margin-top: 0;
     justify-self: center;
     transform: rotate(-1.7deg);
+  }
+
+  .hero-recap-entry {
+    width: 100%;
+  }
+
+  .hero-recap-entry__hint {
+    max-width: 92vw;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    text-align: left;
+  }
+
+  .hero-followup {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
   }
 
   .hero-recap-book:hover,
@@ -5249,6 +5379,11 @@ html[data-language="en"] .hero-recap-book__page > strong {
 
   .hero__actions {
     grid-template-columns: 1fr;
+  }
+
+  .hero-followup {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 10px;
   }
 
   .archive-grid {

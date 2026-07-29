@@ -299,7 +299,7 @@ function LanguageSwitcher() {
   );
 }
 
-function Header({ onSignup }) {
+function Header() {
   const { language, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const isRecapPage = window.location.pathname.replace(/\/+$/, "") === "/recap";
@@ -365,7 +365,7 @@ function Header({ onSignup }) {
 
       <div className="header-actions">
         <LanguageSwitcher />
-        <Button className="desktop-signup" onClick={onSignup}>
+        <Button className="desktop-signup ended-button" disabled>
           {t("signup.action")}
         </Button>
       </div>
@@ -393,65 +393,12 @@ function Header({ onSignup }) {
               <ArrowRight size={18} />
             </button>
           ))}
-          <Button onClick={onSignup}>{t("signup.action")}</Button>
+          <Button className="ended-button" disabled>
+            {t("signup.action")}
+          </Button>
         </div>
       ) : null}
     </header>
-  );
-}
-
-function SignupDialog({ open, onClose }) {
-  const { t } = useI18n();
-
-  return (
-    <Dialog open={open} onClose={onClose} label={t("signup.dialogLabel")}>
-      <div className="signup-dialog">
-        <div className="section-kicker">{t("signup.kicker")}</div>
-        <h2>{t("signup.title")}</h2>
-        <p>{t("signup.description")}</p>
-
-        <div className="signup-dialog__commitment">
-          <CheckCircle size={22} weight="fill" />
-          <div>
-            <strong>{t("signup.confirmTitle")}</strong>
-            <span>{t("signup.confirmText")}</span>
-          </div>
-        </div>
-
-        <div className="signup-dialog__qr">
-          <img
-            src="/assets/registration/cmi-official-account-qr.jpg"
-            alt={t("signup.qrAlt")}
-            onError={(event) => {
-              event.currentTarget.hidden = true;
-              event.currentTarget
-                .closest(".signup-dialog__qr")
-                ?.classList.add("is-unavailable");
-            }}
-          />
-          <div className="qr-fallback">
-            <strong>{t("signup.qrUnavailable")}</strong>
-            <span>{t("signup.qrUnavailableHelp")}</span>
-          </div>
-        </div>
-
-        <div className="signup-dialog__notice">
-          <Sparkle size={18} weight="fill" />
-          {t("signup.qrNotice")}
-        </div>
-
-        <div className="signup-dialog__contact">
-          <div>
-            <strong>{t("signup.contactTitle")}</strong>
-            <span>{t("signup.contactDescription")}</span>
-          </div>
-          <div className="signup-dialog__wechat">
-            <span>{t("signup.wechatLabel")}</span>
-            <strong>LinkLinkGuan</strong>
-          </div>
-        </div>
-      </div>
-    </Dialog>
   );
 }
 
@@ -513,7 +460,7 @@ function RecapBook() {
   );
 }
 
-function Hero({ onSignup }) {
+function Hero() {
   const { t } = useI18n();
   const scrollToCollect = () => {
     document.getElementById("collect")?.scrollIntoView({ behavior: "smooth" });
@@ -559,7 +506,13 @@ function Hero({ onSignup }) {
           </div>
         </div>
 
-        <RecapBook />
+        <div className="hero-recap-entry">
+          <RecapBook />
+          <p className="hero-recap-entry__hint">
+            <ArrowRight size={18} weight="bold" />
+            {t("hero.recapHint")}
+          </p>
+        </div>
 
         <div className="hero__content hero__content--details">
           <dl className="hero__facts">
@@ -588,8 +541,9 @@ function Hero({ onSignup }) {
 
           <div className="hero__actions">
             <Button
-              onClick={onSignup}
-              icon={<Sparkle size={21} weight="fill" />}
+              className="ended-button"
+              disabled
+              icon={<CheckCircle size={21} weight="fill" />}
             >
               {t("signup.action")}
             </Button>
@@ -602,6 +556,32 @@ function Hero({ onSignup }) {
               {t("hero.collect")}
             </Button>
           </div>
+
+          <aside
+            className="hero-followup"
+            aria-label={t("signup.followupLabel")}
+          >
+            <div className="hero-followup__qr">
+              <img
+                src="/assets/registration/cmi-official-account-qr.jpg"
+                alt={t("signup.qrAlt")}
+              />
+            </div>
+            <div className="hero-followup__copy">
+              <span className="hero-followup__kicker">
+                {t("signup.kicker")}
+              </span>
+              <strong>{t("signup.followupTitle")}</strong>
+              <p>{t("signup.description")}</p>
+              <small>{t("signup.qrNotice")}</small>
+              <div className="hero-followup__contact">
+                <span>{t("signup.contactTitle")}</span>
+                <strong>
+                  {t("signup.wechatLabel")} · LinkLinkGuan
+                </strong>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
       <button
@@ -2559,7 +2539,7 @@ function CreationVideo() {
   );
 }
 
-function Footer({ onSignup }) {
+function Footer() {
   const { language, t } = useI18n();
   const localizedHome = language === "zh" ? "/" : `/?lang=${language}`;
   const homeHref =
@@ -2579,7 +2559,7 @@ function Footer({ onSignup }) {
           <h2>{t("footer.title")}</h2>
           <p>{t("footer.intro")}</p>
         </div>
-        <Button variant="accent" onClick={onSignup}>
+        <Button variant="accent" className="ended-button" disabled>
           {t("signup.action")}
         </Button>
       </div>
@@ -2596,7 +2576,6 @@ function Footer({ onSignup }) {
 }
 
 export function App() {
-  const [signupOpen, setSignupOpen] = useState(false);
   const [selectedPattern, setSelectedPattern] = useState(null);
   const [ideaPattern, setIdeaPattern] = useState(null);
   const [archiveRefreshKey, setArchiveRefreshKey] = useState(0);
@@ -2619,13 +2598,13 @@ export function App() {
 
   return (
     <>
-      <Header onSignup={() => setSignupOpen(true)} />
+      <Header />
       <main>
         {isRecapPage ? (
           <RecapPage />
         ) : (
           <>
-            <Hero onSignup={() => setSignupOpen(true)} />
+            <Hero />
             <WorksShowcase />
             <Manifesto />
             <Journey />
@@ -2644,8 +2623,7 @@ export function App() {
           </>
         )}
       </main>
-      <Footer onSignup={() => setSignupOpen(true)} />
-      <SignupDialog open={signupOpen} onClose={() => setSignupOpen(false)} />
+      <Footer />
       <PatternDetailDialog
         pattern={selectedPattern}
         onClose={() => setSelectedPattern(null)}

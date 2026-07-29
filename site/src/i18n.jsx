@@ -27,7 +27,7 @@ const messages = {
       recap: "活动回顾",
     },
     signup: {
-      action: "活动已结束",
+      action: "活动已经结束",
       dialogLabel: "活动结束与 CMI 联系方式",
       kicker: "FOLLOW / 继续关注 CMI",
       title: "本次活动已经结束",
@@ -43,6 +43,8 @@ const messages = {
       contactTitle: "有相关需求？",
       contactDescription: "活动、文化共创或社区合作，都可以直接联系。",
       wechatLabel: "微信",
+      followupLabel: "活动结束后的 CMI 关注与联系方式",
+      followupTitle: "关注 CMI，继续收到后续消息",
     },
     hero: {
       series: "AI 切磋大会 第 26 期",
@@ -69,11 +71,12 @@ const messages = {
       recapTopics: "博物馆采集 · AI 共创 · 纹样档案",
       recapCta: "翻开完整回顾",
       recapAria: "打开《带着一枚纹样，重新认识我们生活的清迈》完整活动回顾",
+      recapHint: "点击查看活动中到底发生了什么",
     },
     works: {
-      kicker: "AFTER / 作品上墙",
-      titleLine1: "这一天留下的，",
-      titleLine2: "不只是纹样。",
+      kicker: "AFTER / 成果展示",
+      titleLine1: "活动成果",
+      titleLine2: "展示",
       intro:
         "从博物馆里的真实观察出发，参与者把纹样继续做成网站、影像与新的体验。两篇来自同一小组的影像被并置呈现，也保留活动现场回顾作为独立记录。",
       previous: "查看上一件作品",
@@ -360,6 +363,8 @@ const messages = {
       contactDescription:
         "ติดต่อเราได้โดยตรงสำหรับกิจกรรม การสร้างสรรค์ทางวัฒนธรรม หรือความร่วมมือกับชุมชน",
       wechatLabel: "WeChat",
+      followupLabel: "ข้อมูลติดตามและติดต่อ CMI หลังจบกิจกรรม",
+      followupTitle: "ติดตาม CMI เพื่อรับข่าวสารครั้งต่อไป",
     },
     hero: {
       series: "กิจกรรมประลองฝีมือ AI ครั้งที่ 26",
@@ -388,11 +393,12 @@ const messages = {
       recapCta: "เปิดอ่านบันทึกฉบับเต็ม",
       recapAria:
         "เปิดอ่านบันทึกกิจกรรมฉบับเต็มเกี่ยวกับลวดลายล้านนาและเชียงใหม่",
+      recapHint: "คลิกเพื่อดูว่าเกิดอะไรขึ้นในกิจกรรมนี้",
     },
     works: {
-      kicker: "AFTER / จัดแสดงผลงาน",
-      titleLine1: "สิ่งที่หลงเหลือจากวันนั้น",
-      titleLine2: "ไม่ได้มีเพียงลวดลาย",
+      kicker: "AFTER / ผลลัพธ์ของกิจกรรม",
+      titleLine1: "จัดแสดง",
+      titleLine2: "ผลงานจากกิจกรรม",
       intro:
         "ผู้เข้าร่วมเริ่มจากสิ่งที่สังเกตจริงในพิพิธภัณฑ์ แล้วต่อยอดลวดลายเป็นเว็บไซต์ ภาพเคลื่อนไหว และประสบการณ์ใหม่ ผลงานวิดีโอสองชิ้นจากทีมเดียวกันจัดแสดงคู่กัน พร้อมบันทึกกิจกรรมแยกเป็นอีกหนึ่งผลงาน",
       previous: "ดูผลงานก่อนหน้า",
@@ -688,6 +694,8 @@ const messages = {
       contactDescription:
         "Reach out directly about events, cultural co-creation, or community collaborations.",
       wechatLabel: "WeChat",
+      followupLabel: "Follow and contact CMI after the event",
+      followupTitle: "Follow CMI for what comes next",
     },
     hero: {
       series: "AI Skills Exchange · Session 26",
@@ -715,11 +723,12 @@ const messages = {
       recapCta: "Open the full story",
       recapAria:
         "Open the full event recap, Carry one pattern and meet Chiang Mai again",
+      recapHint: "Click to see what actually happened during the event",
     },
     works: {
-      kicker: "AFTER / Works on view",
-      titleLine1: "What remained that day",
-      titleLine2: "was more than patterns.",
+      kicker: "AFTER / OUTCOMES",
+      titleLine1: "Activity outcomes",
+      titleLine2: "on view",
       intro:
         "Starting from real observations in museums, participants developed patterns into websites, moving images, and new experiences. Two videos by the same group are shown side by side, with the event recap retained as a separate record.",
       previous: "View previous work",
