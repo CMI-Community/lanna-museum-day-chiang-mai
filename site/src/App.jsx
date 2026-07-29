@@ -42,6 +42,7 @@ import {
   localizePattern,
 } from "./content-i18n";
 import { languageOptions, useI18n } from "./i18n";
+import { RecapPage } from "./RecapPage";
 import {
   createLocalPreviewPattern,
   fetchPublishedPatterns,
@@ -61,8 +62,7 @@ const toneColors = {
   pink: "#e34f7d",
 };
 
-const eventRecapUrl =
-  "https://lanna-field-notes-chiang-mai.vercel.app/";
+const eventRecapUrl = "/recap";
 
 const getFeaturedWorks = (t) => [
   {
@@ -302,27 +302,48 @@ function LanguageSwitcher() {
 }
 
 function Header({ onSignup }) {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isRecapPage = window.location.pathname.replace(/\/+$/, "") === "/recap";
+  const homeHref = language === "zh" ? "/" : `/?lang=${language}`;
+  const recapHref = language === "zh" ? "/recap" : `/recap?lang=${language}`;
 
   const links = [
-    [t("nav.works"), "works"],
-    [t("nav.about"), "about"],
-    [t("nav.journey"), "journey"],
-    [t("nav.museums"), "museums"],
-    [t("nav.collect"), "collect"],
-    [t("nav.archive"), "archive"],
-    [t("nav.ideas"), "ideas"],
+    [t("nav.works"), "works", "section"],
+    [t("nav.about"), "about", "section"],
+    [t("nav.journey"), "journey", "section"],
+    [t("nav.museums"), "museums", "section"],
+    [t("nav.collect"), "collect", "section"],
+    [t("nav.archive"), "archive", "section"],
+    [t("nav.ideas"), "ideas", "section"],
+    [t("nav.recap"), "recap", "page"],
   ];
 
-  const navigate = (id) => {
+  const navigate = (id, type) => {
+    if (type === "page") {
+      if (!isRecapPage) {
+        window.location.assign(recapHref);
+      }
+      setMenuOpen(false);
+      return;
+    }
+
+    if (isRecapPage) {
+      window.location.assign(`${homeHref}#${id}`);
+      return;
+    }
+
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
 
   return (
     <header className="site-header">
-      <a className="brand-lockup" href="#top" aria-label="CMI Community">
+      <a
+        className="brand-lockup"
+        href={isRecapPage ? homeHref : "#top"}
+        aria-label="CMI Community"
+      >
         <img
           src="/assets/brand/cmi-community.svg"
           alt=""
@@ -332,8 +353,13 @@ function Header({ onSignup }) {
       </a>
 
       <nav className="desktop-nav" aria-label={t("navLabel")}>
-        {links.map(([label, id]) => (
-          <button key={id} type="button" onClick={() => navigate(id)}>
+        {links.map(([label, id, type]) => (
+          <button
+            className={type === "page" && isRecapPage ? "is-active" : ""}
+            key={id}
+            type="button"
+            onClick={() => navigate(id, type)}
+          >
             {label}
           </button>
         ))}
@@ -358,8 +384,13 @@ function Header({ onSignup }) {
 
       {menuOpen ? (
         <div className="mobile-nav">
-          {links.map(([label, id]) => (
-            <button key={id} type="button" onClick={() => navigate(id)}>
+          {links.map(([label, id, type]) => (
+            <button
+              className={type === "page" && isRecapPage ? "is-active" : ""}
+              key={id}
+              type="button"
+              onClick={() => navigate(id, type)}
+            >
               {label}
               <ArrowRight size={18} />
             </button>
@@ -418,8 +449,6 @@ function RecapBook() {
     <a
       className="hero-recap-book"
       href={eventRecapUrl}
-      target="_blank"
-      rel="noreferrer"
       aria-label={t("hero.recapAria")}
     >
       <span className="hero-recap-book__page-edges" aria-hidden="true" />
@@ -2518,6 +2547,8 @@ function CreationVideo() {
 
 function Footer({ onSignup }) {
   const { t } = useI18n();
+  const homeHref =
+    window.location.pathname.replace(/\/+$/, "") === "/recap" ? "/" : "#top";
   return (
     <footer className="site-footer">
       <div className="site-footer__art" aria-hidden="true">
@@ -2536,7 +2567,7 @@ function Footer({ onSignup }) {
         </Button>
       </div>
       <div className="site-footer__bottom">
-        <a className="brand-lockup brand-lockup--light" href="#top">
+        <a className="brand-lockup brand-lockup--light" href={homeHref}>
           <img src="/assets/brand/cmi-community.svg" alt="" />
           <span>CMI Community</span>
         </a>
@@ -2552,6 +2583,7 @@ export function App() {
   const [selectedPattern, setSelectedPattern] = useState(null);
   const [ideaPattern, setIdeaPattern] = useState(null);
   const [archiveRefreshKey, setArchiveRefreshKey] = useState(0);
+  const isRecapPage = window.location.pathname.replace(/\/+$/, "") === "/recap";
 
   const handlePatternPublished = (pattern) => {
     setArchiveRefreshKey((current) => current + 1);
@@ -2572,22 +2604,28 @@ export function App() {
     <>
       <Header onSignup={() => setSignupOpen(true)} />
       <main>
-        <Hero onSignup={() => setSignupOpen(true)} />
-        <WorksShowcase />
-        <Manifesto />
-        <Journey />
-        <MuseumSection />
-        <CollectionSection
-          onPreview={setSelectedPattern}
-          onPublished={handlePatternPublished}
-          refreshKey={archiveRefreshKey}
-        />
-        <ArchiveSection
-          refreshKey={archiveRefreshKey}
-          onOpenPattern={setSelectedPattern}
-        />
-        <PossibilityGenerator preferredPattern={ideaPattern} />
-        <CreationVideo />
+        {isRecapPage ? (
+          <RecapPage />
+        ) : (
+          <>
+            <Hero onSignup={() => setSignupOpen(true)} />
+            <WorksShowcase />
+            <Manifesto />
+            <Journey />
+            <MuseumSection />
+            <CollectionSection
+              onPreview={setSelectedPattern}
+              onPublished={handlePatternPublished}
+              refreshKey={archiveRefreshKey}
+            />
+            <ArchiveSection
+              refreshKey={archiveRefreshKey}
+              onOpenPattern={setSelectedPattern}
+            />
+            <PossibilityGenerator preferredPattern={ideaPattern} />
+            <CreationVideo />
+          </>
+        )}
       </main>
       <Footer onSignup={() => setSignupOpen(true)} />
       <SignupDialog open={signupOpen} onClose={() => setSignupOpen(false)} />

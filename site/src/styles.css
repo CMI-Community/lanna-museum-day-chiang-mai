@@ -311,6 +311,11 @@ select:focus-visible,
   color: var(--purple);
 }
 
+.desktop-nav button.is-active {
+  color: var(--purple);
+  box-shadow: inset 0 -2px var(--orange);
+}
+
 .header-actions {
   display: flex;
   align-items: center;

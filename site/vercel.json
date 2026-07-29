@@ -1,4 +1,14 @@
 {
   "framework": "vite",
-  "outputDirectory": "dist/client"
+  "outputDirectory": "dist/client",
+  "rewrites": [
+    {
+      "source": "/recap",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/recap/",
+      "destination": "/index.html"
+    }
+  ]
 }

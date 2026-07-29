@@ -24,6 +24,7 @@ const messages = {
       collect: "采集",
       archive: "纹样档案",
       ideas: "灵感",
+      recap: "活动回顾",
     },
     signup: {
       action: "报名入群",
@@ -337,6 +338,7 @@ const messages = {
       collect: "เก็บลวดลาย",
       archive: "คลังลวดลาย",
       ideas: "ไอเดีย",
+      recap: "บันทึกกิจกรรม",
     },
     signup: {
       action: "สมัครและเข้ากลุ่ม",
@@ -661,6 +663,7 @@ const messages = {
       collect: "Collect",
       archive: "Pattern archive",
       ideas: "Ideas",
+      recap: "Event recap",
     },
     signup: {
       action: "Register & join",
@@ -1033,16 +1036,30 @@ export function I18nProvider({ children }) {
     }
     window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 
-    const titles = {
-      zh: "7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO",
-      th: "กิจกรรมประลองฝีมือ AI · วันมหัศจรรย์แห่งพิพิธภัณฑ์ เชียงใหม่ · CMI STUDIO",
-      en: "AI Skills Exchange · Museum Day Chiang Mai · CMI STUDIO",
-    };
-    const descriptions = {
-      zh: "走进清迈博物馆采集兰纳纹样，用 AI 把真实观察变成网页、影像、智能体、游戏与更多共创作品。",
-      th: "สำรวจพิพิธภัณฑ์เชียงใหม่ เก็บลวดลายล้านนา และใช้ AI เปลี่ยนสิ่งที่สังเกตจริงให้เป็นเว็บไซต์ วิดีโอ เอเจนต์ เกม และผลงานร่วมสร้างสรรค์",
-      en: "Explore Chiang Mai museums, collect Lanna patterns, and use AI to turn real observations into websites, moving images, agents, games, and collaborative works.",
-    };
+    const isRecapPage =
+      window.location.pathname.replace(/\/+$/, "") === "/recap";
+    const titles = isRecapPage
+      ? {
+          zh: "带着一枚纹样，重新认识我们生活的清迈｜活动回顾",
+          th: "บันทึกกิจกรรมลวดลายล้านนาและเชียงใหม่｜CMI FIELD NOTES",
+          en: "Carry one pattern, and meet Chiang Mai again | CMI Field Notes",
+        }
+      : {
+          zh: "7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO",
+          th: "กิจกรรมประลองฝีมือ AI · วันมหัศจรรย์แห่งพิพิธภัณฑ์ เชียงใหม่ · CMI STUDIO",
+          en: "AI Skills Exchange · Museum Day Chiang Mai · CMI STUDIO",
+        };
+    const descriptions = isRecapPage
+      ? {
+          zh: "从博物馆采集、AI 共创，到一座持续生长的线上兰纳纹样档案。",
+          th: "จากการเก็บลวดลายในพิพิธภัณฑ์ การร่วมสร้างกับ AI สู่คลังลวดลายล้านนาออนไลน์ที่เติบโตต่อไป",
+          en: "From museum fieldwork and AI co-creation to a growing online archive of Lanna patterns.",
+        }
+      : {
+          zh: "走进清迈博物馆采集兰纳纹样，用 AI 把真实观察变成网页、影像、智能体、游戏与更多共创作品。",
+          th: "สำรวจพิพิธภัณฑ์เชียงใหม่ เก็บลวดลายล้านนา และใช้ AI เปลี่ยนสิ่งที่สังเกตจริงให้เป็นเว็บไซต์ วิดีโอ เอเจนต์ เกม และผลงานร่วมสร้างสรรค์",
+          en: "Explore Chiang Mai museums, collect Lanna patterns, and use AI to turn real observations into websites, moving images, agents, games, and collaborative works.",
+        };
     document.title = titles[language];
     document
       .querySelector('meta[name="description"]')
