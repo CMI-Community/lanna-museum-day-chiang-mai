@@ -299,7 +299,7 @@ function LanguageSwitcher() {
   );
 }
 
-function Header() {
+function Header({ onSignup }) {
   const { language, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const isRecapPage = window.location.pathname.replace(/\/+$/, "") === "/recap";
@@ -365,6 +365,9 @@ function Header() {
 
       <div className="header-actions">
         <LanguageSwitcher />
+        <Button className="desktop-signup" onClick={onSignup}>
+          {t("signup.action")}
+        </Button>
       </div>
 
       <button
@@ -390,9 +393,65 @@ function Header() {
               <ArrowRight size={18} />
             </button>
           ))}
+          <Button onClick={onSignup}>{t("signup.action")}</Button>
         </div>
       ) : null}
     </header>
+  );
+}
+
+function SignupDialog({ open, onClose }) {
+  const { t } = useI18n();
+
+  return (
+    <Dialog open={open} onClose={onClose} label={t("signup.dialogLabel")}>
+      <div className="signup-dialog">
+        <div className="section-kicker">{t("signup.kicker")}</div>
+        <h2>{t("signup.title")}</h2>
+        <p>{t("signup.description")}</p>
+
+        <div className="signup-dialog__commitment">
+          <CheckCircle size={22} weight="fill" />
+          <div>
+            <strong>{t("signup.confirmTitle")}</strong>
+            <span>{t("signup.confirmText")}</span>
+          </div>
+        </div>
+
+        <div className="signup-dialog__qr">
+          <img
+            src="/assets/registration/cmi-official-account-qr.jpg"
+            alt={t("signup.qrAlt")}
+            onError={(event) => {
+              event.currentTarget.hidden = true;
+              event.currentTarget
+                .closest(".signup-dialog__qr")
+                ?.classList.add("is-unavailable");
+            }}
+          />
+          <div className="qr-fallback">
+            <strong>{t("signup.qrUnavailable")}</strong>
+            <span>{t("signup.qrUnavailableHelp")}</span>
+          </div>
+        </div>
+
+        <div className="signup-dialog__notice">
+          <Sparkle size={18} weight="fill" />
+          {t("signup.qrNotice")}
+        </div>
+
+        <div className="signup-dialog__contact">
+          <div>
+            <strong>{t("signup.contactTitle")}</strong>
+            <span>{t("signup.contactDescription")}</span>
+          </div>
+          <div className="signup-dialog__wechat">
+            <span>{t("signup.wechatLabel")}</span>
+            <strong>LinkLinkGuan</strong>
+          </div>
+        </div>
+      </div>
+    </Dialog>
   );
 }
 
@@ -454,7 +513,7 @@ function RecapBook() {
   );
 }
 
-function Hero() {
+function Hero({ onSignup }) {
   const { t } = useI18n();
   const scrollToCollect = () => {
     document.getElementById("collect")?.scrollIntoView({ behavior: "smooth" });
@@ -528,6 +587,12 @@ function Hero() {
           </dl>
 
           <div className="hero__actions">
+            <Button
+              onClick={onSignup}
+              icon={<Sparkle size={21} weight="fill" />}
+            >
+              {t("signup.action")}
+            </Button>
             <Button
               variant="outline"
               className="hero__collect-button"
@@ -2494,7 +2559,7 @@ function CreationVideo() {
   );
 }
 
-function Footer() {
+function Footer({ onSignup }) {
   const { language, t } = useI18n();
   const localizedHome = language === "zh" ? "/" : `/?lang=${language}`;
   const homeHref =
@@ -2514,6 +2579,9 @@ function Footer() {
           <h2>{t("footer.title")}</h2>
           <p>{t("footer.intro")}</p>
         </div>
+        <Button variant="accent" onClick={onSignup}>
+          {t("signup.action")}
+        </Button>
       </div>
       <div className="site-footer__bottom">
         <a className="brand-lockup brand-lockup--light" href={homeHref}>
@@ -2528,6 +2596,7 @@ function Footer() {
 }
 
 export function App() {
+  const [signupOpen, setSignupOpen] = useState(false);
   const [selectedPattern, setSelectedPattern] = useState(null);
   const [ideaPattern, setIdeaPattern] = useState(null);
   const [archiveRefreshKey, setArchiveRefreshKey] = useState(0);
@@ -2550,13 +2619,13 @@ export function App() {
 
   return (
     <>
-      <Header />
+      <Header onSignup={() => setSignupOpen(true)} />
       <main>
         {isRecapPage ? (
           <RecapPage />
         ) : (
           <>
-            <Hero />
+            <Hero onSignup={() => setSignupOpen(true)} />
             <WorksShowcase />
             <Manifesto />
             <Journey />
@@ -2575,7 +2644,8 @@ export function App() {
           </>
         )}
       </main>
-      <Footer />
+      <Footer onSignup={() => setSignupOpen(true)} />
+      <SignupDialog open={signupOpen} onClose={() => setSignupOpen(false)} />
       <PatternDetailDialog
         pattern={selectedPattern}
         onClose={() => setSelectedPattern(null)}

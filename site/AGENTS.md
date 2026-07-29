@@ -22,7 +22,7 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Page order is fixed: Hero → submitted-works showcase → artistic activity manifesto → complete fishbone journey/day schedule → full-screen museum selection → collection portal/modal wizard → newest-first archive grid.
 - The submitted-works showcase is the second screen. Every work card contains a cover, title, short introduction, and explicit creator credit; website works may open externally and video covers must be extracted from their actual files rather than represented by unrelated imagery.
 - Do not reintroduce the removed four-column explainer between Hero and journey.
-- Registration uses the real replaceable WeChat group QR in `public/assets/registration/`.
+- The former registration entry remains visible after the event, but now opens an event-ended notice with the CMI official-account QR and the WeChat contact `LinkLinkGuan`; do not restore the expired activity-group QR.
 - Pattern submission uses a rotated server-side event access code and Supabase persistence. Case and whitespace normalization is performed in the Edge Function; the client and repository must never contain the real code or service-role credentials.
 - Museum cards use Lanna-pattern borders and link to each museum's official website and map; do not restore selected-state buttons, selected badges, or the central “或” marker.
 - Collection is opened from a decorated card entry and completed in a three-page modal: 01 → 02+03 → 04. Each image picker exposes distinct upload and camera actions.

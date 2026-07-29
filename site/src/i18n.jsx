@@ -27,21 +27,22 @@ const messages = {
       recap: "活动回顾",
     },
     signup: {
-      action: "报名入群",
-      dialogLabel: "报名加入活动群",
-      kicker: "REGISTER / 报名入群",
-      title: "扫码加入清迈场活动群",
+      action: "活动已结束",
+      dialogLabel: "活动结束与 CMI 联系方式",
+      kicker: "FOLLOW / 继续关注 CMI",
+      title: "本次活动已经结束",
       description:
-        "入群后获取 CMI Studio 详细位置、博物馆结伴信息、纹样采集口令与活动提醒。",
-      confirmTitle: "加入前，请先确认",
-      confirmText: "请确保自己有兴趣，且有时间来参加该活动。",
-      qrAlt:
-        "博物馆奇妙日·清迈 CMI·兰纳纹样微信群二维码，有效至 7 月 30 日",
-      qrUnavailable: "群二维码更新中",
+        "谢谢你的支持和关注。欢迎继续关注 CMI 的后续活动、文化共创与社区动态。",
+      confirmTitle: "感谢一路同行",
+      confirmText: "这次活动虽然结束了，人与纹样、文化与创作之间的连接还会继续发生。",
+      qrAlt: "CMI 公众号二维码",
+      qrUnavailable: "公众号二维码暂不可用",
       qrUnavailableHelp:
-        "请稍后刷新，或联系 CMI Community 获取最新二维码。",
-      qrNotice:
-        "当前二维码图片标注 7 月 30 日前有效；过期后将在此处直接更新。",
+        "你也可以通过微信联系 LinkLinkGuan。",
+      qrNotice: "使用微信扫码或长按识别，关注 CMI 公众号。",
+      contactTitle: "有相关需求？",
+      contactDescription: "活动、文化共创或社区合作，都可以直接联系。",
+      wechatLabel: "微信",
     },
     hero: {
       series: "AI 切磋大会 第 26 期",
@@ -55,7 +56,7 @@ const messages = {
       time: "2026.07.26 · 12:30–17:30",
       placeLabel: "地点",
       locationLabel: "位置",
-      location: "报名入群后获取详细信息",
+      location: "CMI Studio · 活动已结束",
       collect: "开始采集纹样",
       worksCue: "看看现场留下的作品",
       recapKicker: "FIELD NOTES / 活动回顾",
@@ -341,21 +342,24 @@ const messages = {
       recap: "บันทึกกิจกรรม",
     },
     signup: {
-      action: "สมัครและเข้ากลุ่ม",
-      dialogLabel: "สมัครเข้าร่วมกลุ่มกิจกรรม",
-      kicker: "REGISTER / สมัครเข้ากลุ่ม",
-      title: "สแกนเพื่อเข้ากลุ่มกิจกรรมเชียงใหม่",
+      action: "กิจกรรมสิ้นสุดแล้ว",
+      dialogLabel: "กิจกรรมสิ้นสุดแล้วและช่องทางติดต่อ CMI",
+      kicker: "FOLLOW / ติดตาม CMI ต่อไป",
+      title: "กิจกรรมครั้งนี้สิ้นสุดแล้ว",
       description:
-        "รับพิกัด CMI Studio ข้อมูลเพื่อนไปพิพิธภัณฑ์ รหัสส่งลวดลาย และข่าวสารกิจกรรมในกลุ่ม",
-      confirmTitle: "โปรดยืนยันก่อนเข้าร่วม",
-      confirmText: "โปรดแน่ใจว่าคุณสนใจและมีเวลาเข้าร่วมกิจกรรม",
-      qrAlt:
-        "คิวอาร์โค้ดกลุ่ม WeChat กิจกรรม Museum Day Chiang Mai CMI ลวดลายล้านนา ใช้ได้ถึง 30 กรกฎาคม",
-      qrUnavailable: "กำลังอัปเดตคิวอาร์โค้ดกลุ่ม",
+        "ขอบคุณสำหรับการสนับสนุนและความสนใจ ติดตาม CMI ต่อเพื่อรับข่าวกิจกรรม การสร้างสรรค์ทางวัฒนธรรม และความเคลื่อนไหวของชุมชน",
+      confirmTitle: "ขอบคุณที่ร่วมเดินทางด้วยกัน",
+      confirmText:
+        "แม้กิจกรรมจะจบลงแล้ว แต่ความเชื่อมโยงระหว่างผู้คน ลวดลาย วัฒนธรรม และการสร้างสรรค์ยังคงดำเนินต่อไป",
+      qrAlt: "คิวอาร์โค้ดบัญชีทางการ CMI",
+      qrUnavailable: "ไม่สามารถแสดงคิวอาร์โค้ดได้ในขณะนี้",
       qrUnavailableHelp:
-        "โปรดลองรีเฟรชภายหลัง หรือติดต่อ CMI Community เพื่อรับคิวอาร์โค้ดล่าสุด",
-      qrNotice:
-        "คิวอาร์โค้ดนี้ระบุว่าใช้ได้ถึง 30 กรกฎาคม และจะอัปเดตที่นี่เมื่อหมดอายุ",
+        "คุณสามารถติดต่อทาง WeChat ได้ที่ LinkLinkGuan",
+      qrNotice: "สแกนหรือกดค้างด้วย WeChat เพื่อติดตามบัญชีทางการ CMI",
+      contactTitle: "มีความต้องการที่เกี่ยวข้องหรือไม่",
+      contactDescription:
+        "ติดต่อเราได้โดยตรงสำหรับกิจกรรม การสร้างสรรค์ทางวัฒนธรรม หรือความร่วมมือกับชุมชน",
+      wechatLabel: "WeChat",
     },
     hero: {
       series: "กิจกรรมประลองฝีมือ AI ครั้งที่ 26",
@@ -369,7 +373,7 @@ const messages = {
       time: "26.07.2026 · 12:30–17:30 น.",
       placeLabel: "สถานที่",
       locationLabel: "พิกัด",
-      location: "รับรายละเอียดหลังเข้ากลุ่ม",
+      location: "CMI Studio · กิจกรรมสิ้นสุดแล้ว",
       collect: "เริ่มเก็บลวดลาย",
       worksCue: "ชมผลงานที่เกิดขึ้นในวันนั้น",
       recapKicker: "FIELD NOTES / บันทึกกิจกรรม",
@@ -666,21 +670,24 @@ const messages = {
       recap: "Event recap",
     },
     signup: {
-      action: "Register & join",
-      dialogLabel: "Register for the activity group",
-      kicker: "REGISTER / Join the group",
-      title: "Scan to join the Chiang Mai activity group",
+      action: "Event ended",
+      dialogLabel: "Event ended and CMI contact details",
+      kicker: "FOLLOW / Stay with CMI",
+      title: "This event has ended",
       description:
-        "Get the exact CMI Studio location, museum visit coordination, pattern collection access code, and activity updates in the group.",
-      confirmTitle: "Before joining, please confirm",
-      confirmText: "Please make sure you are interested and have time to attend.",
-      qrAlt:
-        "WeChat group QR code for Museum Day Chiang Mai CMI Lanna Patterns, valid through July 30",
-      qrUnavailable: "Group QR code is being updated",
+        "Thank you for your support and attention. Follow CMI for future activities, cultural co-creation, and community updates.",
+      confirmTitle: "Thank you for being part of the journey",
+      confirmText:
+        "The event may be over, but the connections between people, patterns, culture, and creativity will continue.",
+      qrAlt: "QR code for the CMI official account",
+      qrUnavailable: "The official account QR code is unavailable",
       qrUnavailableHelp:
-        "Refresh later or contact CMI Community for the latest QR code.",
-      qrNotice:
-        "The current QR image is marked valid through July 30. It will be updated here after it expires.",
+        "You can also contact LinkLinkGuan on WeChat.",
+      qrNotice: "Scan or press and hold in WeChat to follow the CMI official account.",
+      contactTitle: "Have a related request?",
+      contactDescription:
+        "Reach out directly about events, cultural co-creation, or community collaborations.",
+      wechatLabel: "WeChat",
     },
     hero: {
       series: "AI Skills Exchange · Session 26",
@@ -694,7 +701,7 @@ const messages = {
       time: "2026.07.26 · 12:30–17:30",
       placeLabel: "Venue",
       locationLabel: "Location",
-      location: "Details available after joining the group",
+      location: "CMI Studio · Event ended",
       collect: "Start collecting",
       worksCue: "See the works created that day",
       recapKicker: "FIELD NOTES / EVENT RECAP",

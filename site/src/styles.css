@@ -2582,6 +2582,61 @@ html[data-language="en"] .hero-recap-book__page > strong {
   line-height: 1.55;
 }
 
+.signup-dialog__notice > svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--orange);
+}
+
+.signup-dialog__contact {
+  margin-top: 20px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid #d9c7df;
+  background: #fffaf0;
+}
+
+.signup-dialog__contact strong,
+.signup-dialog__contact span {
+  display: block;
+}
+
+.signup-dialog__contact > div:first-child > strong {
+  color: var(--purple-dark);
+  font-size: 1rem;
+}
+
+.signup-dialog__contact > div:first-child > span {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.signup-dialog__wechat {
+  min-width: 158px;
+  padding: 10px 13px;
+  border-left: 4px solid var(--green);
+  background: #edf7ed;
+}
+
+.signup-dialog__wechat span {
+  color: #5c725e;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.signup-dialog__wechat strong {
+  margin-top: 3px;
+  color: #26472b;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
 .pattern-detail {
   display: grid;
   grid-template-columns: 570px minmax(0, 1fr);
@@ -4070,6 +4125,16 @@ html[data-language="en"] .hero-recap-book__page > strong {
   margin-top: 4px;
   color: #5f5363;
   font-size: 0.82rem;
+}
+
+@media (max-width: 560px) {
+  .signup-dialog__contact {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-dialog__wechat {
+    min-width: 0;
+  }
 }
 
 .site-footer__art {
