@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-24 08:12 Asia/Bangkok
+Last updated: 2026-08-27 21:10 Asia/Bangkok
 
 ## Snapshot
 
-- Status: Shipped
-- Current focus: Search and social share metadata, Event structured data, and the 1200 × 630 preview card are live on the stable domain.
-- Next step: Let the first participant submission continue at `CMI-LN-0045`; replace the time-limited WeChat QR before it expires.
+- Status: Cutover Prepared — production redirect not deployed
+- Current focus: The event is frozen read-only and has been migrated natively to CMI staging; this clean branch prepares the old Vercel homepage and recap redirects without touching the dirty content workspace.
+- Next step: Do not deploy this branch until the CMI production D1/R2/Worker release is explicitly approved and verified. Then deploy the nine reviewed 308 rules, verify all three languages and `/recap`, and retain the current Vercel deployment for rollback.
 
 ## Project Goal
 
@@ -50,12 +50,14 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-24 | Import the 18 preview records into the production archive with collector name `CMI`, while preserving their preview-source wording. | The user wants the populated experience in production without presenting the sample content as newly verified museum records. | Shipped |
 | 2026-07-24 | Use a transparent WaytoAGI Hero mark with a dark wordmark and credit “CMI Community 主办 清迈线下场”. | The filled badge obscured the intended partner-logo treatment, and the local organizer role needed to be explicit. | Shipped |
 | 2026-07-24 | Use “7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO” as the share title, paired with a concise participation-focused description and a branded 1200 × 630 PNG card. | Shared links need an immediate date, event, place, image, and clear reason to open the page. | Shipped |
+| 2026-08-27 | Prepare exact permanent redirects from the deployed `8714afac` baseline to the native CMI project routes, with language-query rules before fallbacks and no catch-all. | Preserve Chinese/English/Thai and recap entry points while keeping old static assets available for rollback. | Prepared, not deployed |
 
 ## Task Board
 
 ### Now
 
-- No active metadata implementation item.
+- [x] Prepare and test the isolated `codex/22-lanna-cutover` redirect branch from deployed commit `8714afac`.
+- [ ] Keep production redirect deployment blocked pending explicit CMI production approval.
 
 ### Next
 
@@ -112,6 +114,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | Access | The originally selected event phrase appeared in the public repository. | Reusing that exact phrase would let repository readers submit as participants. | A distinct replacement is stored only in Edge Function secrets; the wrong-phrase and approved-phrase paths were verified without creating a submission. | Resolved |
 | Release | Vercel was deployed through the authorized file API, not Git import. | New Git pushes will not deploy automatically yet. | Connect the repository in Vercel when continuous deployment is needed. | Open |
 | Release | Redeploying a prebuilt Vercel file deployment did not rebuild Vite with newly added environment variables. | The first redeploy remained in preview mode despite correct Vercel settings. | Linked the verified project locally and deployed the source through Vercel CLI; production now builds with the variables. | Resolved |
+| Release | Publishing the prepared 308 rules before the CMI production Worker is accepted would remove the old site as an immediate public fallback. | Visitors could be sent to an unapproved or rolled-back destination. | Keep this branch unmerged/undeployed until explicit approval; rollback by re-promoting the current Vercel deployment. | Blocked by approval |
 | Export | DOM screenshot libraries can fail on Blob URLs, cross-origin images, fonts, or stylesheet serialization. | A participant may see the card but be unable to download it, or receive an incomplete image. | Replaced with loaded image bitmaps and explicit Canvas drawing; required image failures now stop the download with a specific message. | Resolved |
 
 ## Implementation Notes
@@ -171,9 +174,11 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-24 | Transparent Hero partner-credit regression | Passed | Production build, 4/4 Sites worker tests, desktop and 390px visual QA, stable-domain asset loading, exact organizer copy, and horizontal-overflow checks all passed; Vercel deployment `dpl_27oHCahRuticPe3kw95JdqKxR9uq` is `READY`. |
 | 2026-07-24 | Social metadata local validation | Passed | Production build and 4/4 worker tests passed; JSON-LD parsed successfully; required description/Open Graph/Twitter tags are present; the self-contained PNG is 1200 × 630 and 125 KB. |
 | 2026-07-24 | Production social-share metadata | Passed | Deployment `dpl_84maQebQ1sStLzbnQL5uEW9he3ix` is `READY`; crawler-style HTML fetch returned the exact title, description, Open Graph image, and all required terms; the stable PNG returned 200 `image/png`, 1200 × 630, and matched the committed file hash. |
+| 2026-08-27 | Isolated Vercel cutover preparation | Passed | Nine exact permanent rules cover Chinese/English/Thai home and recap routes, including recap trailing slash; 2/2 redirect tests, 4/4 Sites tests, production build, and `git diff --check` passed. No deploy command ran. |
 
 ## Recent Updates
 
+- 2026-08-27 21:10 Asia/Bangkok: Created a clean worktree from deployed commit `8714afac`, prepared nine exact permanent CMI redirects with no asset-swallowing catch-all, and passed cutover, Sites, build, and diff checks. Production remains unchanged pending explicit approval.
 - 2026-07-23 17:20 Asia/Bangkok: Locked registration 1B, access 2A, persistence 3A and received the real registration QR.
 - 2026-07-23 19:58 Asia/Bangkok: Completed the responsive prototype, integrated real assets, prepared the Supabase schema/Edge Function, and passed design and interaction QA.
 - 2026-07-23 20:31 Asia/Bangkok: Created the CMI Community GitHub repository, pushed the rollback and implementation branches, and deployed the verified Vercel phone-test version.
@@ -193,6 +198,7 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 
 ## Handoff Notes
 
+- Do not merge or deploy `codex/22-lanna-cutover` until the CMI production Worker and migrated data receive explicit approval; keep the current Vercel deployment available for immediate rollback.
 - Do not reintroduce the removed four-column “现场观察 / 来源信息 / 仍待了解 / 创意表达” section between the hero and fishbone.
 - Keep museum selection before collection instructions and the public archive.
 - Preserve the distinction between observation, verified source information, open questions, and creative reinterpretation inside each pattern record.
