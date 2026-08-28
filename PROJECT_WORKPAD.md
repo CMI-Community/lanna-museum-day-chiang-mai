@@ -1,12 +1,12 @@
 # Project Workpad
 
-Last updated: 2026-07-23 20:31 Asia/Bangkok
+Last updated: 2026-08-27 21:10 Asia/Bangkok
 
 ## Snapshot
 
-- Status: PRD Preview Deployed
-- Current focus: The responsive prototype is available from the new CMI Community GitHub repository and a verified Vercel deployment.
-- Next step: Test the deployed page on participant phones, then confirm the intended Supabase project and event collection code before enabling live public submissions.
+- Status: Cutover Prepared — production redirect not deployed
+- Current focus: The event is frozen read-only and has been migrated natively to CMI staging; this clean branch prepares the old Vercel homepage and recap redirects without touching the dirty content workspace.
+- Next step: Do not deploy this branch until the CMI production D1/R2/Worker release is explicitly approved and verified. Then deploy the nine reviewed 308 rules, verify all three languages and `/recap`, and retain the current Vercel deployment for rollback.
 
 ## Project Goal
 
@@ -43,12 +43,21 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Pattern submission requires an event access code. | The user selected option 2A to reduce misuse without adding account friction. | Locked |
 | 2026-07-23 | Persist submissions, images, numbers, and archive data in Supabase. | The user selected option 3A. | Locked |
 | 2026-07-23 | Use 12:30–17:30 Chiang Mai time for the public schedule. | This matches the public recruitment copy and the national Beijing-time schedule. | Locked |
+| 2026-07-23 | Replace the always-expanded collection form with a decorated entry card and a three-page modal wizard: 01 → 02+03 → 04. | A progressive flow lowers the perceived effort and keeps the public page focused on action. | Locked |
+| 2026-07-23 | Museum cards are informational choices with official-site and map links, not persistent selection controls. | The reviewed UI no longer needs “已选择” or “或” states. | Locked |
+| 2026-07-23 | Keep the user-approved replacement event code only in server-side secret configuration and normalize case and surrounding/repeated spaces. | The replacement is distinct from the previously published phrase; the repository must not contain its value. | Approved |
+| 2026-07-23 | Keep 18 built-in preview records until Supabase is connected. | The archive needs enough visual density for phone and desktop evaluation. | Superseded |
+| 2026-07-24 | Import the 18 preview records into the production archive with collector name `CMI`, while preserving their preview-source wording. | The user wants the populated experience in production without presenting the sample content as newly verified museum records. | Shipped |
+| 2026-07-24 | Use a transparent WaytoAGI Hero mark with a dark wordmark and credit “CMI Community 主办 清迈线下场”. | The filled badge obscured the intended partner-logo treatment, and the local organizer role needed to be explicit. | Shipped |
+| 2026-07-24 | Use “7月26日 AI 切磋大会｜博物馆奇妙日 · CMI STUDIO” as the share title, paired with a concise participation-focused description and a branded 1200 × 630 PNG card. | Shared links need an immediate date, event, place, image, and clear reason to open the page. | Shipped |
+| 2026-08-27 | Prepare exact permanent redirects from the deployed `8714afac` baseline to the native CMI project routes, with language-query rules before fallbacks and no catch-all. | Preserve Chinese/English/Thai and recap entry points while keeping old static assets available for rollback. | Prepared, not deployed |
 
 ## Task Board
 
 ### Now
 
-- [ ] Connect a user-approved Supabase project.
+- [x] Prepare and test the isolated `codex/22-lanna-cutover` redirect branch from deployed commit `8714afac`.
+- [ ] Keep production redirect deployment blocked pending explicit CMI production approval.
 
 ### Next
 
@@ -74,15 +83,39 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - [x] Receive the real WeChat registration QR.
 - [x] Create and push `CMI-Community/lanna-museum-day-chiang-mai`.
 - [x] Deploy and verify the Vercel phone-test version.
+- [x] Apply and deploy the first 18 reviewed browser comments.
+- [x] Run desktop and phone QA against the updated preview.
+- [x] Replace the fragile DOM-to-image download with a deterministic Canvas card renderer.
+- [x] Display “采集者：姓名” on the export card and archive detail.
+- [x] Verify that a real downloaded PNG includes uploaded detail and context images rather than text-only output.
+- [x] Create the dedicated free `cmi-lanna-pattern-archive` Supabase project in Singapore.
+- [x] Apply the archive table, sequence, public-read RLS, and constrained public Storage bucket.
+- [x] Deploy `submit-pattern` with custom access-code authentication and current publishable/secret-key compatibility.
+- [x] Remove the redundant Storage listing policy and pass Supabase security/performance advisors.
+- [x] Configure ignored local frontend environment values for the new Supabase project.
+- [x] Store the user-approved event access phrase in Supabase Edge Function secrets.
+- [x] Set `ALLOWED_ORIGIN=https://lanna-museum-day-chiang-mai.vercel.app`.
+- [x] Verify that an incorrect phrase is rejected and the approved phrase reaches normal submission validation.
+- [x] Add the Supabase URL and publishable key to the production-only Vercel environment.
+- [x] Link the local workspace to the verified Vercel project and deploy from source so Vite receives the production variables.
+- [x] Replace the production recent-pattern preview strip with live Supabase results and an honest empty state.
+- [x] Verify the stable production URL reads the empty public archive and opens the live collection flow without creating test data.
+- [x] Import the 18 reviewed preview records as published production rows attributed to `CMI`.
+- [x] Advance the archive sequence so the next participant submission receives `CMI-LN-0045`.
+- [x] Replace the filled WaytoAGI Hero badge with a transparent-background mark and publish the explicit CMI Community organizer credit.
+- [x] Publish canonical, search description, Open Graph, Twitter Card, Event JSON-LD, favicon, and a 1200 × 630 social preview image.
 
 ## Risks And Open Questions
 
 | Type | Item | Impact | Owner/Next check | Status |
 | --- | --- | --- | --- | --- |
 | Asset | Current WeChat QR is marked valid through 2026-07-30. | Registration can break after expiry. | Keep it replaceable and show a graceful update state. | Open |
-| Backend | The only accessible Supabase project is inactive and has a generic name. | Applying schema without confirmation could alter an unrelated project. | Build the integration locally; ask before project mutation. | Open |
-| Access | The event submission code has not been provided. | Live uploads cannot be opened safely. | Configure through a server-side Edge Function secret before launch. | Open |
+| Backend | The previous generic Supabase project is inactive and unrelated. | It must not receive this project's schema or data. | A dedicated project was created and all work targets project ref `osqyplgctlzdlpqmzfud`. | Resolved |
+| Access | The originally selected event phrase appeared in the public repository. | Reusing that exact phrase would let repository readers submit as participants. | A distinct replacement is stored only in Edge Function secrets; the wrong-phrase and approved-phrase paths were verified without creating a submission. | Resolved |
 | Release | Vercel was deployed through the authorized file API, not Git import. | New Git pushes will not deploy automatically yet. | Connect the repository in Vercel when continuous deployment is needed. | Open |
+| Release | Redeploying a prebuilt Vercel file deployment did not rebuild Vite with newly added environment variables. | The first redeploy remained in preview mode despite correct Vercel settings. | Linked the verified project locally and deployed the source through Vercel CLI; production now builds with the variables. | Resolved |
+| Release | Publishing the prepared 308 rules before the CMI production Worker is accepted would remove the old site as an immediate public fallback. | Visitors could be sent to an unapproved or rolled-back destination. | Keep this branch unmerged/undeployed until explicit approval; rollback by re-promoting the current Vercel deployment. | Blocked by approval |
+| Export | DOM screenshot libraries can fail on Blob URLs, cross-origin images, fonts, or stylesheet serialization. | A participant may see the card but be unable to download it, or receive an incomplete image. | Replaced with loaded image bitmaps and explicit Canvas drawing; required image failures now stop the download with a specific message. | Resolved |
 
 ## Implementation Notes
 
@@ -92,8 +125,15 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 - GitHub repository: `https://github.com/CMI-Community/lanna-museum-day-chiang-mai`.
 - Vercel phone-test URL: `https://lanna-museum-day-chiang-mai.vercel.app/`.
 - Vercel project ID: `prj_v4l33b5C67ChgB2cZ6CD4KHqD75H`.
+- Social preview asset: `site/public/assets/social/lanna-museum-day-og.png` (1200 × 630 PNG); its editable source is the adjacent self-contained SVG.
 - Use the Product Design `prototype` starter inside `site/`; do not initialize a Sites starter.
 - Public submissions are sent to a custom-authenticated Edge Function; the event code and service-role credentials must never be exposed in the browser.
+- Supabase project: `cmi-lanna-pattern-archive`, ref `osqyplgctlzdlpqmzfud`, Singapore (`ap-southeast-1`), Free plan quote `$0/month`.
+- Local ignored configuration: `site/.env.local`; the same public values are scoped to Production in Vercel.
+- Local Vercel project linkage is stored in ignored `.vercel/project.json`; production source builds target the verified existing project.
+- Production sample-data migration: `site/supabase/migrations/20260723170006_import_archive_samples.sql`; the upsert is idempotent and preserves the sample provenance text.
+- Current feedback batch: Hero copy/logo/date, signup warning, patterned collect CTA, museum official links/prices/borders, three-step collection wizard, 18 preview records, and footer art repair.
+- WaytoAGI Hero asset: `site/public/assets/brand/waytoagi-logo-transparent.svg`, adapted from the official vector wordmark for transparent use on the warm ivory canvas.
 
 ## Validation Log
 
@@ -108,15 +148,58 @@ Build a mobile-compatible single-page activity website for WaytoAGI AI 切磋大
 | 2026-07-23 | Source-to-implementation design QA | Passed | Combined comparison reviewed; no remaining P0/P1/P2 findings. |
 | 2026-07-23 | GitHub organization repository | Passed | Public repository created under CMI Community; `main`, feature, and rollback snapshot branches pushed. |
 | 2026-07-23 | Vercel deployment and phone smoke test | Passed | Deployment is READY; stable URL returns 200; 390 × 844 hero and QR modal verified with no console errors. |
+| 2026-07-23 | Browser feedback regression build | Passed | Vite production build, 4/4 Sites worker tests, and Edge Function TypeScript bundle all passed. |
+| 2026-07-23 | Revised desktop interaction QA | Passed | Hero, signup warning, museum links/prices/borders, collection portal, three-page wizard, image validation, local card generation, 18-item archive, and footer verified. |
+| 2026-07-23 | Revised mobile interaction QA | Passed | 390 × 844 hero, collection portal, bottom-sheet wizard, and footer verified with 390px document width and no horizontal overflow. |
+| 2026-07-23 | Museum official-site availability | Passed | `cmocity.com/lanna-folklife-museum/` and `fahlannaartmuseum.com/` both returned HTTP 200. |
+| 2026-07-23 | Final Vercel production regression | Passed | Production deployment READY; stable URL returned HTTP 200, Vercel reported no runtime errors, and 390 × 844 QA confirmed the hero, 18-item archive, signup warning, museum details, and patterned collect action without horizontal overflow. |
+| 2026-07-23 | Uploaded-image PNG composition test | Passed | Two uploaded-file-equivalent Blob URLs produced a 1080 × 1350, 1,727,843-byte PNG; both main/detail and context regions passed pixel-variance checks and the rendered card showed collector “大夏湖”. |
+| 2026-07-23 | Pattern-card production regression | Passed | Stable Vercel detail showed collector attribution in the card and info panel; “下载纹样卡” reached “已下载，再下一张” with no export error, and 390px phone width had no horizontal page overflow. |
+| 2026-07-23 | Supabase project provisioning | Passed | Dedicated Singapore project created at `$0/month`; status `ACTIVE_HEALTHY`. |
+| 2026-07-23 | Database migration and permissions | Passed | Table RLS enabled; anon can SELECT only and cannot INSERT/UPDATE/DELETE; published-row policy is the only table policy. |
+| 2026-07-23 | Storage security | Passed | Public bucket enforces 1.5MB JPEG/PNG/WebP limits; redundant anonymous object-list policy removed. |
+| 2026-07-23 | Supabase live HTTP checks | Passed | Public REST read returned 200/empty array; anonymous write returned 401; function returned expected 503 while the rotated phrase is unset. |
+| 2026-07-23 | Supabase advisors | Passed | Security and performance advisors both returned zero findings after hardening. |
+| 2026-07-23 | Post-database build and tests | Passed | Vite production build, 4/4 Sites worker tests, and Edge Function esbuild parse passed. |
+| 2026-07-23 | Edge Function secret configuration | Passed | The server-only event phrase and stable production origin were stored in Supabase Dashboard secrets; their digests were visible while plaintext values remained hidden. |
+| 2026-07-23 | Edge Function access-code probes | Passed | An incorrect phrase returned 401; the approved phrase passed authentication and reached the expected missing-image validation without creating rows or uploads. |
+| 2026-07-23 | Vercel production environment | Passed | `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` are present for Production only; no server access phrase was added to Vercel or the client bundle. |
+| 2026-07-23 | Source-based production deployment | Passed | Deployment `dpl_GrfCfxzkmCXfFKuAaRpB78D6yT3Q` reached `READY` and was aliased to the stable production domain. |
+| 2026-07-23 | Production Supabase read flow | Passed | The stable site removed the preview notice, returned 0 real records from the empty public archive, showed a truthful empty recent state, and opened the live collection wizard without a local-preview badge. |
+| 2026-07-23 | Final connected build and tests | Passed | Vite production build, 4/4 Sites worker tests, `git diff --check`, and the client-bundle server-phrase absence check all passed. |
+| 2026-07-24 | Preview-record migration dry run | Passed | Transactional insert produced 18 rows, 18 `CMI` collectors, and archive range `CMI-LN-0027`–`CMI-LN-0044`; the trial was rolled back before the production migration. |
+| 2026-07-24 | Production archive import | Passed | Migration `import_archive_samples` applied successfully; SQL and public REST both returned 18 published rows attributed to `CMI`, and the sequence was synchronized at 44. |
+| 2026-07-24 | Imported archive assets | Passed | All 8 referenced pattern images and both museum context images returned HTTP 200 from the stable production domain. |
+| 2026-07-24 | Post-import Supabase advisors | Passed | Security and performance advisors both returned zero findings. |
+| 2026-07-24 | Transparent Hero partner-credit regression | Passed | Production build, 4/4 Sites worker tests, desktop and 390px visual QA, stable-domain asset loading, exact organizer copy, and horizontal-overflow checks all passed; Vercel deployment `dpl_27oHCahRuticPe3kw95JdqKxR9uq` is `READY`. |
+| 2026-07-24 | Social metadata local validation | Passed | Production build and 4/4 worker tests passed; JSON-LD parsed successfully; required description/Open Graph/Twitter tags are present; the self-contained PNG is 1200 × 630 and 125 KB. |
+| 2026-07-24 | Production social-share metadata | Passed | Deployment `dpl_84maQebQ1sStLzbnQL5uEW9he3ix` is `READY`; crawler-style HTML fetch returned the exact title, description, Open Graph image, and all required terms; the stable PNG returned 200 `image/png`, 1200 × 630, and matched the committed file hash. |
+| 2026-08-27 | Isolated Vercel cutover preparation | Passed | Nine exact permanent rules cover Chinese/English/Thai home and recap routes, including recap trailing slash; 2/2 redirect tests, 4/4 Sites tests, production build, and `git diff --check` passed. No deploy command ran. |
 
 ## Recent Updates
 
+- 2026-08-27 21:10 Asia/Bangkok: Created a clean worktree from deployed commit `8714afac`, prepared nine exact permanent CMI redirects with no asset-swallowing catch-all, and passed cutover, Sites, build, and diff checks. Production remains unchanged pending explicit approval.
 - 2026-07-23 17:20 Asia/Bangkok: Locked registration 1B, access 2A, persistence 3A and received the real registration QR.
 - 2026-07-23 19:58 Asia/Bangkok: Completed the responsive prototype, integrated real assets, prepared the Supabase schema/Edge Function, and passed design and interaction QA.
 - 2026-07-23 20:31 Asia/Bangkok: Created the CMI Community GitHub repository, pushed the rollback and implementation branches, and deployed the verified Vercel phone-test version.
+- 2026-07-23 21:36 Asia/Bangkok: Converted 18 annotated browser comments into locked implementation and acceptance decisions.
+- 2026-07-23 21:52 Asia/Bangkok: Completed all 18 revisions and passed desktop/mobile, upload, card-generation, build, worker, and Edge Function checks.
+- 2026-07-23 22:10 Asia/Bangkok: Published the browser-feedback version to the stable Vercel URL and completed final mobile production QA.
+- 2026-07-23 22:24 Asia/Bangkok: Confirmed collector attribution is absent and the current DOM-to-image export fails on the production preview; locked a Canvas-based image-composition fix.
+- 2026-07-23 22:32 Asia/Bangkok: Deployed the Canvas export fix, verified uploaded-image composition and collector attribution, and removed the obsolete `html-to-image` dependency.
+- 2026-07-23 22:52 Asia/Bangkok: Created and secured the dedicated Supabase project, deployed the schema/function, connected local public credentials, and held production submission closed pending access-phrase rotation.
+- 2026-07-23 23:01 Asia/Bangkok: User approved the replacement server-only event phrase; Supabase Secrets configuration is waiting only for Dashboard sign-in.
+- 2026-07-23 23:35 Asia/Bangkok: Stored the server-only event phrase and production origin in Supabase, verified both rejection and success paths without creating data, and confirmed Vercel still needs Dashboard sign-in before production can be connected.
+- 2026-07-23 23:54 Asia/Bangkok: Connected Production-only Vercel variables, replaced the ineffective prebuilt redeploy with a source build, removed the remaining recent-pattern preview inconsistency, and verified the stable site against the empty live archive without creating test data.
+- 2026-07-24 00:02 Asia/Bangkok: Imported all 18 reviewed preview records into production as published `CMI` records, verified the public API, and advanced the next automatic archive number to 0045.
+- 2026-07-24 00:10 Asia/Bangkok: Replaced the filled WaytoAGI Hero badge with a transparent mark, added the explicit CMI Community organizer credit, and verified the update on the stable Vercel domain at desktop and phone widths.
+- 2026-07-24 08:10 Asia/Bangkok: Added canonical, description, Open Graph, Twitter Card, Event JSON-LD, favicon, and a self-contained branded 1200 × 630 share image; local build and metadata validation passed, with production deployment pending.
+- 2026-07-24 08:12 Asia/Bangkok: Published the metadata build to the stable Vercel domain and verified the raw crawler response plus the exact online share-image bytes.
 
 ## Handoff Notes
 
+- Do not merge or deploy `codex/22-lanna-cutover` until the CMI production Worker and migrated data receive explicit approval; keep the current Vercel deployment available for immediate rollback.
 - Do not reintroduce the removed four-column “现场观察 / 来源信息 / 仍待了解 / 创意表达” section between the hero and fishbone.
 - Keep museum selection before collection instructions and the public archive.
 - Preserve the distinction between observation, verified source information, open questions, and creative reinterpretation inside each pattern record.
+- Do not restore the previously exposed event phrase. Supabase secrets and production Vercel connectivity are complete; the next participant submission should create `CMI-LN-0045`.

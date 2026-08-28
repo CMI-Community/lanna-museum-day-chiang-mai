@@ -1,0 +1,173 @@
+<svg
+  width="1200"
+  height="630"
+  viewBox="0 0 1200 630"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+  <defs>
+    <clipPath id="art-clip">
+      <path d="M636 0H1200V630H542C581 565 596 495 582 421C562 317 563 207 636 0Z" />
+    </clipPath>
+    <pattern id="pixel-pattern" width="52" height="52" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2" width="12" height="12" fill="#5C2683" opacity="0.16" />
+      <rect x="28" y="28" width="8" height="8" fill="#1997A5" opacity="0.22" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#FBF8F1" />
+  <rect x="0" y="0" width="1200" height="14" fill="#5C2683" />
+  <rect x="0" y="14" width="300" height="6" fill="#D84F7E" />
+  <rect x="300" y="14" width="300" height="6" fill="#D8782E" />
+  <rect x="600" y="14" width="300" height="6" fill="#7F9B55" />
+  <rect x="900" y="14" width="300" height="6" fill="#1997A5" />
+
+  <g clip-path="url(#art-clip)">
+    <rect x="512" y="0" width="688" height="630" fill="#F4ECDD" />
+    <circle cx="1004" cy="138" r="212" fill="#5C2683" opacity="0.08" />
+    <circle cx="1118" cy="532" r="248" fill="#1997A5" opacity="0.08" />
+    <path
+      d="M526 188C654 113 735 101 840 145C949 191 1042 184 1226 80"
+      stroke="#5C2683"
+      stroke-width="74"
+      stroke-linecap="round"
+    />
+    <path
+      d="M494 281C650 194 766 196 862 244C970 297 1060 290 1234 187"
+      stroke="#D8782E"
+      stroke-width="68"
+      stroke-linecap="round"
+    />
+    <path
+      d="M510 374C676 285 774 298 875 344C982 393 1086 383 1241 286"
+      stroke="#7F9B55"
+      stroke-width="64"
+      stroke-linecap="round"
+    />
+    <path
+      d="M500 473C675 379 788 395 900 444C1007 491 1102 477 1253 388"
+      stroke="#1997A5"
+      stroke-width="60"
+      stroke-linecap="round"
+    />
+    <g fill="#FBF8F1" opacity="0.76">
+      <path d="M742 101L754 125L778 137L754 149L742 173L730 149L706 137L730 125L742 101Z" />
+      <path d="M902 228L914 252L938 264L914 276L902 300L890 276L866 264L890 252L902 228Z" />
+      <path d="M1062 350L1074 374L1098 386L1074 398L1062 422L1050 398L1026 386L1050 374L1062 350Z" />
+    </g>
+    <g fill="none" stroke="#FBF8F1" stroke-width="5" opacity="0.7">
+      <circle cx="822" cy="168" r="26" />
+      <circle cx="822" cy="168" r="13" />
+      <circle cx="984" cy="306" r="30" />
+      <circle cx="984" cy="306" r="15" />
+      <path d="M1104 142L1134 112L1164 142L1134 172L1104 142Z" />
+      <path d="M696 390L727 359L758 390L727 421L696 390Z" />
+    </g>
+    <g fill="#5C2683" opacity="0.7">
+      <rect x="1102" y="487" width="28" height="28" />
+      <rect x="1147" y="530" width="20" height="20" />
+      <rect x="1057" y="544" width="16" height="16" />
+      <rect x="1183" y="462" width="12" height="12" />
+    </g>
+  </g>
+
+  <rect x="54" y="58" width="236" height="52" rx="26" fill="#5C2683" />
+  <text
+    x="172"
+    y="92"
+    fill="#FFFFFF"
+    font-family="'Noto Sans SC', 'PingFang SC', sans-serif"
+    font-size="22"
+    font-weight="700"
+    text-anchor="middle"
+  >
+    7月26日 · CMI STUDIO
+  </text>
+
+  <text
+    x="56"
+    y="166"
+    fill="#211625"
+    font-family="'Noto Sans SC', 'PingFang SC', sans-serif"
+    font-size="25"
+    font-weight="700"
+    letter-spacing="2"
+  >
+    AI 切磋大会 第 26 期 · 博物馆奇妙日清迈场
+  </text>
+
+  <text
+    x="54"
+    y="252"
+    fill="#5C2683"
+    font-family="'Noto Serif SC', 'Songti SC', serif"
+    font-size="66"
+    font-weight="800"
+  >
+    共同探寻兰纳
+  </text>
+  <text
+    x="54"
+    y="332"
+    fill="#5C2683"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="69"
+    font-weight="700"
+    font-style="italic"
+  >
+    Lanna
+  </text>
+  <text
+    x="54"
+    y="414"
+    fill="#5C2683"
+    font-family="'Noto Serif SC', 'Songti SC', serif"
+    font-size="66"
+    font-weight="800"
+  >
+    纹案的踪迹
+  </text>
+
+  <line x1="56" y1="466" x2="500" y2="466" stroke="#5C2683" stroke-opacity="0.22" />
+  <text
+    x="56"
+    y="512"
+    fill="#554A59"
+    font-family="'Noto Sans SC', 'PingFang SC', sans-serif"
+    font-size="24"
+    font-weight="600"
+  >
+    走进博物馆采集纹样 · 用 AI 创作
+  </text>
+
+  <g transform="translate(56 548)">
+    <circle cx="12" cy="20" r="9" fill="#D84F7E" />
+    <circle cx="34" cy="20" r="9" fill="#D8782E" />
+    <circle cx="56" cy="20" r="9" fill="#7F9B55" />
+    <circle cx="78" cy="20" r="9" fill="#1997A5" />
+    <text
+      x="100"
+      y="29"
+      fill="#211625"
+      font-family="'Noto Sans SC', 'PingFang SC', sans-serif"
+      font-size="22"
+      font-weight="800"
+    >
+      CMI Community
+    </text>
+    <rect x="274" y="9" width="1" height="38" fill="#5C2683" opacity="0.24" />
+    <text
+      x="298"
+      y="36"
+      fill="#211625"
+      font-family="'Noto Sans SC', 'PingFang SC', sans-serif"
+      font-size="20"
+      font-weight="700"
+    >
+      主办 · WaytoAGI 发起
+    </text>
+  </g>
+
+  <rect x="1094" y="516" width="106" height="114" fill="url(#pixel-pattern)" />
+</svg>

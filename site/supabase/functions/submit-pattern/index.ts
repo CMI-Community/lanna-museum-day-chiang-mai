@@ -75,6 +75,24 @@ function text(value: unknown, maximum: number, fallback = "") {
   return value.trim().slice(0, maximum) || fallback;
 }
 
+function normalizeAccessCode(value: unknown) {
+  return text(value, 100).replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+}
+
+function defaultKeyFromJson(environmentName: string) {
+  const value = Deno.env.get(environmentName);
+  if (!value) {
+    return "";
+  }
+
+  try {
+    const keys = JSON.parse(value);
+    return typeof keys?.default === "string" ? keys.default : "";
+  } catch {
+    return "";
+  }
+}
+
 function tags(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
@@ -134,11 +152,13 @@ Deno.serve(async (request) => {
     return response(request, { error: "不允许的来源" }, 403);
   }
 
-  const expectedCode = Deno.env.get("PATTERN_SUBMISSION_CODE") ?? "";
+  const expectedCode = normalizeAccessCode(
+    Deno.env.get("PATTERN_SUBMISSION_CODE") ?? "",
+  );
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey =
-    Deno.env.get("SUPABASE_SECRET_KEY") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+    defaultKeyFromJson("SUPABASE_SECRET_KEYS") ||
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
     "";
 
   if (!expectedCode || !supabaseUrl || !serviceKey) {
@@ -163,7 +183,7 @@ Deno.serve(async (request) => {
     return response(request, { error: "采集信息格式无效" }, 400);
   }
 
-  if (!constantTimeEqual(text(metadata.accessCode, 100), expectedCode)) {
+  if (!constantTimeEqual(normalizeAccessCode(metadata.accessCode), expectedCode)) {
     return response(request, { error: "活动采集口令不正确" }, 401);
   }
 
@@ -246,7 +266,7 @@ Deno.serve(async (request) => {
         status: "published",
       })
       .select(
-        "id, archive_number, museum, source_title, source_location, observation, verified_information, open_question, carrier_tags, position_tags, structure_tags, material_tags, detail_image_urls, context_image_urls, label_image_urls, collector_name, created_at, published_at",
+        "id, archive_number, museum, source_title, source_location, observation, verified_information, open_question, carrier_tags, position_tags, structure_tags, material_tags, detail_image_urls, context_image_urls, label_image_urls, collector_name, captured_at, created_at, published_at",
       )
       .single();
 

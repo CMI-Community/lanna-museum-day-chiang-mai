@@ -2,5 +2,58 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm --prefix site ci",
   "buildCommand": "npm --prefix site run build",
-  "outputDirectory": "site/dist/client"
+  "outputDirectory": "site/dist/client",
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "query", "key": "lang", "value": "en" }],
+      "destination": "https://cmi.community/en/project/waytoagi/26-lanna-museum",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "query", "key": "lang", "value": "th" }],
+      "destination": "https://cmi.community/th/project/waytoagi/26-lanna-museum",
+      "permanent": true
+    },
+    {
+      "source": "/recap",
+      "has": [{ "type": "query", "key": "lang", "value": "en" }],
+      "destination": "https://cmi.community/en/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/recap/",
+      "has": [{ "type": "query", "key": "lang", "value": "en" }],
+      "destination": "https://cmi.community/en/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/recap",
+      "has": [{ "type": "query", "key": "lang", "value": "th" }],
+      "destination": "https://cmi.community/th/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/recap/",
+      "has": [{ "type": "query", "key": "lang", "value": "th" }],
+      "destination": "https://cmi.community/th/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/recap",
+      "destination": "https://cmi.community/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/recap/",
+      "destination": "https://cmi.community/project/waytoagi/26-lanna-museum/recap",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "destination": "https://cmi.community/project/waytoagi/26-lanna-museum",
+      "permanent": true
+    }
+  ]
 }
